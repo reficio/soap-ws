@@ -28,15 +28,15 @@
         </dependency>
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>com.centeractive</groupId>
             <artifactId>soap-client</artifactId>
-            <version>${project.version}</version>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>com.centeractive</groupId>
             <artifactId>soap-server</artifactId>
-            <version>${project.version}</version>
+            <version>1.0</version>
         </dependency>
 
         <dependency>

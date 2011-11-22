@@ -8,6 +8,10 @@
     <version>1.0</version>
     <name>soap-ws - parent</name>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <parent>
         <groupId>com.centeractive</groupId>
         <artifactId>centeractive</artifactId>

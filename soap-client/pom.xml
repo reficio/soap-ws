@@ -8,6 +8,12 @@
     <version>1.0</version>
     <name>soap-client - XML based SOAP client</name>
 
+    <parent>
+        <groupId>com.centeractive</groupId>
+        <artifactId>soap-ws</artifactId>
+        <version>1.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
     <dependencies>
         <dependency>

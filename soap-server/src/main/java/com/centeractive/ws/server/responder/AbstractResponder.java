@@ -13,10 +13,7 @@ import javax.wsdl.Part;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * User: Tom Bujok (tomasz.bujok@centeractive.com)
@@ -82,17 +79,24 @@ public abstract class AbstractResponder implements RequestResponder {
     }
 
     // document style -> there is not encoded operation name - matching based on the input style
-    private BindingOperation matchToInputNames(Set<Node> rootNodes) {
+    private BindingOperation matchToInputNames(Set<Node> rootNodes) throws OperationNotFoundException {
+        Stack<BindingOperation> matchedOperations = new Stack<BindingOperation>();
         for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {
             try {
                 Set<String> expectedNames = operation.getOperation().getInput().getMessage().getParts().keySet();
                 Set<String> receivedNames = getNodeNames(rootNodes);
                 if (receivedNames.equals(expectedNames)) {
-                    return operation;
+                    matchedOperations.push(operation);
                 }
             } catch (NullPointerException ex) {
                 // double-check in case of malformed WSDL's
             }
+        }
+        if(matchedOperations.size() == 1) {
+            return matchedOperations.pop();
+        } else if(matchedOperations.size() > 1) {
+            throw new OperationNotFoundException("Cannot match a SOAP operation to the given SOAP request. " +
+                    "More than one operation could be matched to the given input message!");
         }
         return null;
     }

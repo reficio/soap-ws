@@ -1,5 +1,7 @@
 package com.centeractive.ws.client;
 
+import com.centeractive.ws.client.ex.SoapBuilderException;
+import com.centeractive.ws.client.ex.SoapTransmissionException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import sun.misc.BASE64Encoder;
@@ -13,7 +15,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
-import static com.centeractive.ws.client.HttpConstants.*;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -29,15 +30,14 @@ public final class SoapClient {
     private String basicAuthEncoded;
     private boolean tlsEnabled;
     private KeyStore keyStore;
-    private HttpURLConnection connection;
-
     private boolean strictHostVerification = false;
-    private String sslContext = "SSLv3";
-    private SSLContext context;
     private Proxy proxy;
-    private SSLSocketFactory sslSocketFactory;
     private String proxyAuthEncoded;
+    private String sslContext = "SSLv3";
 
+    private SSLContext context;
+    private HttpURLConnection connection;
+    private SSLSocketFactory sslSocketFactory;
     private OutputStream outputStream = null;
     private InputStream inputStream = null;
 
@@ -70,11 +70,11 @@ public final class SoapClient {
                 ((HttpsURLConnection) connection).setHostnameVerifier(new SoapHostnameVerifier());
             }
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            throw new SoapBuilderException(e);
         } catch (KeyManagementException e) {
-            throw new RuntimeException(e);
+            throw new SoapBuilderException(e);
         } catch (KeyStoreException e) {
-            throw new RuntimeException(e);
+            throw new SoapBuilderException(e);
         }
     }
 
@@ -89,7 +89,7 @@ public final class SoapClient {
     private void configureConnection() throws ProtocolException {
         connection.setDoOutput(true);
         connection.setDoInput(true);
-        connection.setRequestMethod(POST);
+        connection.setRequestMethod("POST");
         if (basicAuthEncoded != null) {
             connection.setRequestProperty("Authorization", "Basic " + basicAuthEncoded);
         }
@@ -103,7 +103,7 @@ public final class SoapClient {
             connection.setRequestProperty("SOAPAction", soapAction);
         }
         if (requestEnvelope.contains("http://schemas.xmlsoap.org/soap/envelope/")) {
-            connection.setRequestProperty("Content-Type", MIMETYPE_TEXT_XML);
+            connection.setRequestProperty("Content-Type", "text/xml");
         } else if (requestEnvelope.contains("http://www.w3.org/2003/05/soap-envelope")) {
             connection.setRequestProperty("Content-Type", "application/soap+xml");
         }
@@ -143,18 +143,24 @@ public final class SoapClient {
     }
 
     private void properlyHandleTransmissionError(IOException ex) {
+        StringBuilder errorMessage = new StringBuilder();
+        int errorCode = 0;
         try {
-            int respCode = connection.getResponseCode();
-            log.info(respCode);
+            errorCode = connection.getResponseCode();
+        } catch (IOException e) {
+            // ignore
+        }
+        try {
             InputStream errorStream = ((HttpURLConnection) connection).getErrorStream();
             int ret = 0;
             while ((ret = errorStream.read()) > 0) {
+                errorMessage.append((char)ret);
             }
             errorStream.close();
         } catch (IOException e) {
             // ignore
         } finally {
-            throw new RuntimeException(ex);
+            throw new SoapTransmissionException(errorMessage.toString(), errorCode);
         }
     }
 
@@ -174,18 +180,23 @@ public final class SoapClient {
         }
     }
 
-    public SoapClient disconnect() {
+    /**
+     * Underlying connection is persistent by default
+     * @link http://docs.oracle.com/javase/1.5.0/docs/guide/net/http-keepalive.html
+     *
+     */
+    public void disconnect() {
         connection.disconnect();
-        return this;
     }
 
     public String post(String requestEnvelope) {
+        // TODO ugly null
         return post(null, requestEnvelope);
     }
 
 
     public String post(String soapAction, String requestEnvelope) {
-        log.info(String.format("Sending request to host=[%s] action=[%s] request:\n%s", serverUrl.toString(),
+        log.debug(String.format("Sending request to host=[%s] action=[%s] request:\n%s", serverUrl.toString(),
                 soapAction, requestEnvelope));
         try {
             openConnection();
@@ -193,10 +204,10 @@ public final class SoapClient {
             configureConnection();
             decorateConnectionWithSoap(soapAction, requestEnvelope);
             String response = transmit(requestEnvelope);
-            log.info("Received response:\n" + requestEnvelope);
+            log.debug("Received response:\n" + requestEnvelope);
             return response;
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            throw new SoapTransmissionException(ex);
         }
     }
 
@@ -222,10 +233,10 @@ public final class SoapClient {
             checkNotNull(url);
             try {
                 client.serverUrl = new URL(url);
-                client.tlsEnabled = client.serverUrl.getProtocol().equalsIgnoreCase(HTTPS);
+                client.tlsEnabled = client.serverUrl.getProtocol().equalsIgnoreCase("https");
                 return this;
             } catch (MalformedURLException ex) {
-                throw new RuntimeException(ex);
+                throw new SoapBuilderException(ex);
             }
         }
 
@@ -293,7 +304,6 @@ public final class SoapClient {
             return this;
         }
 
-
         public SoapClient create() {
             validateAndInitKeystore();
             validateAndInitProxy();
@@ -311,15 +321,15 @@ public final class SoapClient {
                     in.close();
                     client.keyStore = ks;
                 } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
+                    throw new SoapBuilderException(e);
                 } catch (CertificateException e) {
-                    throw new RuntimeException(e);
+                    throw new SoapBuilderException(e);
                 } catch (NoSuchAlgorithmException e) {
-                    throw new RuntimeException(e);
+                    throw new SoapBuilderException(e);
                 } catch (KeyStoreException e) {
-                    throw new RuntimeException(e);
+                    throw new SoapBuilderException(e);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new SoapBuilderException(e);
                 }
             }
         }

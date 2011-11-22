@@ -1,6 +1,7 @@
 package com.centeractive.ws.server;
 
 import com.centeractive.SoapBuilder;
+import com.centeractive.soap.domain.OperationWrapper;
 import com.centeractive.utils.XmlTestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,7 +40,9 @@ public abstract class AbstractCooperationTest {
         assertNotNull(builder);
         for (Binding binding : (Collection<Binding>) builder.getDefinition().getAllBindings().values()) {
             for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {
-                String request = builder.buildSoapMessageFromInput(builder.getOperation(binding, operation));
+                OperationWrapper wrapper = builder.getOperation(binding, operation);
+                log.info("Testing operation: " + wrapper);
+                String request = builder.buildSoapMessageFromInput(wrapper);
                 String contextPath = TestUtils.formatContextPath(testServiceId, binding);
                 String endpointUrl = formatEndpointAddress(url, contextPath);
                 String response = postRequest(endpointUrl, request);

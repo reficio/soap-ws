@@ -37,4 +37,9 @@ public class OperationWrapper {
         return operationOutputName;
     }
 
+    public String toString() {
+        return String.format("bindingName=[%s] operationName=[%s] operationInputName=[%s] operationOutputName=[%s]",
+            bindingName.toString(), operationName, operationInputName, operationOutputName);
+    }
+
 }

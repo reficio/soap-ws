@@ -1,7 +1,6 @@
 package com.centeractive.ws.server;
 
 import com.centeractive.ws.client.SoapClient;
-import com.centeractive.ws.client.ex.SoapException;
 import com.centeractive.ws.client.ex.SoapTransmissionException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,10 +13,10 @@ import static junit.framework.Assert.assertNotNull;
 
 /**
  * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 19/11/11
- * Time: 6:17 PM
+ * Date: 22/11/11
+ * Time: 8:21 PM
  */
-public class PlainCooperationTest extends AbstractCooperationTest {
+public class TrickyCooperationTest extends AbstractCooperationTest {
 
     private final static Log log = LogFactory.getLog(PlainCooperationTest.class);
 
@@ -35,31 +34,21 @@ public class PlainCooperationTest extends AbstractCooperationTest {
     }
 
     public String postRequest(String endpointUrl, String request) {
-        SoapClient client = SoapClient.builder().url("http://"+endpointUrl).create();
-        return client.post(request);
-    }
-
-    @Test
-    public void testServices() throws Exception {
-        for(int serviceId = 1 ; serviceId <= 22 ; serviceId++) {
-            verifyServiceBehavior(serviceId);
-        }
-    }
-
-    @Test
-    public void testService23() throws Exception {
-        SoapTransmissionException expected = null;
+        SoapClient client = SoapClient.builder().url("http://" + endpointUrl).create();
         try {
-            verifyServiceBehavior(23);
-        } catch(SoapTransmissionException ex) {
-            expected = ex;
+            String response = null;
+            for (int i = 0; i < 30; i++) {
+                response = client.post(request);
+            }
+            return response;
+        } finally {
+            client.disconnect();
         }
-        assertNotNull(expected);
-        assertEquals(expected.getErrorCode(), 500);
     }
 
-
-
-
+    @Test
+    public void testMultipleRequests() throws Exception {
+        verifyServiceBehavior(1);
+    }
 
 }

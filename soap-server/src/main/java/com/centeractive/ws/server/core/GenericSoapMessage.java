@@ -30,7 +30,7 @@ public class GenericSoapMessage implements WebServiceMessage {
 
     @Override
     public Result getPayloadResult() {
-        throw new RuntimeException("Method is not implemented");
+        throw new RuntimeException("This method is not implemented - it SHOULD NOT be used.");
     }
 
     @Override

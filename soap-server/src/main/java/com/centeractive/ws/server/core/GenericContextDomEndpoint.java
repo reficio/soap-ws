@@ -31,7 +31,7 @@ public class GenericContextDomEndpoint extends AbstractDomPayloadEndpoint implem
 
     @Override
     protected Element invokeInternal(Element requestElement, Document responseDocument) throws Exception {
-        throw new RuntimeException("This method is not implemented.");
+        throw new RuntimeException("This method is not implemented - it SHOULD NOT be used.");
     }
 
     @Override

@@ -184,12 +184,6 @@ public final class SoapServer {
         return properties;
     }
 
-    public static void main(String args[]) {
-        SoapServer server = SoapServer.builder().httpPort(9595).create();
-        server.start();
-        log.info(server.getEndpoint());
-    }
-
     // ----------------------------------------------------------------
     // BUILDER API
     // ----------------------------------------------------------------

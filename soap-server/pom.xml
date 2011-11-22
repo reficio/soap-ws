@@ -8,6 +8,13 @@
     <version>1.0</version>
     <name>soap-server - XML based SOAP server</name>
 
+    <parent>
+        <groupId>com.centeractive</groupId>
+        <artifactId>soap-ws</artifactId>
+        <version>1.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.ws</groupId>
