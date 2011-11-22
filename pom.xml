@@ -7,7 +7,13 @@
     <packaging>pom</packaging>
     <version>1.0</version>
     <name>soap-ws - parent</name>
-    
+
+    <parent>
+        <groupId>com.centeractive</groupId>
+        <artifactId>centeractive</artifactId>
+        <version>1</version>
+    </parent>
+
     <build>
         <plugins>
             <plugin>
@@ -18,14 +24,14 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
-		</plugins>
-	</build>
-            
-	<modules>
-		<module>soap-builder</module>
-		<module>soap-client</module>
-		<module>soap-server</module>
-		<module>soap-test</module>
-	</modules>
+        </plugins>
+    </build>
+
+    <modules>
+        <module>soap-builder</module>
+        <module>soap-client</module>
+        <module>soap-server</module>
+        <module>soap-test</module>
+    </modules>
 
 </project>
