@@ -1,0 +1,66 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://schemas.eviware.com/TestService/v1/">
+   <soapenv:Header>
+      <v1:SignatureHeader>
+         <!--Optional:-->
+         <v1:CheckSum>?</v1:CheckSum>
+         <!--Optional:-->
+         <v1:RemoteSite>?</v1:RemoteSite>
+      </v1:SignatureHeader>
+   </soapenv:Header>
+   <soapenv:Body>
+      <v1:GetDefaultPageDataResponse>
+         <!--Optional:-->
+         <v1:GetDefaultPageDataResult>
+            <!--Optional:-->
+            <v1:Property>
+               <!--Zero or more repetitions:-->
+               <v1:RawProperty>
+                  <v1:PageDefinitionID>?</v1:PageDefinitionID>
+                  <v1:OwnerTab>?</v1:OwnerTab>
+                  <v1:IsModified>?</v1:IsModified>
+                  <v1:IsNull>?</v1:IsNull>
+                  <v1:IsRequired>?</v1:IsRequired>
+                  <v1:IsPropertyData>?</v1:IsPropertyData>
+                  <v1:IsDynamicProperty>?</v1:IsDynamicProperty>
+                  <v1:IsPersonalized>?</v1:IsPersonalized>
+                  <v1:Type>?</v1:Type>
+                  <!--Optional:-->
+                  <v1:Name>?</v1:Name>
+                  <!--Optional:-->
+                  <v1:DisplayName>?</v1:DisplayName>
+                  <!--Optional:-->
+                  <v1:Description>?</v1:Description>
+                  <!--Optional:-->
+                  <v1:LanguageKey>?</v1:LanguageKey>
+                  <!--Optional:-->
+                  <v1:TypeName>?</v1:TypeName>
+                  <!--Optional:-->
+                  <v1:AssemblyName>?</v1:AssemblyName>
+                  <!--Optional:-->
+                  <v1:Value>?</v1:Value>
+                  <!--Optional:-->
+                  <v1:CustomData>
+                     <!--Zero or more repetitions:-->
+                     <v1:RawNameAndXml>
+                        <!--Optional:-->
+                        <v1:Name>?</v1:Name>
+                        <!--Optional:-->
+                        <v1:Xml>?</v1:Xml>
+                     </v1:RawNameAndXml>
+                  </v1:CustomData>
+               </v1:RawProperty>
+            </v1:Property>
+            <!--Optional:-->
+            <v1:ACL>
+               <!--Zero or more repetitions:-->
+               <v1:RawACE>
+                  <!--Optional:-->
+                  <v1:Name>?</v1:Name>
+                  <v1:SID>?</v1:SID>
+                  <v1:Access>?</v1:Access>
+               </v1:RawACE>
+            </v1:ACL>
+         </v1:GetDefaultPageDataResult>
+      </v1:GetDefaultPageDataResponse>
+   </soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<definitions name="StockQuote" targetNamespace="http://centeractive.com/stockquote.wsdl"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:tns="http://centeractive.com/stockquote.wsdl"
+             xmlns:types="http://centeractive.com/stockquote.xsd"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <types>
+        <xsd:schema targetNamespace="http://centeractive.com/stockquote.xsd">
+            <xsd:import namespace="http://centeractive.com/stockquote.xsd" schemaLocation="stockquote-schema.xsd"/>
+        </xsd:schema>
+    </types>
+
+    <message name="GetLastTradePriceInput">
+        <part name="body" element="types:TradePriceRequest"/>
+    </message>
+        <message name="GetLastTradePriceOutput">
+        <part name="body" element="types:TradePrice"/>
+    </message>
+
+    <portType name="StockQuotePortType">
+        <operation name="GetLastTradePrice">
+            <input message="tns:GetLastTradePriceInput"/>
+            <output message="tns:GetLastTradePriceOutput"/>
+        </operation>
+        <operation name="GetLastTradePrice2">
+            <input message="tns:GetLastTradePriceInput"/>
+            <output message="tns:GetLastTradePriceOutput"/>
+        </operation>
+    </portType>
+
+    <binding name="StockQuoteSoapBinding" type="tns:StockQuotePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <operation name="GetLastTradePrice">
+            <soap:operation soapAction="stock:quote:getlasttradeprice"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+
+        <operation name="GetLastTradePrice2">
+            <soap:operation soapAction="stock:quote:getlasttradeprice2"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <service name="StockQuoteService">
+        <documentation>My first service
+        </documentation>
+        <port name="StockQuotePort" binding="tns:StockQuoteSoapBinding">
+            <soap:address location="http://centeractive.com/stockquote"/>
+        </port>
+    </service>
+
+</definitions>

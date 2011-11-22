@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+    <bean name="genericReceiver" id="genericReceiver" class="com.centeractive.ws.server.core.GenericContextDomEndpoint"/>
+
+    <bean name="endpoint" id="endpoint" class="com.centeractive.ws.server.core.GenericContextDomEndpoint"/>
+
+    <bean id="connector" class="org.mortbay.jetty.nio.SelectChannelConnector" />
+    <bean id="sslConnector" class="org.mortbay.jetty.security.SslSelectChannelConnector" />
+
+    <bean id="messageFactory" class="com.centeractive.ws.server.protocol.GenericSoapMessageFactory" />
+
+    <bean id="jettyServer"
+          class="org.mortbay.jetty.Server"
+          destroy-method="stop">
+        <property name="threadPool">
+            <bean id="ThreadPool" class="org.mortbay.thread.concurrent.ThreadPool">
+                <constructor-arg type="int" value="${core.pool.size}"/>
+                <constructor-arg type="int" value="${max.pool.size}"/>
+                <constructor-arg type="long" value="${keep.alive.time}"/>
+                <constructor-arg type="java.util.concurrent.TimeUnit">
+					<util:constant static-field="java.util.concurrent.TimeUnit.SECONDS" />
+				</constructor-arg>
+            </bean>
+        </property>
+        <property name="connectors">
+            <list>
+
+            </list>
+        </property>
+        <property name="handlers">
+            <list>
+                <bean class="org.mortbay.jetty.servlet.Context"
+                      p:contextPath="/">
+                    <property name="sessionHandler">
+                        <bean class="org.mortbay.jetty.servlet.SessionHandler"/>
+                    </property>
+                    <property name="servletHandler">
+                        <bean class="org.mortbay.jetty.servlet.ServletHandler">
+                            <property name="servlets">
+                                <list>
+                                    <bean class="org.mortbay.jetty.servlet.ServletHolder"
+                                          p:name="spring-ws">
+                                        <property name="servlet">
+                                            <bean class="org.springframework.ws.transport.http.MessageDispatcherServlet">
+                                                <!--
+                                                <property name="messageReceiverBeanName" value="genericReceiver" />
+                                                -->
+                                            </bean>
+                                        </property>
+                                        <property name="initParameters">
+                                            <map>
+                                                <entry key="contextConfigLocation"
+                                                       value="classpath:soap-servlet.xml"/>
+                                            </map>
+                                        </property>
+                                    </bean>
+                                </list>
+                            </property>
+                            <property name="servletMappings">
+                                <list>
+                                    <bean class="org.mortbay.jetty.servlet.ServletMapping"
+                                          p:servletName="spring-ws"
+                                          p:pathSpec="/*"/>
+                                </list>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="org.mortbay.jetty.handler.DefaultHandler"/>
+                <bean class="org.mortbay.jetty.handler.RequestLogHandler"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

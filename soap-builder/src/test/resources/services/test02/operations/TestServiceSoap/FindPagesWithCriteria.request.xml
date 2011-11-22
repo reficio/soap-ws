@@ -1,0 +1,36 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://schemas.eviware.com/TestService/v1/">
+   <soapenv:Header>
+      <v1:SignatureHeader>
+         <!--Optional:-->
+         <v1:CheckSum>?</v1:CheckSum>
+         <!--Optional:-->
+         <v1:RemoteSite>?</v1:RemoteSite>
+      </v1:SignatureHeader>
+   </soapenv:Header>
+   <soapenv:Body>
+      <v1:FindPagesWithCriteria>
+         <v1:pageLink>
+            <v1:ID>?</v1:ID>
+            <v1:WorkID>?</v1:WorkID>
+            <!--Optional:-->
+            <v1:RemoteSite>?</v1:RemoteSite>
+            <v1:LoadRawPageData>?</v1:LoadRawPageData>
+         </v1:pageLink>
+         <!--Optional:-->
+         <v1:criterias>
+            <!--Zero or more repetitions:-->
+            <v1:PropertyCriteria>
+               <!--Optional:-->
+               <v1:Name>?</v1:Name>
+               <!--Optional:-->
+               <v1:Value>?</v1:Value>
+               <v1:Type>?</v1:Type>
+               <v1:Condition>?</v1:Condition>
+               <v1:StringCondition>?</v1:StringCondition>
+               <v1:IsNull>?</v1:IsNull>
+               <v1:Required>?</v1:Required>
+            </v1:PropertyCriteria>
+         </v1:criterias>
+      </v1:FindPagesWithCriteria>
+   </soapenv:Body>
+</soapenv:Envelope>

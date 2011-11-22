@@ -1,0 +1,8 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.ifyouwannabecool.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <api:readPersona>
+         <personaId>?</personaId>
+      </api:readPersona>
+   </soapenv:Body>
+</soapenv:Envelope>

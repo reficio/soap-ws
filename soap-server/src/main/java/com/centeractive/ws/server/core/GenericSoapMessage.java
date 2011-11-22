@@ -1,0 +1,45 @@
+package com.centeractive.ws.server.core;
+
+import com.centeractive.soap.XmlUtils;
+import org.springframework.ws.WebServiceMessage;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+
+/**
+ * User: Tom Bujok (tomasz.bujok@centeractive.com)
+ * Date: 21/11/11
+ * Time: 9:43 AM
+ */
+public class GenericSoapMessage implements WebServiceMessage {
+
+    private final Source source;
+
+    public GenericSoapMessage(Source source) {
+        this.source = source;
+    }
+
+    @Override
+    public Source getPayloadSource() {
+        return source;
+    }
+
+    @Override
+    public Result getPayloadResult() {
+        throw new RuntimeException("Method is not implemented");
+    }
+
+    @Override
+    public void writeTo(OutputStream outputStream) throws IOException {
+        Writer writer = new OutputStreamWriter(outputStream);
+        String message = XmlUtils.sourceToXml(source);
+        writer.write(message);
+        writer.flush();
+        writer.close();
+    }
+
+}

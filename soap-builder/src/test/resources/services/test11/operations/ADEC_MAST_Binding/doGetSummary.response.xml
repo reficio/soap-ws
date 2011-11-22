@@ -1,0 +1,12 @@
+<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ADEC_MAST">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <urn:doGetSummaryResponse soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <return xsi:type="urn:SummaryResult">
+            <!--You may enter the following 2 items in any order-->
+            <missionName xsi:type="xsd:string">?</missionName>
+            <dataIdCount xsi:type="xsd:int">?</dataIdCount>
+         </return>
+      </urn:doGetSummaryResponse>
+   </soapenv:Body>
+</soapenv:Envelope>

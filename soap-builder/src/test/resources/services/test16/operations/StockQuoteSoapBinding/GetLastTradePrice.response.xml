@@ -1,0 +1,10 @@
+<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stoc="http://centeractive.com/stockquote.wsdl" xmlns:stoc1="http://centeractive.com/stockquote.xsd">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <stoc:GetLastTradePriceResponse soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <stoc1:TradePrice>
+            <price xsi:type="xsd:float">?</price>
+         </stoc1:TradePrice>
+      </stoc:GetLastTradePriceResponse>
+   </soapenv:Body>
+</soapenv:Envelope>

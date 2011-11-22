@@ -1,0 +1,23 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.ifyouwannabecool.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <api:readPersonaResponse>
+         <return>
+            <!--Optional:-->
+            <id>?</id>
+            <!--Optional:-->
+            <email>?</email>
+            <!--Optional:-->
+            <alias>?</alias>
+            <!--Optional:-->
+            <name>
+               e
+               <!--You may enter ANY elements at this point-->
+               gero
+            </name>
+            <!--Optional:-->
+            <picture>cid:986942279037</picture>
+         </return>
+      </api:readPersonaResponse>
+   </soapenv:Body>
+</soapenv:Envelope>

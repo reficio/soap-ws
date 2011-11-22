@@ -1,0 +1,16 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.ifyouwannabecool.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <api:readGroupsResponse>
+         <return>
+            <!--Optional:-->
+            <id>?</id>
+            <!--Zero or more repetitions:-->
+            <memberIds>?</memberIds>
+            <!--Optional:-->
+            <groupLeaderId>?</groupLeaderId>
+            <exclusive>?</exclusive>
+         </return>
+      </api:readGroupsResponse>
+   </soapenv:Body>
+</soapenv:Envelope>

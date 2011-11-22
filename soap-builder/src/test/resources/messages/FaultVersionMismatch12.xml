@@ -1,0 +1,13 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+  <soap:Body>
+    <soap:Fault>
+      <soap:Code>
+        <soap:Value>VersionMismatch</soap:Value>
+      </soap:Code>
+      <soap:Reason>
+        <!--1 or more repetitions:-->
+        <soap:Text xml:lang="en">Fault Message</soap:Text>
+      </soap:Reason>
+    </soap:Fault>
+  </soap:Body>
+</soap:Envelope>

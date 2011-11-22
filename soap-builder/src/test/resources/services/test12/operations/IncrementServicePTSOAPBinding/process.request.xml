@@ -1,0 +1,10 @@
+<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:inc="http://orchestra.objectweb.org/samples/incrementService">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <inc:process soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <inc:processIncrementService xsi:type="inc:ProcessIncrementServiceType">
+            <value xsi:type="xsd:int">?</value>
+         </inc:processIncrementService>
+      </inc:process>
+   </soapenv:Body>
+</soapenv:Envelope>

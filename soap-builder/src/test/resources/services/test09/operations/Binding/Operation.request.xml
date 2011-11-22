@@ -1,0 +1,10 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsdl="http://testcase/wsdl" xmlns:one="http://testcase/one">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <wsdl:One>
+         <one:shared>
+            <one:Content>?</one:Content>
+         </one:shared>
+      </wsdl:One>
+   </soapenv:Body>
+</soapenv:Envelope>

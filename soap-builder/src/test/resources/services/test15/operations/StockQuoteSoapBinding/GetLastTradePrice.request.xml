@@ -1,0 +1,8 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stoc="http://centeractive.com/stockquote.xsd">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <stoc:TradePriceRequest>
+         <tickerSymbol>?</tickerSymbol>
+      </stoc:TradePriceRequest>
+   </soapenv:Body>
+</soapenv:Envelope>

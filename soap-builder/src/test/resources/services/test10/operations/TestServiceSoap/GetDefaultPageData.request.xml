@@ -1,0 +1,15 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://schemas.eviware.com/TestService/v1/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:GetDefaultPageData>
+         <v1:pageLink>
+            <v1:ID>?</v1:ID>
+            <v1:WorkID>?</v1:WorkID>
+            <!--Optional:-->
+            <v1:RemoteSite>?</v1:RemoteSite>
+            <v1:LoadRawPageData>?</v1:LoadRawPageData>
+         </v1:pageLink>
+         <v1:pageTypeID>?</v1:pageTypeID>
+      </v1:GetDefaultPageData>
+   </soapenv:Body>
+</soapenv:Envelope>

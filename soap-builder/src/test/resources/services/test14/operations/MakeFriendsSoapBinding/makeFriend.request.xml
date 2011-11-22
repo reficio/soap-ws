@@ -1,0 +1,15 @@
+<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cyc="http://cyclic.test">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cyc:makeFriend soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <A xsi:type="cyc:Person">
+            <name xsi:type="xsd:string">?</name>
+            <friend/>
+         </A>
+         <B xsi:type="cyc:Person">
+            <name xsi:type="xsd:string">?</name>
+            <friend/>
+         </B>
+      </cyc:makeFriend>
+   </soapenv:Body>
+</soapenv:Envelope>

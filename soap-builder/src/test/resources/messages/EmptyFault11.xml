@@ -1,0 +1,14 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+  <soapenv:Body>
+    <soapenv:Fault>
+      <faultcode>?</faultcode>
+      <faultstring xml:lang="?">?</faultstring>
+      <!--Optional:-->
+      <faultactor>?</faultactor>
+      <!--Optional:-->
+      <detail>
+        <!--You may enter ANY elements at this point-->
+      </detail>
+    </soapenv:Fault>
+  </soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,27 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+  <soap:Body>
+    <soap:Fault>
+      <soap:Code>
+        <soap:Value>?</soap:Value>
+        <!--Optional:-->
+        <soap:Subcode>
+          <soap:Value>?</soap:Value>
+          <!--Optional:-->
+          <soap:Subcode/>
+        </soap:Subcode>
+      </soap:Code>
+      <soap:Reason>
+        <!--1 or more repetitions:-->
+        <soap:Text xml:lang="?">?</soap:Text>
+      </soap:Reason>
+      <!--Optional:-->
+      <soap:Node>?</soap:Node>
+      <!--Optional:-->
+      <soap:Role>?</soap:Role>
+      <!--Optional:-->
+      <soap:Detail>
+        <!--You may enter ANY elements at this point-->
+      </soap:Detail>
+    </soap:Fault>
+  </soap:Body>
+</soap:Envelope>

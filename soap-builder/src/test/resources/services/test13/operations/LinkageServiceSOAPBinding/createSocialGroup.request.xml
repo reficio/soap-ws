@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.ifyouwannabecool.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <api:createSocialGroup>
+         <groupLeader>?</groupLeader>
+         <!--1 or more repetitions:-->
+         <memberIds>?</memberIds>
+         <exclusive>?</exclusive>
+      </api:createSocialGroup>
+   </soapenv:Body>
+</soapenv:Envelope>

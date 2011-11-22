@@ -1,0 +1,10 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stoc="http://centeractive.com/stockquote.wsdl" xmlns:stoc1="http://centeractive.com/stockquote.xsd">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <stoc:GetLastTradePrice2>
+         <stoc1:TradePriceRequest>
+            <tickerSymbol>?</tickerSymbol>
+         </stoc1:TradePriceRequest>
+      </stoc:GetLastTradePrice2>
+   </soapenv:Body>
+</soapenv:Envelope>

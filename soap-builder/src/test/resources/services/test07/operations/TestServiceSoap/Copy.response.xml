@@ -1,0 +1,21 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://schemas.eviware.com/TestService/v1/">
+   <soapenv:Header>
+      <v1:SignatureHeader>
+         <!--Optional:-->
+         <v1:CheckSum>?</v1:CheckSum>
+         <!--Optional:-->
+         <v1:RemoteSite>?</v1:RemoteSite>
+      </v1:SignatureHeader>
+   </soapenv:Header>
+   <soapenv:Body>
+      <v1:CopyResponse>
+         <v1:CopyResult>
+            <v1:ID>?</v1:ID>
+            <v1:WorkID>?</v1:WorkID>
+            <!--Optional:-->
+            <v1:RemoteSite>?</v1:RemoteSite>
+            <v1:LoadRawPageData>?</v1:LoadRawPageData>
+         </v1:CopyResult>
+      </v1:CopyResponse>
+   </soapenv:Body>
+</soapenv:Envelope>

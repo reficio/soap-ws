@@ -1,0 +1,8 @@
+<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tem:SayHelloWorldResponse soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <SayHelloWorldResult xsi:type="enc:ArrayOfTest" soapenc:arrayType="enc:Test[]" xmlns:enc="http://tempuri.org/encodedTypes"/>
+      </tem:SayHelloWorldResponse>
+   </soapenv:Body>
+</soapenv:Envelope>
