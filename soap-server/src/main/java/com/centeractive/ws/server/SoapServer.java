@@ -17,8 +17,7 @@ import org.springframework.web.context.support.GenericWebApplicationContext;
 
 import javax.servlet.ServletContext;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.Properties;
+import java.util.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -83,15 +82,18 @@ public final class SoapServer {
     }
 
     public void registerRequestResponder(String contextPath, RequestResponder responder) throws ServiceRegistrationException {
+        checkNotNull(contextPath, "contextPath cannot be null");
+        checkNotNull(responder, "responder cannot be null");
         endpoint.registerRequestResponder(contextPath, responder);
     }
 
     public void unregisterRequestResponder(String contextPath) throws ServiceRegistrationException {
+        checkNotNull(contextPath, "contextPath cannot be null");
         endpoint.unregisterRequestResponder(contextPath);
     }
 
-    public Enumeration<String> getRegisteredContextPaths() {
-        return endpoint.getRegisteredContextPaths();
+    public List<String> getRegisteredContextPaths() {
+        return Collections.list(endpoint.getRegisteredContextPaths());
     }
 
 
