@@ -230,7 +230,7 @@ public class SoapBuilder {
         BindingOperation operation = binding.getBindingOperation(op.getOperationName(),
                 op.getOperationInputName(), op.getOperationOutputName());
         if (operation == null) {
-            throw new RuntimeException("Operation not found");
+            throw new SoapBuilderException("Operation not found");
         }
         return operation;
     }
@@ -253,7 +253,7 @@ public class SoapBuilder {
     private Binding getBindingByName(QName bindingName) {
         Binding binding = this.definition.getBinding(bindingName);
         if (binding == null) {
-            throw new RuntimeException("Binding not found");
+            throw new SoapBuilderException("Binding not found");
         }
         return binding;
     }
@@ -265,7 +265,7 @@ public class SoapBuilder {
         }
         BindingOperation operation = binding.getBindingOperation(operationName, operationInputName, operationOutputName);
         if (operation == null) {
-            throw new RuntimeException("Operation not found");
+            throw new SoapBuilderException("Operation not found");
         }
         return operation;
     }
@@ -290,7 +290,7 @@ public class SoapBuilder {
                 return SoapVersion.Soap12;
             }
         }
-        throw new RuntimeException("SOAP binding not recognized");
+        throw new SoapBuilderException("SOAP binding not recognized");
     }
 
 
@@ -535,7 +535,7 @@ public class SoapBuilder {
             cursor.dispose();
             emptyResponse = xmlObject.toString();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new SoapBuilderException(e);
         }
         return emptyResponse;
     }

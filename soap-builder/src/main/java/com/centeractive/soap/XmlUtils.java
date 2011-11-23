@@ -16,6 +16,7 @@ package com.centeractive.soap;
 //import com.eviware.soapui.impl.wsdl.WsdlInterface;
 //import com.eviware.soapui.support.StringUtils;
 //import com.eviware.soapui.support.types.StringToStringMap;
+import com.centeractive.SoapBuilderException;
 import net.sf.saxon.expr.Token;
 import net.sf.saxon.expr.Tokenizer;
 import org.apache.commons.lang.StringUtils;
@@ -886,7 +887,7 @@ public final class XmlUtils
 			child = child.getNextSibling();
 		}
 
-		throw new RuntimeException( "Child node not found in parent!?" );
+		throw new SoapBuilderException( "Child node not found in parent!?" );
 	}
 
 	public static boolean setNodeValue( Node domNode, String string )
@@ -1628,7 +1629,7 @@ public final class XmlUtils
 		}
 		catch( IOException e )
 		{
-			throw new RuntimeException(e);
+			throw new SoapBuilderException(e);
 		}
 
 		return out.toString();
@@ -1722,11 +1723,11 @@ public final class XmlUtils
             Source xmlSource = new javax.xml.transform.dom.DOMSource(dom);
             return xmlSource;
 		}catch(ParserConfigurationException ex) {
-			throw new RuntimeException(ex);
+			throw new SoapBuilderException(ex);
 		}catch(SAXException ex) {
-			throw new RuntimeException(ex);
+			throw new SoapBuilderException(ex);
 		}catch(IOException ex) {
-			throw new RuntimeException(ex);
+			throw new SoapBuilderException(ex);
 		}
     }
 
@@ -1741,9 +1742,9 @@ public final class XmlUtils
             transformer.transform(xmlSource, new StreamResult(writer));
             return writer.toString();
         } catch (TransformerConfigurationException e) {
-            throw new RuntimeException("Error during XML transformer configuration", e);
+            throw new SoapBuilderException("Error during XML transformer configuration", e);
         } catch (TransformerException e) {
-            throw new RuntimeException("Error during XML source transformation", e);
+            throw new SoapBuilderException("Error during XML source transformation", e);
         }
     }
 

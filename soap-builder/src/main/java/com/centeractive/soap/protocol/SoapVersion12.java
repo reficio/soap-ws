@@ -12,6 +12,7 @@
 
 package com.centeractive.soap.protocol;
 
+import com.centeractive.SoapBuilderException;
 import com.centeractive.soap.Constants;
 import com.centeractive.utils.ResourceUtils;
 import com.centeractive.soap.XmlUtils;
@@ -58,7 +59,7 @@ public class SoapVersion12 extends AbstractSoapVersion {
 		}
 		catch( XmlException e )
 		{
-			throw new RuntimeException(e);
+			throw new SoapBuilderException(e);
 		}
 	}
 

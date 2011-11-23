@@ -12,6 +12,7 @@
 
 package com.centeractive.soap;
 
+import com.centeractive.SoapBuilderException;
 import com.centeractive.utils.ResourceUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -109,7 +110,7 @@ public class SchemaUtils
 		}
 		catch( Exception e )
 		{
-			throw new RuntimeException(e);
+			throw new SoapBuilderException(e);
 		}
 //		finally
 //		{
@@ -141,7 +142,7 @@ public class SchemaUtils
 					}
 					catch( Throwable e )
 					{
-						throw new RuntimeException(e);
+						throw new SoapBuilderException(e);
 					}
 				}
 			}
@@ -180,7 +181,7 @@ public class SchemaUtils
 		}
 		catch( Exception e )
 		{
-			throw new RuntimeException(e);
+			throw new SoapBuilderException(e);
 		}
 	}
 
@@ -271,7 +272,7 @@ public class SchemaUtils
 		}
 		catch( Exception e )
 		{
-			throw new RuntimeException(e);
+			throw new SoapBuilderException(e);
 		}
 		finally
 		{
@@ -483,7 +484,7 @@ public class SchemaUtils
 		}
 		catch( Exception e )
 		{
-			throw new RuntimeException(e);
+			throw new SoapBuilderException(e);
 		}
 	}
 

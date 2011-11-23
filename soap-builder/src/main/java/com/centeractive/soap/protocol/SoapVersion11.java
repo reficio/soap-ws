@@ -12,6 +12,7 @@
 
 package com.centeractive.soap.protocol;
 
+import com.centeractive.SoapBuilderException;
 import com.centeractive.soap.Constants;
 import com.centeractive.utils.ResourceUtils;
 import com.centeractive.soap.XmlUtils;
@@ -64,7 +65,7 @@ public class SoapVersion11 extends AbstractSoapVersion {
             soapEncodingXml = XmlUtils.createXmlObject(soapEncodingXmlResource, options);
 
         }catch(XmlException ex) {
-            throw new RuntimeException(ex);
+            throw new SoapBuilderException(ex);
         }
     }
 
