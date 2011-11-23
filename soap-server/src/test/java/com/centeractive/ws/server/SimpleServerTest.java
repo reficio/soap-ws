@@ -2,13 +2,12 @@ package com.centeractive.ws.server;
 
 import com.centeractive.ws.server.responder.RequestResponder;
 import org.junit.Test;
-import org.springframework.beans.factory.BeanCreationException;
 
 import javax.xml.transform.Source;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
-import java.util.*;
+import java.util.List;
 
 import static junit.framework.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;

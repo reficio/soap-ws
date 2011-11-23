@@ -17,7 +17,9 @@ import org.springframework.web.context.support.GenericWebApplicationContext;
 
 import javax.servlet.ServletContext;
 import java.net.URL;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
