@@ -11,6 +11,8 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 /**
+ * Copyright (c) centeractive ag, Inc. All Rights Reserved.
+ *
  * User: Tom Bujok (tomasz.bujok@centeractive.com)
  * Date: 21/11/11
  * Time: 9:43 AM

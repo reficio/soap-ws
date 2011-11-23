@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.Iterator;
 
 /**
+ * Copyright (c) centeractive ag, Inc. All Rights Reserved.
+ *
  * User: Tom Bujok (tomasz.bujok@centeractive.com)
  * Date: 21/11/11
  * Time: 2:43 PM

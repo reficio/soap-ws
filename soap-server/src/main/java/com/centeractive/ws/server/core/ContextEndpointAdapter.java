@@ -8,6 +8,8 @@ import org.springframework.ws.server.endpoint.adapter.PayloadEndpointAdapter;
 import javax.xml.transform.Source;
 
 /**
+ * Copyright (c) centeractive ag, Inc. All Rights Reserved.
+ *
  * User: Tom Bujok (tomasz.bujok@centeractive.com)
  * Date: 18/10/11
  * Time: 11:27 AM

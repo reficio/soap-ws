@@ -19,6 +19,8 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 /**
+ * Copyright (c) centeractive ag, Inc. All Rights Reserved.
+ *
  * User: Tom Bujok (tomasz.bujok@centeractive.com)
  * Date: 19/11/11
  * Time: 6:32 PM

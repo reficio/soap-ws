@@ -6,6 +6,8 @@ import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.server.endpoint.mapping.AbstractEndpointMapping;
 
 /**
+ * Copyright (c) centeractive ag, Inc. All Rights Reserved.
+ *
  * User: Tom Bujok (tomasz.bujok@centeractive.com)
  * Date: 18/10/11
  * Time: 11:26 AM

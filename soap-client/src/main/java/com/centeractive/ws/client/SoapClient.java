@@ -19,6 +19,8 @@ import static com.centeractive.ws.client.SoapConstants.*;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * Copyright (c) centeractive ag, Inc. All Rights Reserved.
+ *
  * User: Tom Bujok (tomasz.bujok@centeractive.com)
  * Date: 11/11/11
  * Time: 12:55 PM
