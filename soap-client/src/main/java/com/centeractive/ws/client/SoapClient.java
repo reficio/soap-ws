@@ -15,6 +15,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
+import static com.centeractive.ws.client.SoapConstants.*;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -33,7 +34,7 @@ public final class SoapClient {
     private boolean strictHostVerification = false;
     private Proxy proxy;
     private String proxyAuthEncoded;
-    private String sslContext = "SSLv3";
+    private String sslContext = SSL_CONTEXT;
 
     private SSLContext context;
     private HttpURLConnection connection;
@@ -44,24 +45,13 @@ public final class SoapClient {
     private SoapClient() {
     }
 
-    class SoapHostnameVerifier implements com.sun.net.ssl.HostnameVerifier, javax.net.ssl.HostnameVerifier {
-        public boolean verify(String urlHostName, String certHostName) {
-            return true;
-        }
-
-        public boolean verify(String urlHost, SSLSession sslSession) {
-            return true;
-        }
-    }
-
     private void configureTls() {
         if (tlsEnabled == false)
             return;
-        TrustManagerFactory tmf = null;
         try {
-            tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            tmf.init(keyStore);
-            X509TrustManager defaultTrustManager = (X509TrustManager) tmf.getTrustManagers()[0];
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            trustManagerFactory.init(keyStore);
+            X509TrustManager defaultTrustManager = (X509TrustManager) trustManagerFactory.getTrustManagers()[0];
             context = SSLContext.getInstance(sslContext);
             context.init(null, new TrustManager[]{defaultTrustManager}, null);
             sslSocketFactory = context.getSocketFactory();
@@ -89,25 +79,25 @@ public final class SoapClient {
     private void configureConnection() throws ProtocolException {
         connection.setDoOutput(true);
         connection.setDoInput(true);
-        connection.setRequestMethod("POST");
+        connection.setRequestMethod(POST);
         if (basicAuthEncoded != null) {
-            connection.setRequestProperty("Authorization", "Basic " + basicAuthEncoded);
+            connection.setRequestProperty(PROP_AUTH, PROP_BASIC_AUTH + " " + basicAuthEncoded);
         }
         if (proxyAuthEncoded != null) {
-            connection.setRequestProperty("Proxy-Authorization", "Basic " + basicAuthEncoded);
+            connection.setRequestProperty(PROP_PROXY_AUTH, PROP_BASIC_AUTH + " " + basicAuthEncoded);
         }
     }
 
     private void decorateConnectionWithSoap(String soapAction, String requestEnvelope) throws ProtocolException {
         if (soapAction != null) {
-            connection.setRequestProperty("SOAPAction", soapAction);
+            connection.setRequestProperty(PROP_SOAP_ACTION, soapAction);
         }
-        if (requestEnvelope.contains("http://schemas.xmlsoap.org/soap/envelope/")) {
-            connection.setRequestProperty("Content-Type", "text/xml");
-        } else if (requestEnvelope.contains("http://www.w3.org/2003/05/soap-envelope")) {
-            connection.setRequestProperty("Content-Type", "application/soap+xml");
+        if (requestEnvelope.contains(SOAP_1_1_NAMESPACE)) {
+            connection.setRequestProperty(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
+        } else if (requestEnvelope.contains(SOAP_1_2_NAMESPACE)) {
+            connection.setRequestProperty(PROP_CONTENT_TYPE, MIMETYPE_APPLICATION_XML);
         }
-        connection.setRequestProperty("Content-Length", Integer.toString(requestEnvelope.length()));
+        connection.setRequestProperty(PROP_CONTENT_LENGTH, Integer.toString(requestEnvelope.length()));
     }
 
     private String transmit(String data) {
@@ -190,7 +180,6 @@ public final class SoapClient {
     }
 
     public String post(String requestEnvelope) {
-        // TODO ugly null
         return post(null, requestEnvelope);
     }
 
@@ -211,11 +200,22 @@ public final class SoapClient {
         }
     }
 
+    class SoapHostnameVerifier implements HostnameVerifier {
+//        @Override
+//        public boolean verify(String urlHostName, String certHostName) {
+//            return true;
+//        }
+        @Override
+        public boolean verify(String urlHost, SSLSession sslSession) {
+            return true;
+        }
+    }
+
     public static class Builder {
         SoapClient client = new SoapClient();
 
         private String keyStorePath;
-        private String keyStoreType = "JKS";
+        private String keyStoreType = JKS_KEYSTORE;
         private String keyStorePassword;
 
         private Proxy.Type proxyType = Proxy.Type.DIRECT;
@@ -313,9 +313,8 @@ public final class SoapClient {
         private void validateAndInitKeystore() {
             if (keyStorePath != null) {
                 checkNotNull(keyStorePassword);
-                InputStream in = null;
                 try {
-                    in = new FileInputStream(keyStorePath);
+                    InputStream in = new FileInputStream(keyStorePath);
                     KeyStore ks = KeyStore.getInstance(keyStoreType);
                     ks.load(in, keyStorePassword.toCharArray());
                     in.close();
