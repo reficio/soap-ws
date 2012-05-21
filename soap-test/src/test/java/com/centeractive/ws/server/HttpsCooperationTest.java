@@ -20,7 +20,7 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
     private final static Log log = LogFactory.getLog(HttpsCooperationTest.class);
 
     protected URL getTestKeyStoreUrl() {
-        return ResourceUtils.getResourceWithAbsolutePackagePath(getClass(), "/keystores/1", ".keystore");
+        return ResourceUtils.getResourceWithAbsolutePackagePath("/keystores/1", ".keystore");
     }
 
     protected String getTestKeyStorePassword() {
