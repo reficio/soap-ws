@@ -5,13 +5,13 @@
     <groupId>com.centeractive</groupId>
     <artifactId>soap-test</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>1.0.1</version>
     <name>soap-test - integration tests</name>
 
     <parent>
         <groupId>com.centeractive</groupId>
         <artifactId>soap-ws</artifactId>
-        <version>1.0</version>
+        <version>1.0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -19,25 +19,25 @@
         <dependency>
             <groupId>com.centeractive</groupId>
             <artifactId>soap-builder</artifactId>
-            <version>1.0</version>
+            <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.centeractive</groupId>
+            <artifactId>soap-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.centeractive</groupId>
+            <artifactId>soap-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.googlecode.guava-osgi</groupId>
             <artifactId>guava-osgi</artifactId>
             <version>9.0.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.centeractive</groupId>
-            <artifactId>soap-client</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.centeractive</groupId>
-            <artifactId>soap-server</artifactId>
-            <version>1.0</version>
-        </dependency>
 
         <dependency>
             <groupId>junit</groupId>

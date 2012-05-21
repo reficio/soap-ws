@@ -5,17 +5,25 @@
     <groupId>com.centeractive</groupId>
     <artifactId>soap-client</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>1.0.1</version>
     <name>soap-client - XML based SOAP client</name>
 
     <parent>
         <groupId>com.centeractive</groupId>
         <artifactId>soap-ws</artifactId>
-        <version>1.0</version>
+        <version>1.0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.centeractive</groupId>
+            <artifactId>soap-builder</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -25,12 +33,6 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.1.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.centeractive</groupId>
-            <artifactId>soap-builder</artifactId>
-            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.guava-osgi</groupId>
