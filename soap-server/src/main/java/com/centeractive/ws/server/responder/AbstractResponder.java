@@ -94,9 +94,9 @@ public abstract class AbstractResponder implements RequestResponder {
                 // double-check in case of malformed WSDL's
             }
         }
-        if(matchedOperations.size() == 1) {
+        if (matchedOperations.size() == 1) {
             return matchedOperations.pop();
-        } else if(matchedOperations.size() > 1) {
+        } else if (matchedOperations.size() > 1) {
             throw new OperationNotFoundException("Cannot match a SOAP operation to the given SOAP request. " +
                     "More than one operation could be matched to the given input message!");
         }
@@ -108,18 +108,18 @@ public abstract class AbstractResponder implements RequestResponder {
             try {
                 Collection<Part> expectedParts = operation.getOperation().getInput().getMessage().getParts().values();
                 Set<QName> expectedTypes = new HashSet<QName>();
-                for(Part part : expectedParts) {
+                for (Part part : expectedParts) {
                     expectedTypes.add(part.getElementName());
                 }
                 Set<QName> receivedTypes = getNodeTypes(rootNodes);
                 if (expectedTypes.equals(receivedTypes)) {
                     return operation;
-                } else if(expectedParts.size() == 0 && receivedTypes.size() == 1) {
+                } else if (expectedParts.size() == 0 && receivedTypes.size() == 1) {
                     QName receivedType = receivedTypes.toArray(new QName[]{})[0];
                     String namespaceUri = operation.getOperation().getInput().getMessage().getQName().getNamespaceURI();
                     String name = operation.getOperation().getName();
                     QName pseudoInputName = new QName(namespaceUri, name);
-                    if(pseudoInputName.equals(receivedType)) {
+                    if (pseudoInputName.equals(receivedType)) {
                         return operation;
                     }
                 }
@@ -156,7 +156,7 @@ public abstract class AbstractResponder implements RequestResponder {
             invokedOperation = matchToOperationName(root);
         } else {
             invokedOperation = matchToInputNames(rootNodes);
-            if(invokedOperation == null) {
+            if (invokedOperation == null) {
                 invokedOperation = matchToInputTypes(rootNodes);
             }
         }
@@ -171,6 +171,16 @@ public abstract class AbstractResponder implements RequestResponder {
     }
 
     @Override
+
+    /**
+     *
+     * SOAP-Action mystery (1.1):
+     *  http://ws-rx.blogspot.com/2006/01/web-services-design-tips-soapaction.html
+     *  http://www.w3.org/TR/2000/NOTE-SOAP-20000508/#_Toc478383528
+     *  http://www.oreillynet.com/xml/blog/2002/11/unraveling_the_mystery_of_soap.html
+     *  http://damithakumarage.wordpress.com/2008/02/12/soap-action-and-addressing-action/
+     *
+     */
     public Source respond(Source request) {
         try {
             BindingOperation invokedOperation = getOperationByRequestElement((DOMSource) request);

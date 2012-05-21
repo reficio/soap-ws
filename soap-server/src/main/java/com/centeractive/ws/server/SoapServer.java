@@ -42,9 +42,11 @@ public final class SoapServer {
     public static final int MAX_THREADS_COUNT = 16;
     public static final int THREAD_KEEP_ALIVE_TIME_IN_SECONDS = 60;
     public static final String KEYSTORE_TYPE = "JKS";
+    public static final boolean REUSE_ADDRESS = true;
 
     private Integer httpPort = HTTP_PORT;
     private Integer httpsPort = HTTPS_PORT;
+    private boolean reuseAddress = REUSE_ADDRESS;
     private Integer connectionMaxIdleTimeInSeconds = CONNECTION_MAX_IDLE_TIME_IN_SECONDS;
     private Integer acceptorThreads = ACCEPTOR_THREADS_COUNT;
     private Integer coreThreads = CORE_THREADS_COUNT;
@@ -142,12 +144,14 @@ public final class SoapServer {
 
     private SelectChannelConnector configureHttpConnector(SelectChannelConnector connector) {
         configureGenericConnector(connector);
+        connector.setReuseAddress(reuseAddress);
         connector.setPort(httpPort);
         return connector;
     }
 
     private SslSelectChannelConnector configureHttpsConnector(SslSelectChannelConnector connector) {
         configureGenericConnector(connector);
+        connector.setReuseAddress(reuseAddress);
         connector.setPort(httpsPort);
         connector.setKeystore(keyStorePath);
         connector.setKeystoreType(keyStoreType);
@@ -205,6 +209,11 @@ public final class SoapServer {
 
         public SoapServerBuilder() {
             server = new SoapServer();
+        }
+
+        public SoapServerBuilder reuseAddress(boolean value) {
+            server.reuseAddress = value;
+            return this;
         }
 
         public SoapServerBuilder httpPort(int value) {

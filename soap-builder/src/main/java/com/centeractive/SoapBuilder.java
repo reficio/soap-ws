@@ -42,7 +42,7 @@ public class SoapBuilder {
 
     public SoapBuilder(SoapContext context, URL wsdlUrl) throws WSDLException {
         WSDLReader reader = new WSDLReaderImpl();
-        this.definition = reader.readWSDL(wsdlUrl.getPath());
+        this.definition = reader.readWSDL(wsdlUrl.toString());
         this.definitionWrapper = new SchemaDefinitionWrapper(definition, wsdlUrl.toString());
         this.context = context;
     }

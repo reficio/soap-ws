@@ -26,6 +26,7 @@ public class PlainCooperationTest extends AbstractCooperationTest {
     @Before
     public void initializeServer() {
         server = SoapServer.builder()
+                .reuseAddress(true)
                 .httpPort(HOST_PORT)
                 .create();
         server.start();
@@ -54,6 +55,7 @@ public class PlainCooperationTest extends AbstractCooperationTest {
         try {
             verifyServiceBehavior(23);
         } catch(SoapTransmissionException ex) {
+            ex.printStackTrace();
             expected = ex;
         }
         assertNotNull(expected);

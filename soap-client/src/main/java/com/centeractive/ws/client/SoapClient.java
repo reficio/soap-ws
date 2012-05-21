@@ -182,6 +182,7 @@ public final class SoapClient {
     }
 
     public String post(String requestEnvelope) {
+        // TODO ugly null
         return post(null, requestEnvelope);
     }
 
