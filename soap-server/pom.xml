@@ -5,13 +5,13 @@
     <groupId>com.centeractive</groupId>
     <artifactId>soap-server</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.1</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>soap-server - XML based SOAP server</name>
 
     <parent>
         <groupId>com.centeractive</groupId>
         <artifactId>soap-ws</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
