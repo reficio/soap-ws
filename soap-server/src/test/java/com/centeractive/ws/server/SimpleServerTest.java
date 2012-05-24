@@ -2,6 +2,7 @@ package com.centeractive.ws.server;
 
 import com.centeractive.ws.server.responder.RequestResponder;
 import org.junit.Test;
+import org.springframework.ws.soap.SoapMessage;
 
 import javax.xml.transform.Source;
 import java.io.IOException;
@@ -99,7 +100,7 @@ public class SimpleServerTest {
         SoapServer server = getServer();
         server.registerRequestResponder(contextPath, new RequestResponder() {
             @Override
-            public Source respond(Source request) {
+            public Source respond(SoapMessage message) {
                 return null;
             }
         });
@@ -114,7 +115,7 @@ public class SimpleServerTest {
         SoapServer server = getServer();
         server.registerRequestResponder(contextPath, new RequestResponder() {
             @Override
-            public Source respond(Source request) {
+            public Source respond(SoapMessage message) {
                 return null;
             }
         });
@@ -129,13 +130,13 @@ public class SimpleServerTest {
         SoapServer server = getServer();
         server.registerRequestResponder(contextPath, new RequestResponder() {
             @Override
-            public Source respond(Source request) {
+            public Source respond(SoapMessage message) {
                 return null;
             }
         });
         server.registerRequestResponder(contextPath, new RequestResponder() {
             @Override
-            public Source respond(Source request) {
+            public Source respond(SoapMessage message) {
                 return null;
             }
         });
@@ -153,7 +154,7 @@ public class SimpleServerTest {
         SoapServer server = getServer();
         server.registerRequestResponder(null, new RequestResponder() {
             @Override
-            public Source respond(Source request) {
+            public Source respond(SoapMessage message) {
                 return null;
             }
         });

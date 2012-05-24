@@ -160,6 +160,12 @@
             <version>2.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.ws.schema</groupId>
+            <artifactId>XmlSchema</artifactId>
+            <version>1.4.5</version>
+        </dependency>
+
     </dependencies>
 
     <build>

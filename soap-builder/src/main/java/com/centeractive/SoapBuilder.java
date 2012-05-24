@@ -14,7 +14,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import javax.wsdl.*;
+import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBinding;
+import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.extensions.soap12.SOAP12Binding;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
@@ -213,8 +215,7 @@ public class SoapBuilder {
             XmlUtils.serializePretty(object, writer);
             return writer.toString();
         } catch (Exception e) {
-            // TODO
-            // SoapUI.logError( e );
+            log.warn("Exception during message generation" ,e);
             return object.xmlText();
         }
     }
@@ -226,6 +227,10 @@ public class SoapBuilder {
         return definition;
     }
 
+    public SchemaDefinitionWrapper getSchemaDefinitionWrapper() {
+        return definitionWrapper;
+    }
+
     public BindingOperation getBindingOperation(Binding binding, OperationWrapper op) {
         BindingOperation operation = binding.getBindingOperation(op.getOperationName(),
                 op.getOperationInputName(), op.getOperationOutputName());
@@ -235,13 +240,39 @@ public class SoapBuilder {
         return operation;
     }
 
+    public static String getSOAPActionUri(BindingOperation operation) {
+        List extensions = operation.getExtensibilityElements();
+        if (extensions != null) {
+            for (int i = 0; i < extensions.size(); i++) {
+                ExtensibilityElement extElement = (ExtensibilityElement) extensions.get(i);
+                if (extElement instanceof SOAPOperation) {
+                    SOAPOperation soapOp = (SOAPOperation) extElement;
+                    return soapOp.getSoapActionURI();
+                }
+            }
+        }
+        return null;
+    }
+
     public static OperationWrapper getOperation(Binding binding, BindingOperation operation) {
+        String soapAction = getSOAPActionUri(operation);
         if(operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
             return new OperationWrapper(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-                    operation.getBindingOutput().getName());
+                    operation.getBindingOutput().getName(), soapAction);
         } else {
             return new OperationWrapper(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-                    null);
+                    null, soapAction);
+        }
+
+    }
+
+    public static OperationWrapper getOperation(Binding binding, BindingOperation operation, String soapAction) {
+        if(operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
+            return new OperationWrapper(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
+                    operation.getBindingOutput().getName(), soapAction);
+        } else {
+            return new OperationWrapper(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
+                    null, soapAction);
         }
 
     }

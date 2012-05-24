@@ -32,6 +32,7 @@ public class SchemaDefinitionWrapper {
     public SchemaDefinitionWrapper(Definition definition, String schemaURL) {
         this.definition = definition;
         loadSchemaTypes(new UrlSchemaLoader(schemaURL));
+        System.err.println(schemaTypes.toString());
     }
 
     public SchemaTypeLoader getSchemaTypeLoader() {

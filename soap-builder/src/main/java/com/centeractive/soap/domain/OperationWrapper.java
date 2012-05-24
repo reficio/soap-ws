@@ -13,12 +13,14 @@ public class OperationWrapper {
     private final String operationName;
     private final String operationInputName;
     private final String operationOutputName;
+    private final String soapAction;
 
-    public OperationWrapper(QName bindingName, String operationName, String operationInputName, String operationOutputName) {
+    public OperationWrapper(QName bindingName, String operationName, String operationInputName, String operationOutputName, String soapAction) {
         this.bindingName = bindingName;
         this.operationName = operationName;
         this.operationInputName = operationInputName;
         this.operationOutputName = operationOutputName;
+        this.soapAction = soapAction;
     }
 
     public QName getBindingName() {
@@ -37,9 +39,13 @@ public class OperationWrapper {
         return operationOutputName;
     }
 
+    public String getSoapAction() {
+        return soapAction;
+    }
+
     public String toString() {
-        return String.format("bindingName=[%s] operationName=[%s] operationInputName=[%s] operationOutputName=[%s]",
-            bindingName.toString(), operationName, operationInputName, operationOutputName);
+        return String.format("bindingName=[%s] operationName=[%s] operationInputName=[%s] operationOutputName=[%s] soapAction=[%s]",
+                bindingName.toString(), operationName, operationInputName, operationOutputName, soapAction);
     }
 
 }

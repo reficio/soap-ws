@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://cyclic.test" xmlns:impl="http://cyclic.test"
+                  xmlns:intf="http://cyclic.test"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <wsdl:types>
+        <schema targetNamespace="http://cyclic.test"
+                xmlns="http://www.w3.org/2001/XMLSchema" xmlns:impl="http://cyclic.test"
+                xmlns:intf="http://cyclic.test"
+                xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+            <complexType name="Person">
+                <sequence>
+                    <element name="name" nillable="true" type="xsd:string"/>
+                    <element name="friend" nillable="true" type="impl:Person"/>
+                </sequence>
+            </complexType>
+            <element name="Person" nillable="true" type="impl:Person"/>
+        </schema>
+    </wsdl:types>
+
+    <wsdl:message name="makeFriendRequest">
+        <wsdl:part name="A" type="intf:Person"/>
+        <wsdl:part name="B" type="intf:Person"/>
+    </wsdl:message>
+
+    <wsdl:message name="makeFriendResponse">
+        <wsdl:part name="makeFriendReturn" type="intf:Person"/>
+    </wsdl:message>
+
+    <wsdl:portType name="MakeFriends">
+        <wsdl:operation name="makeFriend" parameterOrder="A B">
+            <wsdl:input message="intf:makeFriendRequest" name="makeFriendRequest"/>
+            <wsdl:output message="intf:makeFriendResponse" name="makeFriendResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="makeFriend2" parameterOrder="A B">
+            <wsdl:input message="intf:makeFriendRequest" name="makeFriendRequest2"/>
+            <wsdl:output message="intf:makeFriendResponse" name="makeFriendResponse2"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="makeFriend3" parameterOrder="A B">
+            <wsdl:input message="intf:makeFriendRequest" name="makeFriendRequest3"/>
+            <wsdl:output message="intf:makeFriendResponse" name="makeFriendResponse3"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="makeFriend4" parameterOrder="A B">
+            <wsdl:input message="intf:makeFriendRequest" />
+            <wsdl:output message="intf:makeFriendResponse" />
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="MakeFriendsSoapBinding" type="intf:MakeFriends">
+        <wsdlsoap:binding style="document"
+                          transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <wsdl:operation name="makeFriend">
+            <wsdlsoap:operation soapAction="makeFriend"/>
+            <wsdl:input name="makeFriendRequest">
+                <wsdlsoap:body namespace="http://cyclic.test" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="makeFriendResponse">
+                <wsdlsoap:body namespace="http://cyclic.test" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="makeFriend2">
+            <wsdlsoap:operation soapAction="makeFriend2"/>
+            <wsdl:input name="makeFriendRequest2">
+                <wsdlsoap:body namespace="http://cyclic.test" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="makeFriendResponse2">
+                <wsdlsoap:body namespace="http://cyclic.test" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="makeFriend3">
+            <wsdlsoap:operation soapAction="makeFriend3"/>
+            <wsdl:input name="makeFriendRequest3">
+            </wsdl:input>
+            <wsdl:output name="makeFriendResponse3">
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="makeFriend4">
+            <wsdlsoap:operation soapAction="makeFriend4"/>
+            <wsdl:input >
+            </wsdl:input>
+            <wsdl:output >
+            </wsdl:output>
+        </wsdl:operation>
+
+    </wsdl:binding>
+    <wsdl:service name="MakeFriendsService">
+        <wsdl:port binding="intf:MakeFriendsSoapBinding" name="MakeFriends">
+            <wsdlsoap:address
+                    location="http://localhost:9080/CyclicTestEJBClient/services/MakeFriends"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -6,15 +6,14 @@ import com.centeractive.soap.XmlUtils;
 import com.centeractive.soap.domain.OperationWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.ws.soap.SoapMessage;
 
-import javax.wsdl.BindingOperation;
-import javax.wsdl.BindingOutput;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 
 /**
  * Copyright (c) centeractive ag, Inc. All Rights Reserved.
- *
+ * <p/>
  * User: Tom Bujok (tomasz.bujok@centeractive.com)
  * Date: 16/11/11
  * Time: 3:38 PM
@@ -36,15 +35,10 @@ public class AutoResponder extends AbstractResponder {
     }
 
     @Override
-    public Source respond(BindingOperation invokedOperation, Source request) {
-        BindingOutput output = invokedOperation.getBindingOutput();
-        if (output == null) {
-            return null;
-        }
-        OperationWrapper wrapper = builder.getOperation(binding, invokedOperation);
+    public Source respond(OperationWrapper invokedOperation, SoapMessage message) {
         try {
-            String response = builder.buildSoapMessageFromOutput(wrapper, context);
-            Source responseSource = XmlUtils.xmlToSource(response);
+            String response = builder.buildSoapMessageFromOutput(invokedOperation, context);
+            Source responseSource = XmlUtils.xmlStringToSource(response);
             return responseSource;
         } catch (Exception e) {
             throw new RuntimeException(e);

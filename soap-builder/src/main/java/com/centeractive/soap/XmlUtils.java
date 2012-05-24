@@ -1713,7 +1713,7 @@ public final class XmlUtils
         }
 
     // created by centeractive ag
-    public static Source xmlToSource(String xmlString) {
+    public static Source xmlStringToSource(String xmlString) {
         StringReader reader =  new StringReader(xmlString);
         InputSource src = new InputSource(reader);
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -1732,7 +1732,7 @@ public final class XmlUtils
     }
 
     // created by centeractive ag
-    public static String sourceToXml(Source xmlSource) {
+    public static String sourceToXmlString(Source xmlSource) {
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = null;
         try {

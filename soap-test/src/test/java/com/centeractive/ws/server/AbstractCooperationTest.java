@@ -20,7 +20,7 @@ import static junit.framework.Assert.assertTrue;
 
 /**
  * Copyright (c) centeractive ag, Inc. All Rights Reserved.
- *
+ * <p/>
  * User: Tom Bujok (tomasz.bujok@centeractive.com)
  * Date: 19/11/11
  * Time: 6:32 PM
@@ -35,6 +35,10 @@ public abstract class AbstractCooperationTest {
     protected SoapServer server;
 
     protected void verifyServiceBehavior(int testServiceId) throws Exception {
+        verifyServiceBehavior(testServiceId, null);
+    }
+
+    protected void verifyServiceBehavior(int testServiceId, Boolean postSoapAction) throws Exception {
         log.info(String.format("------------------- TESTING SERVICE [%d] -----------------------", testServiceId));
         String url = getUrlString();
         SoapBuilder builder = TestUtils.createBuilderForService(testServiceId);
@@ -42,21 +46,41 @@ public abstract class AbstractCooperationTest {
         assertNotNull(builder);
         for (Binding binding : (Collection<Binding>) builder.getDefinition().getAllBindings().values()) {
             for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {
-                OperationWrapper wrapper = builder.getOperation(binding, operation);
-                log.info("Testing operation: " + wrapper);
-                String request = builder.buildSoapMessageFromInput(wrapper);
-                String contextPath = TestUtils.formatContextPath(testServiceId, binding);
-                String endpointUrl = formatEndpointAddress(url, contextPath);
-                String response = postRequest(endpointUrl, request);
-
-                if(operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
-                    String expectedResponse = builder.buildSoapMessageFromOutput(builder.getOperation(binding, operation));
-                    boolean identical = XmlTestUtils.isIdenticalNormalizedWithoutValues(expectedResponse, response);
-                    assertTrue("Error during validation of service " + testServiceId, identical);
+                if(postSoapAction == null) {
+                    // test both with and without soap action
+                    testOperation(builder, binding, operation, url, testServiceId, Boolean.TRUE);
+                    testOperation(builder, binding, operation, url, testServiceId, Boolean.FALSE);
+                } else {
+                    testOperation(builder, binding, operation, url, testServiceId, postSoapAction);
                 }
             }
         }
         log.info("------------------------------------------------------------------------");
+    }
+
+
+    private void testOperation(SoapBuilder builder, Binding binding, BindingOperation operation, String url,
+                                 int testServiceId, Boolean postSoapAction) throws Exception {
+        OperationWrapper wrapper = builder.getOperation(binding, operation);
+        log.info("Testing operation: " + wrapper);
+        String request = builder.buildSoapMessageFromInput(wrapper);
+        String contextPath = TestUtils.formatContextPath(testServiceId, binding);
+        String endpointUrl = formatEndpointAddress(url, contextPath);
+
+        String response = null;
+        if (postSoapAction.booleanValue()) {
+            String soapAction = SoapBuilder.getSOAPActionUri(operation);
+            response = postRequest(endpointUrl, request, soapAction);
+        } else {
+            response = postRequest(endpointUrl, request);
+        }
+
+        if (operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
+            String expectedResponse = builder.buildSoapMessageFromOutput(builder.getOperation(binding, operation));
+            // log.info("Expecting response:\n" + expectedResponse);
+            boolean identical = XmlTestUtils.isIdenticalNormalizedWithoutValues(expectedResponse, response);
+            assertTrue("Error during validation of service " + testServiceId, identical);
+        }
     }
 
     protected void registerHandler(int testServiceId, SoapBuilder builder) throws WSDLException {
@@ -72,5 +96,7 @@ public abstract class AbstractCooperationTest {
     }
 
     protected abstract String postRequest(String endpointUrl, String request);
+
+    protected abstract String postRequest(String endpointUrl, String request, String soapAction);
 
 }

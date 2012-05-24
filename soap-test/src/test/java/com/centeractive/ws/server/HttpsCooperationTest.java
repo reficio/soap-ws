@@ -43,19 +43,27 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
     }
 
     public String postRequest(String endpointUrl, String request) {
+        return postRequest(endpointUrl, request, null);
+    }
+
+    @Override
+    protected String postRequest(String endpointUrl, String request, String soapAction) {
         SoapClient client = SoapClient.builder()
                 .url("https://" + endpointUrl)
                 .keyStoreUrl(getTestKeyStoreUrl())
                 .keyStorePassword(getTestKeyStorePassword())
                 .create();
-        return client.post(request);
+        return client.post(soapAction, request);
     }
 
     @Test
-    public void testServices() throws Exception {
-        for(int serviceId = 1 ; serviceId <= 2 ; serviceId++) {
-            verifyServiceBehavior(serviceId);
-        }
+    public void testService1() throws Exception {
+        verifyServiceBehavior(1);
+    }
+
+    @Test
+    public void testService2() throws Exception {
+        verifyServiceBehavior(2);
     }
 
 }

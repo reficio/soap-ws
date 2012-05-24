@@ -36,11 +36,16 @@ public class TrickyCooperationTest extends AbstractCooperationTest {
     }
 
     public String postRequest(String endpointUrl, String request) {
+        return postRequest(endpointUrl, request, null);
+    }
+
+    @Override
+    protected String postRequest(String endpointUrl, String request, String soapAction) {
         SoapClient client = SoapClient.builder().url("http://" + endpointUrl).create();
         try {
             String response = null;
             for (int i = 0; i < 30; i++) {
-                response = client.post(request);
+                response = client.post(soapAction, request);
             }
             return response;
         } finally {

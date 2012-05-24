@@ -1,9 +1,11 @@
 package com.centeractive.ws.server.core;
 
+import com.centeractive.soap.XmlUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.server.endpoint.adapter.PayloadEndpointAdapter;
+import org.springframework.ws.soap.SoapMessage;
 
 import javax.xml.transform.Source;
 

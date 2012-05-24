@@ -9,6 +9,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.server.endpoint.AbstractDomPayloadEndpoint;
+import org.springframework.ws.soap.SoapMessage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -42,7 +43,8 @@ public class GenericContextDomEndpoint extends AbstractDomPayloadEndpoint implem
         if (noResponderForRequestFound(requestResponder)) {
             handleNoResponderFault(request);
         }
-        Source response = requestResponder.respond(request);
+        SoapMessage msg = (SoapMessage) messageContext.getRequest();
+        Source response = requestResponder.respond(msg);
         return response;
     }
 

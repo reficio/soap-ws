@@ -38,7 +38,7 @@ public class GenericSoapMessage implements WebServiceMessage {
     @Override
     public void writeTo(OutputStream outputStream) throws IOException {
         Writer writer = new OutputStreamWriter(outputStream);
-        String message = XmlUtils.sourceToXml(source);
+        String message = XmlUtils.sourceToXmlString(source);
         writer.write(message);
         writer.flush();
         writer.close();
