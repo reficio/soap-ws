@@ -1,4 +1,4 @@
-package com.centeractive.utils;
+package com.centeractive.utils.test;
 
 import com.centeractive.soap.XmlUtils;
 import org.apache.log4j.Logger;
@@ -12,7 +12,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * User: Tom Bujok (tomasz.bujok@centeractive.com)

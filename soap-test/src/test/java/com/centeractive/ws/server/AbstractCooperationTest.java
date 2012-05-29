@@ -5,8 +5,6 @@ import com.centeractive.soap.domain.OperationWrapper;
 import com.centeractive.utils.XmlTestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.After;
-import org.junit.Test;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;

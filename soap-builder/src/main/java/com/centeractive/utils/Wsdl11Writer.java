@@ -47,7 +47,6 @@ public class Wsdl11Writer {
             // add the initial definition to the map
             baseURIwsdlNameMap.put(definition.getDocumentBaseURI(), name + ".wsdl");
             writeWSDL(definition, name + ".wsdl", new HashMap<String, String>(), baseURIwsdlNameMap);
-
         } catch (Exception e) {
             throw new RuntimeException("WSDL writing failed!", e);
         }
@@ -161,7 +160,7 @@ public class Wsdl11Writer {
      * @param definition
      * @param changedSchemaLocations
      */
-    public void processSchemas(Definition definition, Map<String, String> changedSchemaLocations) {
+    private void processSchemas(Definition definition, Map<String, String> changedSchemaLocations) {
         Types wsdlTypes = definition.getTypes();
         if (wsdlTypes != null) {
             List extensibilityElements = wsdlTypes.getExtensibilityElements();

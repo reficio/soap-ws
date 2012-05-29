@@ -4,7 +4,9 @@ import com.centeractive.soap.*;
 import com.centeractive.soap.WsdlUtils.SoapHeader;
 import com.centeractive.soap.domain.OperationWrapper;
 import com.centeractive.soap.protocol.SoapVersion;
+import com.centeractive.utils.Wsdl11Writer;
 import com.ibm.wsdl.xml.WSDLReaderImpl;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.SchemaGlobalElement;
 import org.apache.xmlbeans.SchemaType;
@@ -20,6 +22,7 @@ import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.extensions.soap12.SOAP12Binding;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
+import java.io.File;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.List;
@@ -33,6 +36,7 @@ public class SoapBuilder {
     private SchemaDefinitionWrapper definitionWrapper;
     private Map<QName, String[]> multiValues = null; // TODO What are multiValues???
     private SoapContext context;
+    private String wsdlPath;
 
     public void setContext(SoapContext context) {
         this.context = context;
@@ -47,10 +51,20 @@ public class SoapBuilder {
         this.definition = reader.readWSDL(wsdlUrl.toString());
         this.definitionWrapper = new SchemaDefinitionWrapper(definition, wsdlUrl.toString());
         this.context = context;
+        this.wsdlPath = wsdlUrl.toString();
     }
 
     public void setMultiValues(Map<QName, String[]> multiValues) {
         this.multiValues = multiValues;
+    }
+
+    // ----------------------------------------------------------
+    // SERVICE MARSHALLER
+    // ----------------------------------------------------------
+    public void saveWsdl(File rootFolder) {
+        Wsdl11Writer writer = new Wsdl11Writer(rootFolder);
+        String fileName = FilenameUtils.getBaseName(wsdlPath);
+        writer.writeWSDL(fileName, definition);
     }
 
     // ----------------------------------------------------------

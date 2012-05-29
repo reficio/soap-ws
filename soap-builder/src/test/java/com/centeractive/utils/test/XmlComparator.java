@@ -1,4 +1,4 @@
-package com.centeractive.utils;
+package com.centeractive.utils.test;
 
 /**
  * User: Tom Bujok (tomasz.bujok@centeractive.com)
