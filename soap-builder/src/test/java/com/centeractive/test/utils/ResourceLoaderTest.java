@@ -1,4 +1,4 @@
-package com.centeractive.utils.test;
+package com.centeractive.test.utils;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;

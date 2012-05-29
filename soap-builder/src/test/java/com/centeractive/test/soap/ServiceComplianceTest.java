@@ -1,8 +1,8 @@
-package com.centeractive.soap.test;
+package com.centeractive.test.soap;
 
 import com.centeractive.SoapBuilder;
+import com.centeractive.test.utils.XmlTestUtils;
 import com.centeractive.utils.ResourceUtils;
-import com.centeractive.utils.test.XmlTestUtils;
 import com.ibm.wsdl.xml.WSDLReaderImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;

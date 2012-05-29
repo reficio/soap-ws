@@ -1,4 +1,4 @@
-package com.centeractive.soap.test;
+package com.centeractive.test.soap;
 
 import com.centeractive.SoapBuilder;
 import com.centeractive.soap.protocol.SoapVersion;

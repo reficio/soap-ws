@@ -1,4 +1,4 @@
-package com.centeractive.utils.test;
+package com.centeractive.test.utils;
 
 import com.centeractive.utils.ResourceUtils;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.centeractive.soap.test;
+package com.centeractive.test.soap;
 
 import com.centeractive.utils.ResourceUtils;
 import com.centeractive.utils.Wsdl11Writer;
