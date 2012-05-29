@@ -8,6 +8,7 @@ package com.centeractive.utils;
  * To change this template use File | Settings | File Templates.
  */
 
+import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -18,11 +19,11 @@ import javax.wsdl.Import;
 import javax.wsdl.Service;
 import javax.wsdl.Types;
 import javax.wsdl.extensions.schema.Schema;
+import javax.wsdl.extensions.schema.SchemaImport;
+import javax.wsdl.extensions.schema.SchemaReference;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 
@@ -35,19 +36,17 @@ public class Wsdl11Writer {
     private File baseFolder = null;
     private int count;
 
-
     public Wsdl11Writer(File baseFolder) {
         this.baseFolder = baseFolder;
         this.count = 0;
     }
 
-
-    public void writeWSDL(String name, Definition definition, Map changedMap) {
+    public void writeWSDL(String name, Definition definition) {
         try {
             Map baseURIwsdlNameMap = new HashMap();
             // add the initial definition to the map
             baseURIwsdlNameMap.put(definition.getDocumentBaseURI(), name + ".wsdl");
-            writeWSDL(definition, name + ".wsdl", changedMap, baseURIwsdlNameMap);
+            writeWSDL(definition, name + ".wsdl", new HashMap<String, String>(), baseURIwsdlNameMap);
 
         } catch (Exception e) {
             throw new RuntimeException("WSDL writing failed!", e);
@@ -56,17 +55,8 @@ public class Wsdl11Writer {
 
     private void writeWSDL(Definition definition,
                            String fileName,
-                           Map changedMap,
+                           Map<String, String> changedMap,
                            Map baseURIwsdlNameMap) throws Exception {
-        // process the schemas
-//        for (Object o : definition.getTypes().getExtensibilityElements()) {
-//            if (o instanceof javax.wsdl.extensions.schema.Schema) {
-//                org.w3c.dom.Element elt = ((javax.wsdl.extensions.schema.Schema) o).getElement();
-//                if(elt != null)
-//                System.out.println(elt.toString());
-//            }
-//        }
-
 
         // first process the imports and save them.
         Map imports = definition.getImports();
@@ -100,6 +90,7 @@ public class Wsdl11Writer {
                             String extension = wsdlName.substring(wsdlName.lastIndexOf("."));
                             wsdlName = fileNamePart + count++ + extension;
                         }
+                        wsdlName = normalizeName(wsdlName);
                         baseURIwsdlNameMap.put(wsdlLocation, wsdlName);
                         Definition innerDefinition = wsdlImport.getDefinition();
                         writeWSDL(innerDefinition, wsdlName, changedMap, baseURIwsdlNameMap);
@@ -110,7 +101,7 @@ public class Wsdl11Writer {
             }
         }
         // change the locations on the imported schemas
-        adjustWSDLSchemaLocations(definition, changedMap);
+        processSchemas(definition, changedMap);
         // finally save the file
         WSDLWriter wsdlWriter = WSDLFactory.newInstance().newWSDLWriter();
         // wsdlWriter.setFeature("javax.wsdl.xml.parseXMLSchemas", true);
@@ -165,37 +156,62 @@ public class Wsdl11Writer {
     }
 
     /**
-     * @param definition
-     * @param changedSchemaLocations
-     * @deprecated please use adjustWSDLSchemaLocations
-     */
-    public void adjustWSDLSchemaLocatins(Definition definition, Map changedSchemaLocations) {
-        adjustWSDLSchemaLocations(definition, changedSchemaLocations);
-    }
-
-    /**
      * adjust the schema locations in the original wsdl
      *
      * @param definition
      * @param changedSchemaLocations
      */
-    public void adjustWSDLSchemaLocations(Definition definition, Map changedSchemaLocations) {
+    public void processSchemas(Definition definition, Map<String, String> changedSchemaLocations) {
         Types wsdlTypes = definition.getTypes();
         if (wsdlTypes != null) {
             List extensibilityElements = wsdlTypes.getExtensibilityElements();
-            Object currentObject;
-            Schema schema;
             for (Iterator iter = extensibilityElements.iterator(); iter.hasNext(); ) {
-                currentObject = iter.next();
+                Object currentObject = iter.next();
                 if (currentObject instanceof Schema) {
-                    schema = (Schema) currentObject;
-                    changeLocations(schema.getElement(), changedSchemaLocations);
+                    Schema schema = (Schema) currentObject;
+                    processSchema(definition, schema, null, changedSchemaLocations);
                 }
             }
         }
     }
 
-    private void changeLocations(Element element, Map changedSchemaLocations) {
+
+    private void processSchema(Definition definition, Schema schema, String fileName, Map<String, String> changedSchemaLocations) {
+        try {
+            for (Object o : schema.getIncludes()) {
+                if (o instanceof SchemaReference) {
+                    SchemaReference ref = (SchemaReference) o;
+                    String fileNameChild = normalizeName(ref.getSchemaLocationURI());
+                    Schema includedSchema = ref.getReferencedSchema();
+                    changedSchemaLocations.put(ref.getSchemaLocationURI(), fileNameChild);
+                    processSchema(definition, includedSchema, fileNameChild, changedSchemaLocations);
+                }
+            }
+            for (Object o : schema.getImports().values()) {
+                for (Object oi : (Vector) o) {
+                    if (oi instanceof SchemaImport) {
+                        SchemaImport imp = ((SchemaImport) oi);
+                        Schema importedSchema = imp.getReferencedSchema();
+                        String fileNameChild = normalizeName(imp.getSchemaLocationURI());
+                        changedSchemaLocations.put(imp.getSchemaLocationURI(), fileNameChild);
+                        processSchema(definition, importedSchema, fileNameChild, changedSchemaLocations);
+                    }
+                }
+            }
+            changeLocations(schema.getElement(), changedSchemaLocations);
+            if (fileName != null) {
+                java.io.FileWriter writer = new java.io.FileWriter(new File(baseFolder, fileName));
+                DOM2Writer.serializeAsXML(schema.getElement(), definition.getNamespaces(), writer);
+                writer.flush();
+                writer.close();
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException("Unexpected error", ex);
+        }
+
+    }
+
+    private void changeLocations(Element element, Map<String, String> changedSchemaLocations) {
         NodeList nodeList = element.getChildNodes();
         String tagName;
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -206,22 +222,24 @@ public class Wsdl11Writer {
         }
     }
 
-    private void processImport(Node importNode, Map changedSchemaLocations) {
+    private void processImport(Node importNode, Map<String, String> changedSchemaLocations) {
         NamedNodeMap nodeMap = importNode.getAttributes();
         Node attribute;
         String attributeValue;
         for (int i = 0; i < nodeMap.getLength(); i++) {
             attribute = nodeMap.item(i);
-            if (attribute.getNodeName().equals("schemaLocation")) {
+            if (attribute.getNodeName().equals(SCHEMA_LOCATION)) {
                 attributeValue = attribute.getNodeValue();
-                if (changedSchemaLocations.get(attributeValue) != null) {
-                    attribute.setNodeValue(
-                            (String) changedSchemaLocations.get(attributeValue));
+                attributeValue = changedSchemaLocations.get(attributeValue);
+                if (attributeValue != null) {
+                    attribute.setNodeValue(attributeValue);
                 }
             }
         }
     }
 
-
+    private String normalizeName(String name) {
+        return name.replaceAll("[^A-Za-z0-9.]", "_");
+    }
 
 }
