@@ -7,19 +7,13 @@ package com.centeractive.ws.client.ex;
  * Date: 22/11/11
  * Time: 8:11 PM
  */
-public class SoapTransmissionException extends SoapException {
+public class SoapTransmissionException extends SoapClientException {
 
     private final String errorResponse;
     private final int errorCode;
 
-    public SoapTransmissionException(Throwable cause) {
-        super(cause);
-        this.errorResponse = null;
-        this.errorCode = -1;
-    }
-
     public SoapTransmissionException(String response, int errorCode, Throwable cause) {
-        super(response + " " +cause.getMessage(), cause);
+        super(response + "; HTTP code = [" + errorCode + "]; possible cause: " +cause.getMessage(), cause);
         this.errorResponse = response;
         this.errorCode = errorCode;
     }

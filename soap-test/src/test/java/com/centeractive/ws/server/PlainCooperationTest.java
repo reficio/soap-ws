@@ -1,7 +1,6 @@
 package com.centeractive.ws.server;
 
 import com.centeractive.ws.client.SoapClient;
-import com.centeractive.ws.client.ex.SoapException;
 import com.centeractive.ws.client.ex.SoapTransmissionException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

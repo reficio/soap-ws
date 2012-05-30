@@ -1,6 +1,6 @@
 package com.centeractive.ws.client;
 
-import com.centeractive.ws.client.ex.SoapBuilderException;
+import com.centeractive.ws.client.ex.SoapClientException;
 import com.centeractive.ws.client.ex.SoapTransmissionException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -67,37 +67,46 @@ public final class SoapClient {
                 ((HttpsURLConnection) connection).setHostnameVerifier(new SoapHostnameVerifier());
             }
         } catch (NoSuchAlgorithmException e) {
-            throw new SoapBuilderException(e);
+            throw new SoapClientException("TLS/SSL setup failed", e);
         } catch (KeyManagementException e) {
-            throw new SoapBuilderException(e);
+            throw new SoapClientException("TLS/SSL setup failed", e);
         } catch (KeyStoreException e) {
-            throw new SoapBuilderException(e);
+            throw new SoapClientException("TLS/SSL setup failed", e);
         }
     }
 
-    private void openConnection() throws IOException {
-        if (proxy != null) {
-            connection = (HttpURLConnection) serverUrl.openConnection(proxy);
-        } else {
-            connection = (HttpURLConnection) serverUrl.openConnection();
+    private void openConnection() {
+        try {
+            if (proxy != null) {
+                connection = (HttpURLConnection) serverUrl.openConnection(proxy);
+            } else {
+                connection = (HttpURLConnection) serverUrl.openConnection();
+            }
+        } catch (IOException e) {
+            throw new SoapClientException("Connection initialization failed", e);
         }
     }
 
-    private void configureConnection() throws ProtocolException {
-        connection.setDoOutput(true);
-        connection.setDoInput(true);
-        connection.setRequestMethod(POST);
-        connection.setConnectTimeout(connectTimeoutInMillis);
-        connection.setReadTimeout(readTimeoutInMillis);
-        if (basicAuthEncoded != null) {
-            connection.setRequestProperty(PROP_AUTH, PROP_BASIC_AUTH + " " + basicAuthEncoded);
+    private void configureConnection() {
+        try {
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+            connection.setRequestMethod(POST);
+            connection.setConnectTimeout(connectTimeoutInMillis);
+            connection.setReadTimeout(readTimeoutInMillis);
+            if (basicAuthEncoded != null) {
+                connection.setRequestProperty(PROP_AUTH, PROP_BASIC_AUTH + " " + basicAuthEncoded);
+            }
+            if (proxyAuthEncoded != null) {
+                connection.setRequestProperty(PROP_PROXY_AUTH, PROP_BASIC_AUTH + " " + basicAuthEncoded);
+            }
+        } catch (ProtocolException e) {
+            throw new SoapClientException("Connection setup failed", e);
         }
-        if (proxyAuthEncoded != null) {
-            connection.setRequestProperty(PROP_PROXY_AUTH, PROP_BASIC_AUTH + " " + basicAuthEncoded);
-        }
+
     }
 
-    private void decorateConnectionWithSoap(String soapAction, String requestEnvelope) throws ProtocolException {
+    private void decorateConnectionWithSoap(String soapAction, String requestEnvelope) {
         if (requestEnvelope.contains(SOAP_1_1_NAMESPACE)) {
             if (soapAction != null) {
                 connection.setRequestProperty(PROP_SOAP_ACTION_11, soapAction);
@@ -108,7 +117,7 @@ public final class SoapClient {
             if (soapAction != null) {
                 String prop = connection.getRequestProperty(PROP_CONTENT_TYPE);
                 connection.setRequestProperty(PROP_CONTENT_TYPE, prop + PROP_DELIMITER
-                        + PROP_SOAP_ACTION_12 + "\"" + soapAction + "\"" );
+                        + PROP_SOAP_ACTION_12 + "\"" + soapAction + "\"");
             }
 
         }
@@ -203,17 +212,13 @@ public final class SoapClient {
     public String post(String soapAction, String requestEnvelope) {
         log.debug(String.format("Sending request to host=[%s] action=[%s] request:\n%s", serverUrl.toString(),
                 soapAction, requestEnvelope));
-        try {
-            openConnection();
-            configureTls();
-            configureConnection();
-            decorateConnectionWithSoap(soapAction, requestEnvelope);
-            String response = transmit(requestEnvelope);
-            log.debug("Received response:\n" + requestEnvelope);
-            return response;
-        } catch (IOException ex) {
-            throw new SoapTransmissionException(ex);
-        }
+        openConnection();
+        configureTls();
+        configureConnection();
+        decorateConnectionWithSoap(soapAction, requestEnvelope);
+        String response = transmit(requestEnvelope);
+        log.debug("Received response:\n" + requestEnvelope);
+        return response;
     }
 
     class SoapHostnameVerifier implements HostnameVerifier {
@@ -248,7 +253,7 @@ public final class SoapClient {
                 client.tlsEnabled = client.serverUrl.getProtocol().equalsIgnoreCase("https");
                 return this;
             } catch (MalformedURLException ex) {
-                throw new SoapBuilderException(ex);
+                throw new SoapClientException(String.format("URL [%s] is malformed", url), ex);
             }
         }
 
@@ -343,15 +348,15 @@ public final class SoapClient {
                     in.close();
                     client.keyStore = ks;
                 } catch (FileNotFoundException e) {
-                    throw new SoapBuilderException(e);
+                    throw new SoapClientException("Keystore setup failed", e);
                 } catch (CertificateException e) {
-                    throw new SoapBuilderException(e);
+                    throw new SoapClientException("Keystore setup failed", e);
                 } catch (NoSuchAlgorithmException e) {
-                    throw new SoapBuilderException(e);
+                    throw new SoapClientException("Keystore setup failed", e);
                 } catch (KeyStoreException e) {
-                    throw new SoapBuilderException(e);
+                    throw new SoapClientException("Keystore setup failed", e);
                 } catch (IOException e) {
-                    throw new SoapBuilderException(e);
+                    throw new SoapClientException("Keystore setup failed", e);
                 }
             }
         }
