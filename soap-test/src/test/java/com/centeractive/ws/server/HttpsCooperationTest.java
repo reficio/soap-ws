@@ -1,7 +1,8 @@
 package com.centeractive.ws.server;
 
-import com.centeractive.utils.ResourceUtils;
-import com.centeractive.ws.client.SoapClient;
+import com.centeractive.ws.builder.utils.ResourceUtils;
+import com.centeractive.ws.client.core.SoapClient;
+import com.centeractive.ws.server.core.SoapServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.*;

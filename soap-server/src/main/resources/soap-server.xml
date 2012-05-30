@@ -10,9 +10,9 @@
                            http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 
-    <bean name="genericReceiver" id="genericReceiver" class="com.centeractive.ws.server.core.GenericContextDomEndpoint"/>
+    <bean name="genericReceiver" id="genericReceiver" class="com.centeractive.ws.server.endpoint.GenericContextDomEndpoint"/>
 
-    <bean name="endpoint" id="endpoint" class="com.centeractive.ws.server.core.GenericContextDomEndpoint"/>
+    <bean name="endpoint" id="endpoint" class="com.centeractive.ws.server.endpoint.GenericContextDomEndpoint"/>
 
     <bean id="connector" class="org.mortbay.jetty.nio.SelectChannelConnector" />
     <bean id="sslConnector" class="org.mortbay.jetty.security.SslSelectChannelConnector" />

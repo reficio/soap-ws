@@ -1,7 +1,8 @@
 package com.centeractive.ws.server;
 
-import com.centeractive.ws.client.SoapClient;
-import com.centeractive.ws.client.ex.SoapTransmissionException;
+import com.centeractive.ws.client.core.SoapClient;
+import com.centeractive.ws.client.TransmissionException;
+import com.centeractive.ws.server.core.SoapServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
@@ -171,10 +172,10 @@ public class PlainCooperationTest extends AbstractCooperationTest {
 
     @Test
     public void testService23() throws Exception {
-        SoapTransmissionException expected = null;
+        TransmissionException expected = null;
         try {
             verifyServiceBehavior(23);
-        } catch (SoapTransmissionException ex) {
+        } catch (TransmissionException ex) {
             ex.printStackTrace();
             expected = ex;
         }
@@ -184,10 +185,10 @@ public class PlainCooperationTest extends AbstractCooperationTest {
 
     @Test
     public void testService24_noSoapAction_soap11() throws Exception {
-        SoapTransmissionException expected = null;
+        TransmissionException expected = null;
         try {
             verifyServiceBehavior(24, false);
-        } catch (SoapTransmissionException ex) {
+        } catch (TransmissionException ex) {
             ex.printStackTrace();
             expected = ex;
         }

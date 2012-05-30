@@ -1,13 +1,12 @@
 package com.centeractive.ws.server.responder;
 
-import com.centeractive.SoapBuilder;
-import com.centeractive.soap.WsdlUtils;
-import com.centeractive.soap.domain.OperationWrapper;
+import com.centeractive.ws.builder.core.SoapBuilder;
+import com.centeractive.ws.builder.soap.WsdlUtils;
+import com.centeractive.ws.builder.soap.domain.OperationWrapper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.soap.server.endpoint.annotation.SoapAction;
 import org.w3c.dom.Node;
 
 import javax.wsdl.Binding;
@@ -55,6 +54,7 @@ public abstract class AbstractResponder implements RequestResponder {
     }
 
     // rpc-style -> operation name is always encoded in the request
+    @SuppressWarnings("unchecked")
     private BindingOperation matchToOperationName(QName elementName) {
         for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {
             if (operation.getOperation().getName().equals(elementName.getLocalPart())) {

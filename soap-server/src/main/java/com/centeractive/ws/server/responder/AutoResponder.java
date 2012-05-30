@@ -1,9 +1,9 @@
 package com.centeractive.ws.server.responder;
 
-import com.centeractive.SoapBuilder;
-import com.centeractive.SoapContext;
-import com.centeractive.soap.XmlUtils;
-import com.centeractive.soap.domain.OperationWrapper;
+import com.centeractive.ws.builder.core.SoapBuilder;
+import com.centeractive.ws.builder.core.SoapContext;
+import com.centeractive.ws.builder.soap.XmlUtils;
+import com.centeractive.ws.builder.soap.domain.OperationWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.ws.soap.SoapMessage;

@@ -1,6 +1,6 @@
 package com.centeractive.ws.client;
 
-import com.centeractive.ws.client.ex.SoapTransmissionException;
+import com.centeractive.ws.client.core.SoapClient;
 import org.junit.Test;
 
 import java.net.SocketTimeoutException;
@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class SimpleClientTest {
 
-    @Test(timeout = 5000, expected = SoapTransmissionException.class)
+    @Test(timeout = 5000, expected = TransmissionException.class)
     public void connectTimeout() {
         try {
             SoapClient client = SoapClient.builder()
@@ -24,7 +24,7 @@ public class SimpleClientTest {
                     .connectTimeoutInMillis(1000)
                     .create();
             client.post("<xml/>");
-        } catch (SoapTransmissionException ex) {
+        } catch (TransmissionException ex) {
             assertTrue(ex.getCause() instanceof SocketTimeoutException);
             throw ex;
         }

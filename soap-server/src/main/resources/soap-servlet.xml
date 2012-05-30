@@ -6,10 +6,10 @@
        http://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services-2.0.xsd">
 
 
-    <bean id="adapter" class="com.centeractive.ws.server.core.ContextEndpointAdapter"/>
+    <bean id="adapter" class="com.centeractive.ws.server.endpoint.ContextEndpointAdapter"/>
 
 
-    <bean class="com.centeractive.ws.server.core.GenericEndpointMapping">
+    <bean class="com.centeractive.ws.server.endpoint.GenericEndpointMapping">
         <property name="genericEndpoint" ref="endpoint"/>
         <property name="interceptors">
             <list>

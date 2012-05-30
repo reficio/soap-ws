@@ -1,5 +1,6 @@
 package com.centeractive.ws.server;
 
+import com.centeractive.ws.server.core.SoapServer;
 import com.centeractive.ws.server.responder.RequestResponder;
 import org.junit.Test;
 import org.springframework.ws.soap.SoapMessage;
