@@ -69,30 +69,36 @@ public class SoapBuilder {
     // ----------------------------------------------------------
     // WSDLs and XSDs MARSHALLER
     // ----------------------------------------------------------
-    /**
-     * Saves wsdl recursively fetching all referenced wsdls and schemas fixing their location tags
-     *
-     * @param fileName name of the top level file
-     * @param targetFolder folder in which all the files are stored, no subfolders are created
-     */
-    public void saveWsdl(String fileName, File targetFolder) {
+    private static void saveDefinition(String fileBaseName, Definition definition, File targetFolder) {
+        if(targetFolder.exists() == false || targetFolder.isDirectory() == false) {
+            throw new IllegalArgumentException("Target folder does not exist or is not a folder [" + targetFolder.getPath() + "]");
+        }
         Wsdl11Writer writer = new Wsdl11Writer(targetFolder);
-        writer.writeWSDL(fileName, definition);
+        writer.writeWSDL(fileBaseName, definition);
     }
 
     /**
      * Saves wsdl recursively fetching all referenced wsdls and schemas fixing their location tags
      *
-     * @param fileName name of the top level file
+     * @param fileBaseName name of the top level file, without extension -> wsdl will be added by default
+     * @param targetFolder folder in which all the files are stored - folder has to exist, no subfolders are created,
+     */
+    public void saveWsdl(String fileBaseName, File targetFolder) {
+        saveDefinition(fileBaseName, definition, targetFolder);
+    }
+
+    /**
+     * Saves wsdl recursively fetching all referenced wsdls and schemas fixing their location tags
+     *
+     * @param fileBaseName name of the top level file, without extension -> wsdl will be added by default
      * @param wsdlUrl url of the wsdl to save
-     * @param targetFolder folder in which all the files are be stored, no subfolders are created
+     * @param targetFolder folder in which all the files are be stored - folder has to exist, no subfolders are created,
      * @throws WSDLException thrown in case of import errors
      */
-    public static void saveWsdl(String fileName, URL wsdlUrl, File targetFolder) throws WSDLException {
+    public static void saveWsdl(String fileBaseName, URL wsdlUrl, File targetFolder) throws WSDLException {
         WSDLReader reader = new WSDLReaderImpl();
         Definition definition = reader.readWSDL(wsdlUrl.toString());
-        Wsdl11Writer writer = new Wsdl11Writer(targetFolder);
-        writer.writeWSDL(fileName, definition);
+        saveDefinition(fileBaseName, definition, targetFolder);
     }
 
     // ----------------------------------------------------------

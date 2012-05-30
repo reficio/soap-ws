@@ -5,9 +5,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
 
+import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -203,15 +207,19 @@ public class DefinitionSaveTest {
 //    }
 
 
-//
+
 //    @Test
-//    @Ignore
-//    public void urlSchema() throws MalformedURLException, WSDLException {
+//    public void urlSchema() throws WSDLException, MalformedURLException {
 //        // http://www.ibspan.waw.pl/~gawinec/example.wsdl
-//        URL wsdlUrl = new URL("http://www.ibspan.waw.pl/~gawinec/example.wsdl");
+//        URL wsdlUrl = new URL("http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL");
 //        WSDLFactory wsdlFactory = WSDLFactory.newInstance();
 //        WSDLReader wsdlReader = wsdlFactory.newWSDLReader();
 //        Definition def = wsdlReader.readWSDL(wsdlUrl.toString());
+//        File f = new File("/opt/wsdl");
+//        if(f.mkdirs() == false) {
+//            throw new RuntimeException("cannot create a folder");
+//        }
+//        SoapBuilder.saveWsdl("aaa", wsdlUrl, f);
 //    }
 
 
