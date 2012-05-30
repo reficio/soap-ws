@@ -6,7 +6,7 @@
     <artifactId>soap-test</artifactId>
     <packaging>jar</packaging>
     <version>1.0.1-SNAPSHOT</version>
-    <name>soap-test - integration tests</name>
+    <name>soap-test - client-server integration tests</name>
 
     <parent>
         <groupId>com.centeractive</groupId>

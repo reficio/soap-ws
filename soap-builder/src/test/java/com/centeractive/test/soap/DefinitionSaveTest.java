@@ -1,10 +1,8 @@
 package com.centeractive.test.soap;
 
 import com.centeractive.SoapBuilder;
-import com.sun.tools.example.debug.bdi.FrameIndexOutOfBoundsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 
 import javax.wsdl.WSDLException;
@@ -18,7 +16,6 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 
 /**
  * User: Tom Bujok (tomasz.bujok@centeractive.com)

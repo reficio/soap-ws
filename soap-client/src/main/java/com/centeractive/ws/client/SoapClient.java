@@ -16,6 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
 import static com.centeractive.ws.client.SoapConstants.*;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -28,6 +29,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class SoapClient {
 
     private final static Log log = LogFactory.getLog(SoapClient.class);
+
+    private static final int INFINITE_TIMEOUT = 0;
 
     private URL serverUrl;
     private String basicAuthEncoded;
@@ -43,6 +46,8 @@ public final class SoapClient {
     private SSLSocketFactory sslSocketFactory;
     private OutputStream outputStream = null;
     private InputStream inputStream = null;
+    private int readTimeoutInMillis = INFINITE_TIMEOUT;
+    private int connectTimeoutInMillis = INFINITE_TIMEOUT;
 
     private SoapClient() {
     }
@@ -82,6 +87,8 @@ public final class SoapClient {
         connection.setDoOutput(true);
         connection.setDoInput(true);
         connection.setRequestMethod(POST);
+        connection.setConnectTimeout(connectTimeoutInMillis);
+        connection.setReadTimeout(readTimeoutInMillis);
         if (basicAuthEncoded != null) {
             connection.setRequestProperty(PROP_AUTH, PROP_BASIC_AUTH + " " + basicAuthEncoded);
         }
@@ -152,7 +159,7 @@ public final class SoapClient {
         } catch (IOException e) {
             // ignore
         } finally {
-            throw new SoapTransmissionException(errorMessage.toString(), errorCode);
+            throw new SoapTransmissionException(errorMessage.toString(), errorCode, ex);
         }
     }
 
@@ -204,10 +211,6 @@ public final class SoapClient {
     }
 
     class SoapHostnameVerifier implements HostnameVerifier {
-//        @Override
-//        public boolean verify(String urlHostName, String certHostName) {
-//            return true;
-//        }
         @Override
         public boolean verify(String urlHost, SSLSession sslSession) {
             return true;
@@ -278,7 +281,6 @@ public final class SoapClient {
         }
 
         public Builder strictHostVerification(boolean value) {
-            checkNotNull(value);
             client.strictHostVerification = value;
             return this;
         }
@@ -296,7 +298,7 @@ public final class SoapClient {
         }
 
         public Builder proxyPort(int value) {
-            checkNotNull(value);
+            checkArgument(value > 0);
             proxyPort = value;
             return this;
         }
@@ -304,6 +306,18 @@ public final class SoapClient {
         public Builder sslContext(String value) {
             checkNotNull(value);
             client.sslContext = value;
+            return this;
+        }
+
+        public Builder readTimeoutInMillis(int value) {
+            checkArgument(value >= 0);
+            client.readTimeoutInMillis = value;
+            return this;
+        }
+
+        public Builder connectTimeoutInMillis(int value) {
+            checkArgument(value >= 0);
+            client.connectTimeoutInMillis = value;
             return this;
         }
 

@@ -6,6 +6,7 @@
     <groupId>com.centeractive</groupId>
     <artifactId>soap-builder</artifactId>
     <version>1.0.1-SNAPSHOT</version>
+    <name>soap-server - XML based SOAP message generator</name>
 
     <parent>
         <groupId>com.centeractive</groupId>

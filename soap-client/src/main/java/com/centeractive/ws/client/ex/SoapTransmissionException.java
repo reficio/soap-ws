@@ -18,8 +18,8 @@ public class SoapTransmissionException extends SoapException {
         this.errorCode = -1;
     }
 
-    public SoapTransmissionException(String response, int errorCode) {
-        super(response);
+    public SoapTransmissionException(String response, int errorCode, Throwable cause) {
+        super(response + " " +cause.getMessage(), cause);
         this.errorResponse = response;
         this.errorCode = errorCode;
     }
