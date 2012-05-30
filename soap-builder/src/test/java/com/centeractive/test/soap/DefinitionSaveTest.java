@@ -44,7 +44,8 @@ public class DefinitionSaveTest {
         if (!tempFolder.mkdir()) {
             throw new RuntimeException("cannot create tmp folder");
         }
-        builder.saveWsdl(tempFolder);
+        String fileName = FilenameUtils.getBaseName(wsdlUrl.toString());
+        builder.saveWsdl(fileName, tempFolder);
         tempFolder.deleteOnExit();
         return tempFolder;
     }

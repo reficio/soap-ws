@@ -71,26 +71,26 @@ public class SoapBuilder {
     /**
      * Saves wsdl recursively fetching all referenced wsdls and schemas fixing their location tags
      *
+     * @param fileName name of the top level file
      * @param targetFolder folder in which all the files are stored, no subfolders are created
      */
-    public void saveWsdl(File targetFolder) {
+    public void saveWsdl(String fileName, File targetFolder) {
         Wsdl11Writer writer = new Wsdl11Writer(targetFolder);
-        String fileName = FilenameUtils.getBaseName(wsdlPath);
         writer.writeWSDL(fileName, definition);
     }
 
     /**
      * Saves wsdl recursively fetching all referenced wsdls and schemas fixing their location tags
      *
+     * @param fileName name of the top level file
      * @param wsdlUrl url of the wsdl to save
      * @param targetFolder folder in which all the files are be stored, no subfolders are created
      * @throws WSDLException thrown in case of import errors
      */
-    public static void saveWsdl(URL wsdlUrl, File targetFolder) throws WSDLException {
+    public static void saveWsdl(String fileName, URL wsdlUrl, File targetFolder) throws WSDLException {
         WSDLReader reader = new WSDLReaderImpl();
         Definition definition = reader.readWSDL(wsdlUrl.toString());
         Wsdl11Writer writer = new Wsdl11Writer(targetFolder);
-        String fileName = FilenameUtils.getBaseName(wsdlUrl.toString());
         writer.writeWSDL(fileName, definition);
     }
 
