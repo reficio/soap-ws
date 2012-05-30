@@ -69,7 +69,7 @@ public class DefinitionSaveTest {
         final boolean RECURSIVE = true;
         String[] extensions = new String[]{FilenameUtils.getExtension(name)};
         Collection<File> files = FileUtils.listFiles(folder, extensions, RECURSIVE);
-        if(files.isEmpty() == false) {
+        if (files.isEmpty() == false) {
             return files.iterator().next();
         }
         throw new RuntimeException("File not found " + name);
@@ -206,8 +206,7 @@ public class DefinitionSaveTest {
 //        importer.importWsdl(wsdlFile, targetFolder);
 //    }
 
-
-
+//
 //    @Test
 //    public void urlSchema() throws WSDLException, MalformedURLException {
 //        // http://www.ibspan.waw.pl/~gawinec/example.wsdl
@@ -216,12 +215,17 @@ public class DefinitionSaveTest {
 //        WSDLReader wsdlReader = wsdlFactory.newWSDLReader();
 //        Definition def = wsdlReader.readWSDL(wsdlUrl.toString());
 //        File f = new File("/opt/wsdl");
-//        if(f.mkdirs() == false) {
+//        if (f.mkdirs() == false) {
 //            throw new RuntimeException("cannot create a folder");
 //        }
 //        SoapBuilder.saveWsdl("aaa", wsdlUrl, f);
 //    }
-
+//
+//    @Test
+//    public void load() throws MalformedURLException, WSDLException {
+//        URL url = new URL("file:/opt/wsdl/aaa.wsdl");
+//        SoapBuilder builder = new SoapBuilder(url);
+//    }
 
 //    @Test
 //    public void testWsdlRead() throws Exception {
