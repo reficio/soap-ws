@@ -177,23 +177,33 @@ public class Wsdl11Writer {
 
     private void processSchema(Definition definition, Schema schema, String fileName, Map<String, String> changedSchemaLocations) {
         try {
-            for (Object o : schema.getIncludes()) {
-                if (o instanceof SchemaReference) {
-                    SchemaReference ref = (SchemaReference) o;
-                    String fileNameChild = normalizeName(ref.getSchemaLocationURI());
-                    Schema includedSchema = ref.getReferencedSchema();
-                    changedSchemaLocations.put(ref.getSchemaLocationURI(), fileNameChild);
-                    processSchema(definition, includedSchema, fileNameChild, changedSchemaLocations);
+            if (schema.getIncludes() != null) {
+                for (Object o : schema.getIncludes()) {
+                    if (o instanceof SchemaReference) {
+                        SchemaReference ref = (SchemaReference) o;
+                        String fileNameChild = normalizeName(ref.getSchemaLocationURI());
+                        Schema includedSchema = ref.getReferencedSchema();
+                        if (includedSchema == null) {
+                            continue;
+                        }
+                        changedSchemaLocations.put(ref.getSchemaLocationURI(), fileNameChild);
+                        processSchema(definition, includedSchema, fileNameChild, changedSchemaLocations);
+                    }
                 }
             }
-            for (Object o : schema.getImports().values()) {
-                for (Object oi : (Vector) o) {
-                    if (oi instanceof SchemaImport) {
-                        SchemaImport imp = ((SchemaImport) oi);
-                        Schema importedSchema = imp.getReferencedSchema();
-                        String fileNameChild = normalizeName(imp.getSchemaLocationURI());
-                        changedSchemaLocations.put(imp.getSchemaLocationURI(), fileNameChild);
-                        processSchema(definition, importedSchema, fileNameChild, changedSchemaLocations);
+            if (schema.getImports() != null && schema.getImports().values() != null) {
+                for (Object o : schema.getImports().values()) {
+                    for (Object oi : (Vector) o) {
+                        if (oi instanceof SchemaImport) {
+                            SchemaImport imp = ((SchemaImport) oi);
+                            Schema importedSchema = imp.getReferencedSchema();
+                            if (importedSchema == null) {
+                                continue;
+                            }
+                            String fileNameChild = normalizeName(imp.getSchemaLocationURI());
+                            changedSchemaLocations.put(imp.getSchemaLocationURI(), fileNameChild);
+                            processSchema(definition, importedSchema, fileNameChild, changedSchemaLocations);
+                        }
                     }
                 }
             }
@@ -238,7 +248,10 @@ public class Wsdl11Writer {
     }
 
     private String normalizeName(String name) {
-        return name.replaceAll("[^A-Za-z0-9.]", "_");
+        if (name != null) {
+            return name.replaceAll("[^A-Za-z0-9.\\-_]", "_");
+        }
+        return null;
     }
 
 }

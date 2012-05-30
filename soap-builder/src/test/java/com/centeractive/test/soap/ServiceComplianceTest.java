@@ -39,7 +39,7 @@ public class ServiceComplianceTest {
         return "/services/test" + testServiceIdString;
     }
 
-    public static URL getDefinitionUrl(int testServiceId) throws WSDLException {
+    public static URL getDefinitionUrl(int testServiceId) {
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath(
                 getTestServiceFolderPath(testServiceId), "TestService.wsdl");
         return wsdlUrl;

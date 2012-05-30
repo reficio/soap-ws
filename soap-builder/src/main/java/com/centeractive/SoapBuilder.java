@@ -38,14 +38,21 @@ public class SoapBuilder {
     private SoapContext context;
     private String wsdlPath;
 
-    public void setContext(SoapContext context) {
-        this.context = context;
-    }
-
+    /**
+     *
+     * @param wsdlUrl url of the wsdl to import
+     * @throws WSDLException thrown in case of import errors
+     */
     public SoapBuilder(URL wsdlUrl) throws WSDLException {
         this(SoapContext.builder().create(), wsdlUrl);
     }
 
+    /**
+     *
+     * @param context specifies additional parameters
+     * @param wsdlUrl url of the wsdl to import
+     * @throws WSDLException thrown in case of import errors
+     */
     public SoapBuilder(SoapContext context, URL wsdlUrl) throws WSDLException {
         WSDLReader reader = new WSDLReaderImpl();
         this.definition = reader.readWSDL(wsdlUrl.toString());
@@ -59,11 +66,31 @@ public class SoapBuilder {
     }
 
     // ----------------------------------------------------------
-    // SERVICE MARSHALLER
+    // WSDLs and XSDs MARSHALLER
     // ----------------------------------------------------------
-    public void saveWsdl(File rootFolder) {
-        Wsdl11Writer writer = new Wsdl11Writer(rootFolder);
+    /**
+     * Saves wsdl recursively fetching all referenced wsdls and schemas fixing their location tags
+     *
+     * @param targetFolder folder in which all the files are stored, no subfolders are created
+     */
+    public void saveWsdl(File targetFolder) {
+        Wsdl11Writer writer = new Wsdl11Writer(targetFolder);
         String fileName = FilenameUtils.getBaseName(wsdlPath);
+        writer.writeWSDL(fileName, definition);
+    }
+
+    /**
+     * Saves wsdl recursively fetching all referenced wsdls and schemas fixing their location tags
+     *
+     * @param wsdlUrl url of the wsdl to save
+     * @param targetFolder folder in which all the files are be stored, no subfolders are created
+     * @throws WSDLException thrown in case of import errors
+     */
+    public static void saveWsdl(URL wsdlUrl, File targetFolder) throws WSDLException {
+        WSDLReader reader = new WSDLReaderImpl();
+        Definition definition = reader.readWSDL(wsdlUrl.toString());
+        Wsdl11Writer writer = new Wsdl11Writer(targetFolder);
+        String fileName = FilenameUtils.getBaseName(wsdlUrl.toString());
         writer.writeWSDL(fileName, definition);
     }
 
@@ -237,6 +264,10 @@ public class SoapBuilder {
     // ----------------------------------------------------------
     // UTILS
     // ----------------------------------------------------------
+    public void setContext(SoapContext context) {
+        this.context = context;
+    }
+
     public Definition getDefinition() {
         return definition;
     }
