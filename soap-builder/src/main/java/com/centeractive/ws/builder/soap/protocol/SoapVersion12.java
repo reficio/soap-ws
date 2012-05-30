@@ -49,12 +49,12 @@ public class SoapVersion12 extends AbstractSoapVersion {
 		try
 		{
             URL soapSchemaXmlResource = ResourceUtils.getResourceWithAbsolutePackagePath(getClass(),
-                    "/com/centeractive/ws/builder/soap/xsds/", "soapEnvelope12.xsd");
+                    "/xsds/", "soapEnvelope12.xsd");
 			soapSchemaXml = XmlUtils.createXmlObject(soapSchemaXmlResource);
 			soapSchema = XmlBeans.loadXsd(new XmlObject[]{soapSchemaXml});
 
             URL soapEncodingXmlResource = ResourceUtils.getResourceWithAbsolutePackagePath(getClass(),
-                    "/com/centeractive/ws/builder/soap/xsds/", "soapEncoding12.xsd");
+                    "/xsds/", "soapEncoding12.xsd");
 			soapEncodingXml = XmlUtils.createXmlObject(soapEncodingXmlResource);
 		}
 		catch( XmlException e )

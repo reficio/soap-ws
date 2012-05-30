@@ -53,7 +53,7 @@ public class SoapVersion11 extends AbstractSoapVersion {
             options.setValidateTreatLaxAsSkip();
 
             URL soapSchemaXmlResource = ResourceUtils.getResourceWithAbsolutePackagePath(getClass(),
-                    "/com/centeractive/ws/builder/soap/xsds/", "soapEnvelope.xsd");
+                    "/xsds/", "soapEnvelope.xsd");
             soapSchemaXml = XmlUtils.createXmlObject(soapSchemaXmlResource, options);
             soapSchema = XmlBeans.loadXsd(new XmlObject[]{soapSchemaXml});
 
@@ -61,7 +61,7 @@ public class SoapVersion11 extends AbstractSoapVersion {
             soapFaultType = soapSchema.findDocumentType(faultQName);
 
             URL soapEncodingXmlResource = ResourceUtils.getResourceWithAbsolutePackagePath(getClass(),
-                    "/com/centeractive/ws/builder/soap/xsds/", "soapEncoding.xsd");
+                    "/xsds/", "soapEncoding.xsd");
             soapEncodingXml = XmlUtils.createXmlObject(soapEncodingXmlResource, options);
 
         }catch(XmlException ex) {

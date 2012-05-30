@@ -4,7 +4,8 @@
 <!-- The prose copy in the structures REC is the normative -->
 <!-- version (which shouldn't differ from this one except for -->
 <!-- this comment and entity expansions, but just in case -->
-<!DOCTYPE xs:schema PUBLIC "-//W3C//DTD XMLSCHEMA 200102//EN" "XMLSchema.dtd" [
+<!DOCTYPE xs:schema PUBLIC "-//W3C//DTD XMLSCHEMA 200102//EN"
+        "/opt/workspaces/centeractive/soap-ws/soap-builder/src/main/resources/xsds/XMLSchema.xsd" [
 
 <!-- provide ID type information even for parsers which only read the
      internal subset -->

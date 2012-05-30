@@ -68,7 +68,7 @@ public class SchemaUtils
 
     public static URL loadResoruce(String resourceName) {
         return ResourceUtils.getResourceWithAbsolutePackagePath(
-                SchemaUtils.class, "/com/centeractive/ws/builder/soap/xsds/", resourceName);
+                SchemaUtils.class, "/xsds/", resourceName);
     }
 
 	public static void initDefaultSchemas()
