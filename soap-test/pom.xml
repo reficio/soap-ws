@@ -23,6 +23,13 @@
         </dependency>
         <dependency>
             <groupId>com.centeractive</groupId>
+            <artifactId>soap-builder</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.centeractive</groupId>
             <artifactId>soap-client</artifactId>
             <version>${project.version}</version>
         </dependency>

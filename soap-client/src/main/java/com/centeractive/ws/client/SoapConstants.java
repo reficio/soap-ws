@@ -28,12 +28,15 @@ class SoapConstants {
             MIMETYPE_APPLICATION_XML = "application/soap+xml";
 
     public final static String
-            PROP_SOAP_ACTION = "SOAPAction",
+            PROP_SOAP_ACTION_11 = "SOAPAction",
+            PROP_SOAP_ACTION_12 = "action=",
             PROP_CONTENT_TYPE = "Content-Type",
             PROP_CONTENT_LENGTH = "Content-Length",
             PROP_AUTH = "Authorization",
             PROP_PROXY_AUTH = "Proxy-Authorization",
-            PROP_BASIC_AUTH = "Basic";
+            PROP_BASIC_AUTH = "Basic",
+            PROP_DELIMITER = "; ";
+
 
     public final static String
             SOAP_1_1_NAMESPACE = "http://schemas.xmlsoap.org/soap/envelope/",

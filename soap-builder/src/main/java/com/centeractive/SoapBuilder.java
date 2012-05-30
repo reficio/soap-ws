@@ -20,6 +20,7 @@ import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.extensions.soap12.SOAP12Binding;
+import javax.wsdl.extensions.soap12.SOAP12Operation;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -293,10 +294,25 @@ public class SoapBuilder {
                 if (extElement instanceof SOAPOperation) {
                     SOAPOperation soapOp = (SOAPOperation) extElement;
                     return soapOp.getSoapActionURI();
+                } else if(extElement instanceof SOAP12Operation) {
+                    SOAP12Operation soapOp = (SOAP12Operation) extElement;
+                    return soapOp.getSoapActionURI();
                 }
             }
         }
         return null;
+    }
+
+    // removes "" from soap action
+    public static String normalizeSoapAction(String soapAction) {
+        String normalizedSoapAction = "";
+        if (soapAction != null && soapAction.length() > 0) {
+            normalizedSoapAction = soapAction;
+            if (soapAction.charAt(0) == '"' && soapAction.charAt(soapAction.length() - 1) == '"') {
+                normalizedSoapAction = soapAction.substring(1, soapAction.length() - 1).trim();
+            }
+        }
+        return normalizedSoapAction;
     }
 
     public static OperationWrapper getOperation(Binding binding, BindingOperation operation) {
@@ -314,10 +330,10 @@ public class SoapBuilder {
     public static OperationWrapper getOperation(Binding binding, BindingOperation operation, String soapAction) {
         if(operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
             return new OperationWrapper(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-                    operation.getBindingOutput().getName(), soapAction);
+                    operation.getBindingOutput().getName(), normalizeSoapAction(soapAction));
         } else {
             return new OperationWrapper(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-                    null, soapAction);
+                    null, normalizeSoapAction(soapAction));
         }
 
     }

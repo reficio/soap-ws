@@ -126,13 +126,13 @@ public abstract class AbstractResponder implements RequestResponder {
     }
 
     private BindingOperation getOperationBySoapAction(SoapMessage message) {
-        String soapActionToMatch = normalizeSoapAction(message.getSoapAction());
+        String soapActionToMatch = SoapBuilder.normalizeSoapAction(message.getSoapAction());
         if (StringUtils.isBlank(soapActionToMatch)) {
             return null;
         }
         for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {
             try {
-                String soapAction = normalizeSoapAction(SoapBuilder.getSOAPActionUri(operation));
+                String soapAction = SoapBuilder.normalizeSoapAction(SoapBuilder.getSOAPActionUri(operation));
                 if (StringUtils.isBlank(soapAction)) {
                     continue;
                 }
@@ -144,18 +144,6 @@ public abstract class AbstractResponder implements RequestResponder {
             }
         }
         return null;
-    }
-
-    // removes "" from soap action
-    private String normalizeSoapAction(String soapAction) {
-        String normalizedSoapAction = "";
-        if (soapAction != null && soapAction.length() > 0) {
-            normalizedSoapAction = soapAction;
-            if (soapAction.charAt(0) == '"' && soapAction.charAt(soapAction.length() - 1) == '"') {
-                normalizedSoapAction = soapAction.substring(1, soapAction.length() - 1).trim();
-            }
-        }
-        return normalizedSoapAction;
     }
 
     private BindingOperation getOperationByRootQName(Set<Node> rootNodes) throws OperationNotFoundException {

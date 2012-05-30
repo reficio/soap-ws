@@ -21,7 +21,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Copyright (c) centeractive ag, Inc. All Rights Reserved.
- *
+ * <p/>
  * User: Tom Bujok (tomasz.bujok@centeractive.com)
  * Date: 11/11/11
  * Time: 12:55 PM
@@ -98,13 +98,19 @@ public final class SoapClient {
     }
 
     private void decorateConnectionWithSoap(String soapAction, String requestEnvelope) throws ProtocolException {
-        if (soapAction != null) {
-            connection.setRequestProperty(PROP_SOAP_ACTION, soapAction);
-        }
         if (requestEnvelope.contains(SOAP_1_1_NAMESPACE)) {
+            if (soapAction != null) {
+                connection.setRequestProperty(PROP_SOAP_ACTION_11, soapAction);
+            }
             connection.setRequestProperty(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
         } else if (requestEnvelope.contains(SOAP_1_2_NAMESPACE)) {
             connection.setRequestProperty(PROP_CONTENT_TYPE, MIMETYPE_APPLICATION_XML);
+            if (soapAction != null) {
+                String prop = connection.getRequestProperty(PROP_CONTENT_TYPE);
+                connection.setRequestProperty(PROP_CONTENT_TYPE, prop + PROP_DELIMITER
+                        + PROP_SOAP_ACTION_12 + "\"" + soapAction + "\"" );
+            }
+
         }
         connection.setRequestProperty(PROP_CONTENT_LENGTH, Integer.toString(requestEnvelope.length()));
     }
@@ -153,7 +159,7 @@ public final class SoapClient {
             InputStream errorStream = ((HttpURLConnection) connection).getErrorStream();
             int ret = 0;
             while ((ret = errorStream.read()) > 0) {
-                errorMessage.append((char)ret);
+                errorMessage.append((char) ret);
             }
             errorStream.close();
         } catch (IOException e) {
@@ -181,8 +187,8 @@ public final class SoapClient {
 
     /**
      * Underlying connection is persistent by default
-     * @link http://docs.oracle.com/javase/1.5.0/docs/guide/net/http-keepalive.html
      *
+     * @link http://docs.oracle.com/javase/1.5.0/docs/guide/net/http-keepalive.html
      */
     public void disconnect() {
         connection.disconnect();

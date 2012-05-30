@@ -1,9 +1,9 @@
-package com.centeractive.ws.server;
+package com.centeractive.ws.server.util;
 
 import com.centeractive.SoapBuilder;
 import com.centeractive.SoapContext;
 import com.centeractive.utils.ResourceUtils;
-import com.centeractive.ws.server.core.GenericContextDomEndpoint;
+import com.centeractive.ws.server.SoapServer;
 import com.centeractive.ws.server.responder.AutoResponder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

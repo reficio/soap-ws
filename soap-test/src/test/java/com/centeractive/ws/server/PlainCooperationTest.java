@@ -201,5 +201,10 @@ public class PlainCooperationTest extends AbstractCooperationTest {
         verifyServiceBehavior(24, true);
     }
 
+    @Test
+    public void testService25() throws Exception {
+        verifyServiceBehavior(25, true);
+    }
+
 
 }

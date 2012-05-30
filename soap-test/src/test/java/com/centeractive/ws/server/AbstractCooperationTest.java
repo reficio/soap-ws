@@ -2,7 +2,8 @@ package com.centeractive.ws.server;
 
 import com.centeractive.SoapBuilder;
 import com.centeractive.soap.domain.OperationWrapper;
-import com.centeractive.utils.XmlTestUtils;
+import com.centeractive.test.utils.XmlTestUtils;
+import com.centeractive.ws.server.util.TestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
