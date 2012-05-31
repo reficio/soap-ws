@@ -43,8 +43,8 @@ public class SoapBuilder {
     // ----------------------------------------------------------
     // Constructors and factory methods
     // ----------------------------------------------------------
+
     /**
-     *
      * @param wsdlUrl url of the wsdl to import
      * @throws WSDLException thrown in case of import errors
      */
@@ -53,7 +53,6 @@ public class SoapBuilder {
     }
 
     /**
-     *
      * @param context specifies additional parameters
      * @param wsdlUrl url of the wsdl to import
      * @throws WSDLException thrown in case of import errors
@@ -67,12 +66,17 @@ public class SoapBuilder {
     }
 
     /**
+     * Constructs a new SoapBuilder instance importing the wsdl from the specified wsdlUrl.
+     * If the import is successful it saves the wsdl/xsd files to the target folder giving
+     * the top-level wsdl the specified baseName and setting the documentBaseUri to the newly
+     * saved wsdl uri. If the import is not successful an exception will be thrown and files
+     * will not be saved. Method expects that the targetFolder already exists.
      *
-     * @param wsdlUrl url of the wsdl to import
+     * @param wsdlUrl      url of the wsdl to import
      * @param targetFolder folder in which all the files are be stored - folder has to exist, no subfolders are created,
      * @param fileBaseName name of the top level file, without extension -> wsdl will be added by default
      * @return instance of the soap-builder which documentBaseUri is set to the url of the locally saved wsdl
-     * @throws WSDLException  thrown in case of import errors
+     * @throws WSDLException thrown in case of import errors
      */
     public static SoapBuilder createAndSave(URL wsdlUrl, File targetFolder, String fileBaseName) throws WSDLException {
         SoapBuilder soapBuilder = new SoapBuilder(wsdlUrl);
@@ -85,7 +89,7 @@ public class SoapBuilder {
     // WSDLs and XSDs MARSHALLER
     // ----------------------------------------------------------
     private static void saveDefinition(String fileBaseName, Definition definition, File targetFolder) {
-        if(targetFolder.exists() == false || targetFolder.isDirectory() == false) {
+        if (targetFolder.exists() == false || targetFolder.isDirectory() == false) {
             throw new IllegalArgumentException("Target folder does not exist or is not a folder [" + targetFolder.getPath() + "]");
         }
         Wsdl11Writer writer = new Wsdl11Writer(targetFolder);
@@ -116,7 +120,7 @@ public class SoapBuilder {
      * Saves wsdl recursively fetching all referenced wsdls and schemas fixing their location tags
      *
      * @param fileBaseName name of the top level file, without extension -> wsdl will be added by default
-     * @param wsdlUrl url of the wsdl to save
+     * @param wsdlUrl      url of the wsdl to save
      * @param targetFolder folder in which all the files are be stored - folder has to exist, no subfolders are created,
      * @throws WSDLException thrown in case of import errors
      */
@@ -289,7 +293,7 @@ public class SoapBuilder {
             XmlUtils.serializePretty(object, writer);
             return writer.toString();
         } catch (Exception e) {
-            log.warn("Exception during message generation" ,e);
+            log.warn("Exception during message generation", e);
             return object.xmlText();
         }
     }
@@ -330,7 +334,7 @@ public class SoapBuilder {
                 if (extElement instanceof SOAPOperation) {
                     SOAPOperation soapOp = (SOAPOperation) extElement;
                     return soapOp.getSoapActionURI();
-                } else if(extElement instanceof SOAP12Operation) {
+                } else if (extElement instanceof SOAP12Operation) {
                     SOAP12Operation soapOp = (SOAP12Operation) extElement;
                     return soapOp.getSoapActionURI();
                 }
@@ -353,7 +357,7 @@ public class SoapBuilder {
 
     public static OperationWrapper getOperation(Binding binding, BindingOperation operation) {
         String soapAction = getSOAPActionUri(operation);
-        if(operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
+        if (operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
             return new OperationWrapper(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
                     operation.getBindingOutput().getName(), soapAction);
         } else {
@@ -364,7 +368,7 @@ public class SoapBuilder {
     }
 
     public static OperationWrapper getOperation(Binding binding, BindingOperation operation, String soapAction) {
-        if(operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
+        if (operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
             return new OperationWrapper(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
                     operation.getBindingOutput().getName(), normalizeSoapAction(soapAction));
         } else {
