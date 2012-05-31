@@ -3,15 +3,13 @@ package com.centeractive.ws.builder;
 import com.centeractive.ws.builder.core.SoapBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +34,17 @@ public class DefinitionSaveTest {
             throw new RuntimeException("Cannot get service folder for service " + serviceId);
         }
         return serviceFolder;
+    }
+
+    public static File createTempFolder(String name) throws IOException {
+        File tempFolder = File.createTempFile(name, Long.toString(System.nanoTime()));
+        if (!tempFolder.delete()) {
+            throw new RuntimeException("cannot delete tmp file");
+        }
+        if (!tempFolder.mkdir()) {
+            throw new RuntimeException("cannot create tmp folder");
+        }
+        return tempFolder;
     }
 
     public static File getGeneratedFolder(int serviceId) throws WSDLException, IOException {
@@ -108,16 +117,19 @@ public class DefinitionSaveTest {
 
     @Test
     public void testDefinitionSaveService() {
-        for (int i = 1; i <= 18; i++) {
-            testDefinitionSave(i);
+        for (int serviceId = 1; serviceId <= 18; serviceId++) {
+            testDefinitionSave(serviceId);
         }
     }
 
     @Test
-    public void testDefinitionSaveService6() {
-        testDefinitionSave(15);
+    @Ignore
+    public void testCreateAndSave() throws WSDLException, IOException, URISyntaxException {
+        int serviceId = 1;
+        URL wsdlUrl = ServiceComplianceTest.getDefinitionUrl(serviceId);
+        File tmpFolder = createTempFolder("testCreateAndSave");
+        SoapBuilder.createAndSave(wsdlUrl, tmpFolder, "tempWsdl");
     }
-
 
 //    @Test
 //    @Ignore

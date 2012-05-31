@@ -25,6 +25,7 @@ import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,9 @@ public class SoapBuilder {
     private SoapContext context;
     private String wsdlPath;
 
+    // ----------------------------------------------------------
+    // Constructors and factory methods
+    // ----------------------------------------------------------
     /**
      *
      * @param wsdlUrl url of the wsdl to import
@@ -62,8 +66,19 @@ public class SoapBuilder {
         this.wsdlPath = wsdlUrl.toString();
     }
 
-    public void setMultiValues(Map<QName, String[]> multiValues) {
-        this.multiValues = multiValues;
+    /**
+     *
+     * @param wsdlUrl url of the wsdl to import
+     * @param targetFolder folder in which all the files are be stored - folder has to exist, no subfolders are created,
+     * @param fileBaseName name of the top level file, without extension -> wsdl will be added by default
+     * @return instance of the soap-builder which documentBaseUri is set to the url of the locally saved wsdl
+     * @throws WSDLException  thrown in case of import errors
+     */
+    public static SoapBuilder createAndSave(URL wsdlUrl, File targetFolder, String fileBaseName) throws WSDLException {
+        SoapBuilder soapBuilder = new SoapBuilder(wsdlUrl);
+        URL url = soapBuilder.saveWsdl(fileBaseName, targetFolder);
+        soapBuilder.getDefinition().setDocumentBaseURI(url.toString());
+        return soapBuilder;
     }
 
     // ----------------------------------------------------------
@@ -77,14 +92,24 @@ public class SoapBuilder {
         writer.writeWSDL(fileBaseName, definition);
     }
 
+    private static URL getSavedWsdlUrl(String fileBaseName, File targetFolder) {
+        File file = new File(targetFolder, fileBaseName + ".wsdl");
+        try {
+            return file.toURI().toURL();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Error saving url", e);
+        }
+    }
+
     /**
      * Saves wsdl recursively fetching all referenced wsdls and schemas fixing their location tags
      *
      * @param fileBaseName name of the top level file, without extension -> wsdl will be added by default
      * @param targetFolder folder in which all the files are stored - folder has to exist, no subfolders are created,
      */
-    public void saveWsdl(String fileBaseName, File targetFolder) {
+    public URL saveWsdl(String fileBaseName, File targetFolder) {
         saveDefinition(fileBaseName, definition, targetFolder);
+        return getSavedWsdlUrl(fileBaseName, targetFolder);
     }
 
     /**
@@ -95,10 +120,11 @@ public class SoapBuilder {
      * @param targetFolder folder in which all the files are be stored - folder has to exist, no subfolders are created,
      * @throws WSDLException thrown in case of import errors
      */
-    public static void saveWsdl(String fileBaseName, URL wsdlUrl, File targetFolder) throws WSDLException {
+    public static URL saveWsdl(String fileBaseName, URL wsdlUrl, File targetFolder) throws WSDLException {
         WSDLReader reader = new WSDLReaderImpl();
         Definition definition = reader.readWSDL(wsdlUrl.toString());
         saveDefinition(fileBaseName, definition, targetFolder);
+        return getSavedWsdlUrl(fileBaseName, targetFolder);
     }
 
     // ----------------------------------------------------------
@@ -271,6 +297,10 @@ public class SoapBuilder {
     // ----------------------------------------------------------
     // UTILS
     // ----------------------------------------------------------
+    public void setMultiValues(Map<QName, String[]> multiValues) {
+        this.multiValues = multiValues;
+    }
+
     public void setContext(SoapContext context) {
         this.context = context;
     }
