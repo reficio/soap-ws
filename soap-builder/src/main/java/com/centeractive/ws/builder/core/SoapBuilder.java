@@ -43,7 +43,6 @@ public class SoapBuilder {
     // ----------------------------------------------------------
     // Constructors and factory methods
     // ----------------------------------------------------------
-
     /**
      * @param wsdlUrl url of the wsdl to import
      * @throws WSDLException thrown in case of import errors
@@ -72,7 +71,7 @@ public class SoapBuilder {
      * saved wsdl uri. If the import is not successful an exception will be thrown and files
      * will not be saved. Method expects that the targetFolder already exists.
      *
-     * @param wsdlUrl      url of the wsdl to import
+     * @param wsdlUrl url of the wsdl to import
      * @param targetFolder folder in which all the files are be stored - folder has to exist, no subfolders are created,
      * @param fileBaseName name of the top level file, without extension -> wsdl will be added by default
      * @return instance of the soap-builder which documentBaseUri is set to the url of the locally saved wsdl
@@ -653,7 +652,6 @@ public class SoapBuilder {
     private static String buildEmptyFault(SampleXmlUtil generator, SoapVersion soapVersion) {
         String emptyResponse = buildEmptyMessage(soapVersion);
         try {
-            // XmlObject xmlObject = XmlObject.Factory.parse( emptyResponse );
             XmlObject xmlObject = XmlUtils.createXmlObject(emptyResponse);
             XmlCursor cursor = xmlObject.newCursor();
 

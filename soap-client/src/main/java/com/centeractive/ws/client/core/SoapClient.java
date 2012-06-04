@@ -233,7 +233,7 @@ public final class SoapClient {
 
         private String keyStorePath;
         private String keyStoreType = JKS_KEYSTORE;
-        private String keyStorePassword;
+        private char[] keyStorePassword;
 
         private Proxy.Type proxyType = Proxy.Type.DIRECT;
         private String proxyHost;
@@ -286,8 +286,9 @@ public final class SoapClient {
         }
 
         public Builder keyStorePassword(String value) {
-            checkNotNull(value);
-            keyStorePassword = value;
+            if(value != null) {
+                keyStorePassword = value.toCharArray();
+            }
             return this;
         }
 
@@ -340,11 +341,10 @@ public final class SoapClient {
 
         private void validateAndInitKeystore() {
             if (keyStorePath != null) {
-                checkNotNull(keyStorePassword);
                 try {
                     InputStream in = new FileInputStream(keyStorePath);
                     KeyStore ks = KeyStore.getInstance(keyStoreType);
-                    ks.load(in, keyStorePassword.toCharArray());
+                    ks.load(in, keyStorePassword);
                     in.close();
                     client.keyStore = ks;
                 } catch (FileNotFoundException e) {
