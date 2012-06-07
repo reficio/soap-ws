@@ -62,7 +62,7 @@ public class ResourceUtils {
     }
 
     private static String formatArgument(String argument) {
-        String argumentWithoutWhiteSpaces = argument.replaceAll("\\s+", "");
+        String argumentWithoutWhiteSpaces = argument.trim();
         return argumentWithoutWhiteSpaces;
     }
 

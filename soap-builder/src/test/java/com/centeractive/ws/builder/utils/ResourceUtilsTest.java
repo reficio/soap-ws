@@ -40,7 +40,7 @@ public class ResourceUtilsTest {
 
     @Test
     public void testResourceLoadingWhiteSpaces() {
-        URL url = ResourceUtils.getResourceWithAbsolutePackagePath(System.class, "/com/ center active/soa p/tes t", "soapEncoding.xsd");
+        URL url = ResourceUtils.getResourceWithAbsolutePackagePath(System.class, "  /com/centeractive/soap/test  ", "soapEncoding.xsd");
         assertNotNull(url);
     }
 
@@ -95,6 +95,12 @@ public class ResourceUtilsTest {
     @Test
     public void testResourceLoadingNotNormalizedNoClass() {
         URL url = ResourceUtils.getResourceWithAbsolutePackagePath("com/../com/centeractive/../centeractive/soap/test/", "soapEncoding.xsd");
+        assertNotNull(url);
+    }
+
+    @Test
+    public void testResourceLoadingSpaceInTheResource() {
+        URL url = ResourceUtils.getResourceWithAbsolutePackagePath("my folder", "resource.txt");
         assertNotNull(url);
     }
 
