@@ -3,6 +3,7 @@ package com.centeractive.ws.server;
 import com.centeractive.ws.builder.utils.ResourceUtils;
 import com.centeractive.ws.client.core.SoapClient;
 import com.centeractive.ws.server.core.SoapServer;
+import java.io.File;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.*;
@@ -21,7 +22,14 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
     private final static Log log = LogFactory.getLog(HttpsCooperationTest.class);
 
     protected URL getTestKeyStoreUrl() {
-        return ResourceUtils.getResourceWithAbsolutePackagePath("/keystores/1", ".keystore");
+        return ResourceUtils.getResourceWithAbsolutePackagePath("/keystores/my dir", ".keystore");
+
+//        File f = new File("c:\\dev\\soap-ws\\soap-test\\src\\test\\resources\\keystores\\my dir\\.keystore");
+//        try {
+//            return f.toURL();
+//        } catch (Exception x) {
+//            return null;
+//        }
     }
 
     protected String getTestKeyStorePassword() {
