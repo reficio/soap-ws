@@ -260,7 +260,7 @@ public final class SoapServer {
         }
 
         public SoapServerBuilder keyStoreUrl(URL value) {
-            server.keyStorePath = value.getPath();
+            server.keyStorePath = value.toString();
             return this;
         }
 

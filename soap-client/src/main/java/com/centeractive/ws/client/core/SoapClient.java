@@ -2,6 +2,7 @@ package com.centeractive.ws.client.core;
 
 import com.centeractive.ws.client.SoapClientException;
 import com.centeractive.ws.client.TransmissionException;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import sun.misc.BASE64Encoder;
@@ -231,7 +232,7 @@ public final class SoapClient {
     public static class Builder {
         SoapClient client = new SoapClient();
 
-        private String keyStorePath;
+        private URL keyStoreUrl;
         private String keyStoreType = JKS_KEYSTORE;
         private char[] keyStorePassword;
 
@@ -275,7 +276,7 @@ public final class SoapClient {
 
         public Builder keyStoreUrl(URL value) {
             checkNotNull(value);
-            keyStorePath = value.getPath();
+            keyStoreUrl = value;
             return this;
         }
 
@@ -340,9 +341,9 @@ public final class SoapClient {
         }
 
         private void validateAndInitKeystore() {
-            if (keyStorePath != null) {
+            if (keyStoreUrl != null) {
                 try {
-                    InputStream in = new FileInputStream(keyStorePath);
+                    InputStream in = keyStoreUrl.openStream();
                     KeyStore ks = KeyStore.getInstance(keyStoreType);
                     ks.load(in, keyStorePassword);
                     in.close();
