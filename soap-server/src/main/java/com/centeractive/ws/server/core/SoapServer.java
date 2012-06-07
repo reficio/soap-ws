@@ -1,6 +1,7 @@
 package com.centeractive.ws.server.core;
 
 import com.centeractive.ws.server.ServiceRegistrationException;
+import com.centeractive.ws.server.SoapServerException;
 import com.centeractive.ws.server.endpoint.GenericContextDomEndpoint;
 import com.centeractive.ws.server.responder.RequestResponder;
 import org.apache.commons.logging.Log;
@@ -17,6 +18,8 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
 import javax.servlet.ServletContext;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -259,10 +262,13 @@ public final class SoapServer {
             return server;
         }
 
-        @Deprecated
         public SoapServerBuilder keyStoreUrl(URL value) {
-            server.keyStorePath = value.toString();
-            return this;
+            try {
+                server.keyStorePath = value.toURI().getPath();
+                return this;
+            } catch (URISyntaxException e) {
+                throw new SoapServerException(e);
+            }
         }
 
         public SoapServerBuilder keyStorePath(String path) {

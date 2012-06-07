@@ -23,13 +23,6 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
 
     protected URL getTestKeyStoreUrl() {
         return ResourceUtils.getResourceWithAbsolutePackagePath("/keystores/my dir", ".keystore");
-
-//        File f = new File("c:\\dev\\soap-ws\\soap-test\\src\\test\\resources\\keystores\\my dir\\.keystore");
-//        try {
-//            return f.toURL();
-//        } catch (Exception x) {
-//            return null;
-//        }
     }
 
     protected String getTestKeyStorePassword() {
