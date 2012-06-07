@@ -259,8 +259,14 @@ public final class SoapServer {
             return server;
         }
 
+        @Deprecated
         public SoapServerBuilder keyStoreUrl(URL value) {
             server.keyStorePath = value.toString();
+            return this;
+        }
+
+        public SoapServerBuilder keyStorePath(String path) {
+            server.keyStorePath = path;
             return this;
         }
 
