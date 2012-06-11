@@ -43,8 +43,6 @@ import java.util.*;
  */
 public abstract class AbstractResponder implements RequestResponder {
 
-    private final static Log log = LogFactory.getLog(AbstractResponder.class);
-
     protected final SoapBuilder builder;
     protected final QName bindingName;
     protected final Binding binding;

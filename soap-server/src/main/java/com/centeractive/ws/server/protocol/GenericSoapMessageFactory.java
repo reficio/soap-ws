@@ -37,9 +37,8 @@ import java.io.InputStream;
  * @since 1.0.0
  */
 public class GenericSoapMessageFactory implements SoapMessageFactory, InitializingBean {
-    private static final String REQUEST_CONTEXT_ATTRIBUTE = "GenericSoapMessageFactory";
 
-    private static final Log log = LogFactory.getLog(GenericSoapMessageFactory.class);
+    private static final String REQUEST_CONTEXT_ATTRIBUTE = "GenericSoapMessageFactory";
 
     private SaajSoapMessageFactory soap11 = new SaajSoapMessageFactory();
     private SaajSoapMessageFactory soap12 = new SaajSoapMessageFactory();

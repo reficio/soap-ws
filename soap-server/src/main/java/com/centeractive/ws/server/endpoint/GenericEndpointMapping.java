@@ -29,8 +29,6 @@ import org.springframework.ws.server.endpoint.mapping.AbstractEndpointMapping;
  */
 public class GenericEndpointMapping extends AbstractEndpointMapping {
 
-    private final static Log log = LogFactory.getLog(GenericEndpointMapping.class);
-
     private ContextPayloadEndpoint genericEndpoint;
 
     @Override

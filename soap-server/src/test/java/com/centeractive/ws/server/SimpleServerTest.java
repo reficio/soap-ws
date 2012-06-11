@@ -183,5 +183,4 @@ public class SimpleServerTest {
         server.unregisterRequestResponder(contextPath);
     }
 
-
 }

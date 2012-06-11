@@ -25,7 +25,6 @@ package com.centeractive.ws.client;
  * @since 1.0.0
  */
 public class SoapClientException extends RuntimeException {
-
     public SoapClientException(String message) {
         super(message);
     }
@@ -37,5 +36,4 @@ public class SoapClientException extends RuntimeException {
     public SoapClientException(Throwable cause) {
         super(cause.getMessage(), cause);
     }
-
 }

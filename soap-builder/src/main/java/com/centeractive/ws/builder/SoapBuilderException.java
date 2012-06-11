@@ -25,7 +25,6 @@ package com.centeractive.ws.builder;
  * @since 1.0.0
  */
 public class SoapBuilderException extends RuntimeException {
-
     public SoapBuilderException(String message) {
         super(message);
     }

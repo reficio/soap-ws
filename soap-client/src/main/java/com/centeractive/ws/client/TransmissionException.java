@@ -42,5 +42,4 @@ public class TransmissionException extends SoapClientException {
     public int getErrorCode() {
         return errorCode;
     }
-
 }

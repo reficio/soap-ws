@@ -31,8 +31,6 @@ import javax.xml.transform.Source;
  */
 public class ContextEndpointAdapter extends PayloadEndpointAdapter {
 
-    private final static Log log = LogFactory.getLog(ContextEndpointAdapter.class);
-
     public void invoke(MessageContext messageContext, Object endpoint) throws Exception {
         ContextPayloadEndpoint payloadEndpoint = (ContextPayloadEndpoint) endpoint;
         Source requestSource = messageContext.getRequest().getPayloadSource();

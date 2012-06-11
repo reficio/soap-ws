@@ -36,8 +36,6 @@ import javax.xml.transform.Source;
  */
 public class AutoResponder extends AbstractResponder {
 
-    private final static Log log = LogFactory.getLog(AutoResponder.class);
-
     private final SoapContext context;
 
     public AutoResponder(SoapBuilder builder, QName bindingName) {
