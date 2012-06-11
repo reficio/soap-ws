@@ -28,6 +28,47 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.10.b1</version>
+                <configuration>
+                    <strictCheck>true</strictCheck>
+                    <basedir>${basedir}</basedir>
+                    <header>src/main/resources/license.txt</header>
+                    <quiet>false</quiet>
+                    <failIfMissing>true</failIfMissing>
+                    <aggregate>false</aggregate>
+                    <includes>
+                        <include>src/**</include>
+                        <include>**/test/**</include>
+                    </includes>
+                    <excludes>
+                        <exclude>target/**</exclude>
+                        <exclude>**/resources/**</exclude>
+                        <exclude>.clover/**</exclude>
+                    </excludes>
+                    <useDefaultExcludes>true</useDefaultExcludes>
+                    <mapping>
+                        <jwc>XML_STYLE</jwc>
+                        <application>XML_STYLE</application>
+                        <myFileExtension>JAVADOC_STYLE</myFileExtension>
+                    </mapping>
+                    <useDefaultMapping>true</useDefaultMapping>
+                    <properties>
+                        <year>${project.inceptionYear}</year>
+                        <company>centeractive ag</company>
+                    </properties>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -42,6 +83,13 @@
         <name>centeractive ag</name>
         <url>http://www.centeractive.com</url>
     </organization>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <inceptionYear>2012</inceptionYear>
     <developers>

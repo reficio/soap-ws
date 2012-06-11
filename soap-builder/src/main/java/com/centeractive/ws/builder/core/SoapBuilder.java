@@ -30,6 +30,11 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Builds SOAP requests according to WSDL/XSD definitions
+ *
+ * @author Ole.Matzura
+ */
 public class SoapBuilder {
 
     private final static Logger log = Logger.getLogger(SoapBuilder.class);

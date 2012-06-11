@@ -3,7 +3,7 @@ package com.centeractive.ws.server.responder;
 import com.centeractive.ws.builder.core.SoapBuilder;
 import com.centeractive.ws.builder.soap.WsdlUtils;
 import com.centeractive.ws.builder.soap.domain.OperationWrapper;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.ws.soap.SoapMessage;
@@ -125,6 +125,7 @@ public abstract class AbstractResponder implements RequestResponder {
         throw new OperationNotFoundException("Cannot match a SOAP operation to the given SOAP request");
     }
 
+    @SuppressWarnings("unchecked")
     private BindingOperation getOperationBySoapAction(SoapMessage message) {
         String soapActionToMatch = SoapBuilder.normalizeSoapAction(message.getSoapAction());
         if (StringUtils.isBlank(soapActionToMatch)) {
@@ -160,6 +161,7 @@ public abstract class AbstractResponder implements RequestResponder {
     //   http://stackoverflow.com/questions/1172118/what-is-the-difference-between-type-and-element-in-wsdl
     //   http://www.xfront.com/ElementVersusType.html
     //   http://www.xfront.com/GlobalVersusLocal.html !!!
+    @SuppressWarnings("unchecked")
     private BindingOperation getOperationByInputTypes(Set<Node> rootNodes) {
         for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {
             try {
@@ -188,6 +190,7 @@ public abstract class AbstractResponder implements RequestResponder {
     }
 
     // document style -> there is not encoded operation name - matching based on the input style
+    @SuppressWarnings("unchecked")
     private BindingOperation getOperationByInputNames(Set<Node> rootNodes) {
         Stack<BindingOperation> matchedOperations = new Stack<BindingOperation>();
         for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {

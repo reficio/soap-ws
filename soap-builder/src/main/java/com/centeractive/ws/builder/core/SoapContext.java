@@ -1,9 +1,7 @@
 package com.centeractive.ws.builder.core;
 
 /**
- * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 18/11/11
- * Time: 11:11 AM
+ * @author Tom Bujok
  */
 public class SoapContext {
 

@@ -14,6 +14,13 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <licenses>
+        <license>
+            <name>GNU Library or Lesser General Public License (LGPL) 2.1</name>
+            <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+        </license>
+    </licenses>
+
     <dependencies>
         <dependency>
             <groupId>xmlunit</groupId>
