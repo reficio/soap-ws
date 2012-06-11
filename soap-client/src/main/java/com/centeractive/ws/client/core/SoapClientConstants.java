@@ -16,13 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centeractive.ws.client.config;
+package com.centeractive.ws.client.core;
 
 /**
  * @author Tom Bujok
  * @since 1.0.0
  */
-public class SoapConstants {
+class SoapClientConstants {
 
     public final static String
             HTTP = "HTTP",
@@ -61,6 +61,9 @@ public class SoapConstants {
             SSL_CONTEXT = "SSLv3",
             TLS_CONTEXT = "TLS",
             JKS_KEYSTORE = "JKS";
+
+    public final static int
+            INFINITE_TIMEOUT = 0;
 
 
 }

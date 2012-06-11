@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import static com.centeractive.ws.server.core.SoapServerConstants.*;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -51,16 +52,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class SoapServer {
 
     private final static Log log = LogFactory.getLog(SoapServer.class);
-
-    public static final int HTTP_PORT = 8080;
-    public static final int HTTPS_PORT = 8443;
-    public static final int CONNECTION_MAX_IDLE_TIME_IN_SECONDS = 60;
-    public static final int ACCEPTOR_THREADS_COUNT = 4;
-    public static final int CORE_THREADS_COUNT = 8;
-    public static final int MAX_THREADS_COUNT = 16;
-    public static final int THREAD_KEEP_ALIVE_TIME_IN_SECONDS = 60;
-    public static final String KEYSTORE_TYPE = "JKS";
-    public static final boolean REUSE_ADDRESS = true;
 
     private Integer httpPort = HTTP_PORT;
     private Integer httpsPort = HTTPS_PORT;
@@ -124,10 +115,6 @@ public final class SoapServer {
     // ----------------------------------------------------------------
     // INTERNAL API
     // ----------------------------------------------------------------
-    GenericContextDomEndpoint getEndpoint() {
-        return this.endpoint;
-    }
-
     private void configure() {
         configureParentContext();
         configureConnectors();
@@ -139,21 +126,21 @@ public final class SoapServer {
         config.setProperties(buildProperties());
         context = new ClassPathXmlApplicationContext();
         context.addBeanFactoryPostProcessor(config);
-        context.setConfigLocation("classpath:soap-server.xml");
+        context.setConfigLocation(SPRING_CONTEXT_LOCATION);
         context.refresh();
         context.registerShutdownHook();
-        server = context.getBean("jettyServer", Server.class);
+        server = context.getBean(SERVER_BEAN_NAME, Server.class);
     }
 
     private void configureConnectors() {
         if (http) {
-            SelectChannelConnector httpConnector = context.getBean("connector", SelectChannelConnector.class);
+            SelectChannelConnector httpConnector = context.getBean(CONNECTOR_BEAN_NAME, SelectChannelConnector.class);
             configureHttpConnector(httpConnector);
             server.addConnector(httpConnector);
         }
         if (https) {
             checkNotNull(keyStorePath, "keyStore has to be set in https mode");
-            SslSelectChannelConnector httpsConnector = context.getBean("sslConnector", SslSelectChannelConnector.class);
+            SslSelectChannelConnector httpsConnector = context.getBean(SSL_CONNECTOR_BEAN_NAME, SslSelectChannelConnector.class);
             configureHttpsConnector(httpsConnector);
             server.addConnector(httpsConnector);
         }
@@ -190,7 +177,7 @@ public final class SoapServer {
         webContext.refresh();
         servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, webContext);
         if (webContext != null) {
-            endpoint = webContext.getBean("endpoint", GenericContextDomEndpoint.class);
+            endpoint = webContext.getBean(ENDPOINT_BEAN_NAME, GenericContextDomEndpoint.class);
         }
     }
 
@@ -205,9 +192,9 @@ public final class SoapServer {
 
     private Properties buildProperties() {
         Properties properties = new Properties();
-        properties.setProperty("core.pool.size", coreThreads.toString());
-        properties.setProperty("max.pool.size", maxThreads.toString());
-        properties.setProperty("keep.alive.time", threadKeepAliveTimeInSeconds.toString());
+        properties.setProperty(CORE_POOL_SIZE_PROP_KEY, coreThreads.toString());
+        properties.setProperty(MAX_POOL_SIZE_PROP_KEY, maxThreads.toString());
+        properties.setProperty(KEEP_ALIVE_PROP_KEY, threadKeepAliveTimeInSeconds.toString());
         return properties;
     }
 

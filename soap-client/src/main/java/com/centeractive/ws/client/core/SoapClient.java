@@ -32,7 +32,7 @@ import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
-import static com.centeractive.ws.client.config.SoapConstants.*;
+import static com.centeractive.ws.client.core.SoapClientConstants.*;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -48,8 +48,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class SoapClient {
 
     private final static Log log = LogFactory.getLog(SoapClient.class);
-
-    private static final int INFINITE_TIMEOUT = 0;
 
     private URL serverUrl;
     private String basicAuthEncoded;
