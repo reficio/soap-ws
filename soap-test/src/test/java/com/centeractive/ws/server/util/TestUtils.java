@@ -32,6 +32,8 @@ import java.net.URL;
 import java.util.Collection;
 
 /**
+ * Utils used in SoapClient<->Soap Server integration testing
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */

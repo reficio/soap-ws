@@ -31,6 +31,8 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 /**
+ * Test SoapServer<->SoapClient communication using plain HTTP connection
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */

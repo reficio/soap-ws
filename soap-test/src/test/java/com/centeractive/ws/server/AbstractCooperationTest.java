@@ -37,6 +37,14 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 /**
+ * Abstract SoapServer<->SoapClient integration test with lots of convenience methods.
+ * Basically, what it does is:
+ * - read the test set from the resources folder -> test set id is passed to the reader
+ * - starts the soap server and registers an auto-responder for the specified WSDL
+ * - generates an XML request and response for every operation in the WSDL
+ * - creates a SoapClient and post the XML request to the Server
+ * - receives the response from the server and compares it to the response generated locally by the client.
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */
@@ -92,7 +100,6 @@ public abstract class AbstractCooperationTest {
 
         if (operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
             String expectedResponse = builder.buildSoapMessageFromOutput(builder.getOperation(binding, operation));
-            // log.info("Expecting response:\n" + expectedResponse);
             boolean identical = XmlTestUtils.isIdenticalNormalizedWithoutValues(expectedResponse, response);
             assertTrue("Error during validation of service " + testServiceId, identical);
         }

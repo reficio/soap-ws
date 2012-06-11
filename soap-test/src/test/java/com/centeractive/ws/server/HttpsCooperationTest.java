@@ -29,6 +29,8 @@ import org.junit.*;
 import java.net.URL;
 
 /**
+ * Test SoapServer<->SoapClient communication using HTTPS
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */

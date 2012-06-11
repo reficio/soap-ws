@@ -30,6 +30,8 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 /**
+ * Test the post the message 30 consecutive times
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */
