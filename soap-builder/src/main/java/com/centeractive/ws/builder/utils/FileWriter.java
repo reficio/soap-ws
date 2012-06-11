@@ -22,11 +22,10 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: tom
- * Date: 5/23/12
- * Time: 3:29 PM
- * To change this template use File | Settings | File Templates.
+ * This class was taken from Axis2 code. It's a Wsdl11Writer dependency.
+ *
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 class FileWriter {
 

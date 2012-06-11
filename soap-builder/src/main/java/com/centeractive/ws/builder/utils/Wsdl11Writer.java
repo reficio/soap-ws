@@ -18,13 +18,6 @@
  */
 package com.centeractive.ws.builder.utils;
 
-/**
- * Created by IntelliJ IDEA.
- * User: tom
- * Date: 5/23/12
- * Time: 2:10 PM
- * To change this template use File | Settings | File Templates.
- */
 
 import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.w3c.dom.Element;
@@ -44,7 +37,13 @@ import javax.wsdl.xml.WSDLWriter;
 import java.io.*;
 import java.util.*;
 
-
+/**
+ * This class was taken from Axis2 code. It's main responsibility is to marshall wsdl4j Definition instance back into the XML format.
+ * By default it only marshalled the WSDL hierarchy. It was adjusted in such a way that it recursively marshalls XSD schemas as well.<p></p>
+ *
+ * @author Tom Bujok
+ * @since 1.0.0
+ */
 public class Wsdl11Writer {
 
     public static final String IMPORT_TAG = "import";

@@ -21,9 +21,10 @@ package com.centeractive.ws.builder.soap.domain;
 import javax.xml.namespace.QName;
 
 /**
- * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 16/11/11
- * Time: 2:49 PM
+ * Wrapper object that represents one operation from a WSDL's binding
+ *
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 public class OperationWrapper {
 
@@ -33,7 +34,8 @@ public class OperationWrapper {
     private final String operationOutputName;
     private final String soapAction;
 
-    public OperationWrapper(QName bindingName, String operationName, String operationInputName, String operationOutputName, String soapAction) {
+    public OperationWrapper(QName bindingName, String operationName, String operationInputName,
+                            String operationOutputName, String soapAction) {
         this.bindingName = bindingName;
         this.operationName = operationName;
         this.operationInputName = operationInputName;

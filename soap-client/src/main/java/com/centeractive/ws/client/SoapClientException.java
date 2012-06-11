@@ -19,8 +19,6 @@
 package com.centeractive.ws.client;
 
 /**
- * Copyright (c) centeractive ag, Inc. All Rights Reserved.
- * <p/>
  * User: Tom Bujok (tomasz.bujok@centeractive.com)
  * Date: 22/11/11
  * Time: 7:53 PM

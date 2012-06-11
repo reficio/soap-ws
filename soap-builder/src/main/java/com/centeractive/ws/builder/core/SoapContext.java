@@ -19,7 +19,10 @@
 package com.centeractive.ws.builder.core;
 
 /**
+ * Specifies the context of the SOAP message generation.
+ *
  * @author Tom Bujok
+ * @since 1.0.0
  */
 public class SoapContext {
 
@@ -69,31 +72,65 @@ public class SoapContext {
         private boolean buildOptional = true;
         private boolean alwaysBuildHeaders = true;
 
+        /**
+         * Specifies if to generate example SOAP message content
+         *
+         * @param value
+         * @return
+         */
         public ContextBuilder exampleContent(boolean value) {
             this.exampleContent = value;
             return this;
         }
 
+        /**
+         * Specifies if to generate SOAP message type comments
+         *
+         * @param value
+         * @return
+         */
         public ContextBuilder typeComment(boolean value) {
             this.typeComment = value;
             return this;
         }
 
+        /**
+         * Specifies if to skip SOAP message comments
+         *
+         * @param value
+         * @return
+         */
         public ContextBuilder skipComments(boolean value) {
             this.skipComments = value;
             return this;
         }
 
+        /**
+         * Specifies if to generate content for elements marked as optional
+         *
+         * @param value
+         * @return
+         */
         public ContextBuilder buildOptional(boolean value) {
             this.buildOptional = value;
             return this;
         }
 
+        /**
+         * Specifies if to always build SOAP headers
+         *
+         * @param value
+         * @return
+         */
         public ContextBuilder alwaysBuildHeaders(boolean value) {
             this.alwaysBuildHeaders = value;
             return this;
         }
 
+        /**
+         * Builds populated context instance
+         * @return
+         */
         public SoapContext create() {
             return new SoapContext(exampleContent, typeComment, skipComments,
                     buildOptional, alwaysBuildHeaders);

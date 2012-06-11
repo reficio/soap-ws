@@ -26,9 +26,11 @@ import java.net.URL;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 11/10/11
- * Time: 10:04 AM
+ * Loads resources from the classpath in a relatively seamless way.<br/>
+ * Simplifies the Java API for resource loading.
+ *
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 public class ResourceUtils {
 
