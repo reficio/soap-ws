@@ -20,6 +20,7 @@ package com.centeractive.ws.client.core;
 
 import com.centeractive.ws.client.SoapClientException;
 import com.centeractive.ws.client.TransmissionException;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import sun.misc.BASE64Encoder;
@@ -27,17 +28,19 @@ import sun.misc.BASE64Encoder;
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.*;
-import java.security.KeyManagementException;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 
 import static com.centeractive.ws.client.config.SoapConstants.*;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * SOAP client. Enables to communicate with SOAP server on a purely XML level.
+ * Supports SSL/TLS, basic-authentication and java.net.Proxy.
+ * Supports SOAP 1.1 and 1.2 - SOAPAction attribute is properly placed, either in the header (SOAP 1.1) or in the content (SOAP 1.2).
+ * SOAP version recognition is based on the SOAP namespace included in the payload.
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */
@@ -81,11 +84,7 @@ public final class SoapClient {
             if (strictHostVerification == false) {
                 ((HttpsURLConnection) connection).setHostnameVerifier(new SoapHostnameVerifier());
             }
-        } catch (NoSuchAlgorithmException e) {
-            throw new SoapClientException("TLS/SSL setup failed", e);
-        } catch (KeyManagementException e) {
-            throw new SoapClientException("TLS/SSL setup failed", e);
-        } catch (KeyStoreException e) {
+        } catch (GeneralSecurityException e) {
             throw new SoapClientException("TLS/SSL setup failed", e);
         }
     }
@@ -167,7 +166,7 @@ public final class SoapClient {
             return response.toString();
         } finally {
             if (outputWriter != null)
-                outputWriter.close();
+                IOUtils.closeQuietly(outputWriter);
         }
     }
 
@@ -194,23 +193,15 @@ public final class SoapClient {
     }
 
     private void cleanupResources() {
-        try {
-            if (inputStream != null)
-                inputStream.close();
-        } catch (IOException e) {
-            // ignore
-        } finally {
-            try {
-                if (outputStream != null)
-                    outputStream.close();
-            } catch (IOException e) {
-                // ignore
-            }
-        }
+        if (inputStream != null)
+            IOUtils.closeQuietly(inputStream);
+        if (outputStream != null)
+            IOUtils.closeQuietly(outputStream);
     }
 
     /**
-     * Underlying connection is persistent by default
+     * Disconnects from the SOAP server
+     * Underlying connection is persistent by default:
      *
      * @link http://docs.oracle.com/javase/1.5.0/docs/guide/net/http-keepalive.html
      */
@@ -218,12 +209,24 @@ public final class SoapClient {
         connection.disconnect();
     }
 
+
+    /**
+     * Post the SOAP message to the SOAP server without specifying the SOAPAction
+     *
+     * @param requestEnvelope SOAP message envelope
+     * @return The result returned by the SOAP server
+     */
     public String post(String requestEnvelope) {
-        // TODO ugly null
         return post(null, requestEnvelope);
     }
 
-
+    /**
+     * Post the SOAP message to the SOAP server specifying the SOAPAction
+     *
+     * @param soapAction      SOAPAction attribute
+     * @param requestEnvelope SOAP message envelope
+     * @return The result returned by the SOAP server
+     */
     public String post(String soapAction, String requestEnvelope) {
         log.debug(String.format("Sending request to host=[%s] action=[%s] request:\n%s", serverUrl.toString(),
                 soapAction, requestEnvelope));
@@ -243,6 +246,9 @@ public final class SoapClient {
         }
     }
 
+    /**
+     * Builder to construct a properly populated SoapClient
+     */
     public static class Builder {
         SoapClient client = new SoapClient();
 
@@ -261,6 +267,10 @@ public final class SoapClient {
             return new BASE64Encoder().encode(basicAuthCredentials.getBytes());
         }
 
+        /**
+         * @param url URL of the SOAP server to whom the client should send messages. Has to be not-null.
+         * @return
+         */
         public Builder url(String url) {
             checkNotNull(url);
             try {
@@ -272,82 +282,147 @@ public final class SoapClient {
             }
         }
 
+        /**
+         * Enables basic authentication while communication with the SOAP server
+         *
+         * @param user     User for the basic-authentication
+         * @param password Password for the basic-authentication
+         * @return
+         */
         public Builder basicAuth(String user, String password) {
             client.basicAuthEncoded = encodeBasicCredentials(user, password);
             return this;
         }
 
+        /**
+         * Enables basic authentication while communication with the proxy server
+         *
+         * @param user     User for the basic-authentication
+         * @param password Password for the basic-authentication
+         * @return
+         */
         public Builder proxyAuth(String user, String password) {
             client.proxyAuthEncoded = encodeBasicCredentials(user, password);
             return this;
         }
 
+        /**
+         * @param keyStore Specifies the keystore to be used in the SOAP communication
+         * @return
+         */
         public Builder keyStore(KeyStore keyStore) {
             checkNotNull(keyStore);
             client.keyStore = keyStore;
             return this;
         }
 
+        /**
+         * @param value Specifies the URL of the keystore to be used in the SOAP communication
+         * @return
+         */
         public Builder keyStoreUrl(URL value) {
             checkNotNull(value);
             keyStoreUrl = value;
             return this;
         }
 
+        /**
+         * @param value Specifies the type of the keystore
+         * @return
+         */
         public Builder keyStoreType(String value) {
             checkNotNull(value);
             keyStoreType = value;
             return this;
         }
 
+        /**
+         * @param value keystore password
+         * @return
+         */
         public Builder keyStorePassword(String value) {
-            if(value != null) {
+            if (value != null) {
                 keyStorePassword = value.toCharArray();
             }
             return this;
         }
 
+        /**
+         * Enables strict host verification
+         *
+         * @param value strict host verification enables/disabled
+         * @return
+         */
         public Builder strictHostVerification(boolean value) {
             client.strictHostVerification = value;
             return this;
         }
 
+        /**
+         * @param value Specifies the proxy type
+         * @return
+         */
         public Builder proxyType(Proxy.Type value) {
             checkNotNull(value);
             proxyType = value;
             return this;
         }
 
+        /**
+         * @param value Specifies the proxy host (IP or hostname)
+         * @return
+         */
         public Builder proxyHost(String value) {
             checkNotNull(value);
             proxyHost = value;
             return this;
         }
 
+        /**
+         * @param value Specifies the proxy port
+         * @return
+         */
         public Builder proxyPort(int value) {
             checkArgument(value > 0);
             proxyPort = value;
             return this;
         }
 
+        /**
+         * @param value Specifies the SSL Context. By default it's SSLv3
+         * @return
+         */
         public Builder sslContext(String value) {
             checkNotNull(value);
             client.sslContext = value;
             return this;
         }
 
+        /**
+         * @param value Specifies the timeout in millisecond for the read operation
+         * @return
+         */
         public Builder readTimeoutInMillis(int value) {
             checkArgument(value >= 0);
             client.readTimeoutInMillis = value;
             return this;
         }
 
+        /**
+         * @param value Specifies the timeout in millisecond for the connect operation
+         * @return
+         */
         public Builder connectTimeoutInMillis(int value) {
             checkArgument(value >= 0);
             client.connectTimeoutInMillis = value;
             return this;
         }
 
+        /**
+         * Constructs properly populated soap client
+         *
+         * @return properly populated soap clients
+         */
         public SoapClient create() {
             validateAndInitKeystore();
             validateAndInitProxy();
@@ -362,13 +437,7 @@ public final class SoapClient {
                     ks.load(in, keyStorePassword);
                     in.close();
                     client.keyStore = ks;
-                } catch (FileNotFoundException e) {
-                    throw new SoapClientException("Keystore setup failed", e);
-                } catch (CertificateException e) {
-                    throw new SoapClientException("Keystore setup failed", e);
-                } catch (NoSuchAlgorithmException e) {
-                    throw new SoapClientException("Keystore setup failed", e);
-                } catch (KeyStoreException e) {
+                } catch (GeneralSecurityException e) {
                     throw new SoapClientException("Keystore setup failed", e);
                 } catch (IOException e) {
                     throw new SoapClientException("Keystore setup failed", e);

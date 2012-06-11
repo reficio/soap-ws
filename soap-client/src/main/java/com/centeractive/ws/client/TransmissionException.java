@@ -19,6 +19,8 @@
 package com.centeractive.ws.client;
 
 /**
+ * Exception thrown when an transmission error occurs. Returns HTTP error code if returned by the server.
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */
