@@ -37,11 +37,8 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 /**
- * Copyright (c) centeractive ag, Inc. All Rights Reserved.
- * <p/>
- * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 19/11/11
- * Time: 6:32 PM
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 public abstract class AbstractCooperationTest {
 

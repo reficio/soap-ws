@@ -30,11 +30,8 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 /**
- * Copyright (c) centeractive ag, Inc. All Rights Reserved.
- *
- * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 22/11/11
- * Time: 8:21 PM
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 public class TrickyCooperationTest extends AbstractCooperationTest {
 

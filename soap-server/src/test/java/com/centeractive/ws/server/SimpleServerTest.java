@@ -34,11 +34,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Copyright (c) centeractive ag, Inc. All Rights Reserved.
- *
- * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 22/11/11
- * Time: 8:47 PM
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 public class SimpleServerTest {
 

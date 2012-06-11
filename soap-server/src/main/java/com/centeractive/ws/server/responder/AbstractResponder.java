@@ -37,11 +37,8 @@ import javax.xml.transform.dom.DOMSource;
 import java.util.*;
 
 /**
- * Copyright (c) centeractive ag, Inc. All Rights Reserved.
- * <p/>
- * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 18/11/11
- * Time: 10:19 AM
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 public abstract class AbstractResponder implements RequestResponder {
 

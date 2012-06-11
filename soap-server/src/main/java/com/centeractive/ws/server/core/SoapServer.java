@@ -45,11 +45,8 @@ import java.util.Properties;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Copyright (c) centeractive ag, Inc. All Rights Reserved.
- *
- * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 19/11/11
- * Time: 4:41 PM
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 public final class SoapServer {
 

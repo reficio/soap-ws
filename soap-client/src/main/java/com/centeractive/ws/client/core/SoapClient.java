@@ -38,11 +38,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Copyright (c) centeractive ag, Inc. All Rights Reserved.
- * <p/>
- * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 11/11/11
- * Time: 12:55 PM
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 public final class SoapClient {
 

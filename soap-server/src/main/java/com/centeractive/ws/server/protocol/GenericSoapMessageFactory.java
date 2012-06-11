@@ -33,11 +33,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Copyright (c) centeractive ag, Inc. All Rights Reserved.
- *
- * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 21/11/11
- * Time: 2:40 PM
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 public class GenericSoapMessageFactory implements SoapMessageFactory, InitializingBean {
     private static final String REQUEST_CONTEXT_ATTRIBUTE = "GenericSoapMessageFactory";

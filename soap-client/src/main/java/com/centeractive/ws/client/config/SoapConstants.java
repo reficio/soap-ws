@@ -19,11 +19,8 @@
 package com.centeractive.ws.client.config;
 
 /**
- * Copyright (c) centeractive ag, Inc. All Rights Reserved.
- *
- * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 23/11/11
- * Time: 9:13 AM
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 public class SoapConstants {
 

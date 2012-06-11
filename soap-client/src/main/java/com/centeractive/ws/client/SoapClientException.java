@@ -19,9 +19,8 @@
 package com.centeractive.ws.client;
 
 /**
- * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 22/11/11
- * Time: 7:53 PM
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 public class SoapClientException extends RuntimeException {
 

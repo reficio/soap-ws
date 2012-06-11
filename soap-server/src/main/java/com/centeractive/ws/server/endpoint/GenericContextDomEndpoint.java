@@ -37,11 +37,8 @@ import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Copyright (c) centeractive ag, Inc. All Rights Reserved.
- *
- * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 18/10/11
- * Time: 11:27 AM
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 @SuppressWarnings("deprecation")
 public class GenericContextDomEndpoint extends AbstractDomPayloadEndpoint implements ContextPayloadEndpoint, InitializingBean {

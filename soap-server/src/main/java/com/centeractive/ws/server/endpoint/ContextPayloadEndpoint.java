@@ -24,11 +24,8 @@ import org.springframework.ws.server.endpoint.PayloadEndpoint;
 import javax.xml.transform.Source;
 
 /**
- * Copyright (c) centeractive ag, Inc. All Rights Reserved.
- *
- * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 14/11/11
- * Time: 3:14 PM
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 public interface ContextPayloadEndpoint extends PayloadEndpoint {
 

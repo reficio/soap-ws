@@ -30,11 +30,8 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 
 /**
- * Copyright (c) centeractive ag, Inc. All Rights Reserved.
- * <p/>
- * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 16/11/11
- * Time: 3:38 PM
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 public class AutoResponder extends AbstractResponder {
 

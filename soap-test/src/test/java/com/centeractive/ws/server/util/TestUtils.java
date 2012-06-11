@@ -32,9 +32,8 @@ import java.net.URL;
 import java.util.Collection;
 
 /**
- * User: Tom Bujok (tomasz.bujok@centeractive.com)
- * Date: 19/11/11
- * Time: 6:29 PM
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 public class TestUtils {
 

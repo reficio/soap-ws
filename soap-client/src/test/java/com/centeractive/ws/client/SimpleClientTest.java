@@ -26,11 +26,8 @@ import java.net.SocketTimeoutException;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by IntelliJ IDEA.
- * User: tom
- * Date: 5/30/12
- * Time: 10:45 AM
- * To change this template use File | Settings | File Templates.
+ * @author Tom Bujok
+ * @since 1.0.0
  */
 public class SimpleClientTest {
 
