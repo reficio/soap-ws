@@ -28,6 +28,7 @@ import sun.misc.BASE64Encoder;
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.*;
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
@@ -153,7 +154,7 @@ public final class SoapClient {
         Writer outputWriter = null;
         try {
             outputStream = connection.getOutputStream();
-            outputWriter = new OutputStreamWriter(outputStream);
+            outputWriter = new OutputStreamWriter(outputStream, Charset.forName("UTF-8"));
             outputWriter.write(data);
             outputWriter.flush();
 
@@ -228,7 +229,7 @@ public final class SoapClient {
      * @return The result returned by the SOAP server
      */
     public String post(String soapAction, String requestEnvelope) {
-        log.debug(String.format("Sending request to host=[%s] action=[%s] request:\n%s", serverUrl.toString(),
+        log.debug(String.format("Sending request to host=[%s] action=[%s] request:%n%s", serverUrl.toString(),
                 soapAction, requestEnvelope));
         openConnection();
         configureTls();
@@ -239,7 +240,7 @@ public final class SoapClient {
         return response;
     }
 
-    class SoapHostnameVerifier implements HostnameVerifier {
+    static class SoapHostnameVerifier implements HostnameVerifier {
         @Override
         public boolean verify(String urlHost, SSLSession sslSession) {
             return true;
@@ -264,7 +265,7 @@ public final class SoapClient {
             checkNotNull(user);
             checkNotNull(password);
             String basicAuthCredentials = user + ":" + password;
-            return new BASE64Encoder().encode(basicAuthCredentials.getBytes());
+            return new BASE64Encoder().encode(basicAuthCredentials.getBytes(Charset.forName("UTF-8")));
         }
 
         /**

@@ -20,14 +20,17 @@ package com.centeractive.ws.server.endpoint;
 
 import com.centeractive.ws.builder.soap.XmlUtils;
 import com.centeractive.ws.server.SoapServerException;
+import org.apache.commons.io.input.CharSequenceReader;
 import org.springframework.ws.WebServiceMessage;
 
+import javax.sound.sampled.AudioFormat;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 
 /**
  * @author Tom Bujok
@@ -53,7 +56,7 @@ public class GenericSoapMessage implements WebServiceMessage {
 
     @Override
     public void writeTo(OutputStream outputStream) throws IOException {
-        Writer writer = new OutputStreamWriter(outputStream);
+        Writer writer = new OutputStreamWriter(outputStream, Charset.forName("UTF-8"));
         String message = XmlUtils.sourceToXmlString(source);
         writer.write(message);
         writer.flush();
