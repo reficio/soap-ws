@@ -51,8 +51,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class SoapServer {
 
-    private final static Log log = LogFactory.getLog(SoapServer.class);
-
     private Integer httpPort = HTTP_PORT;
     private Integer httpsPort = HTTPS_PORT;
     private boolean reuseAddress = REUSE_ADDRESS;
@@ -209,11 +207,7 @@ public final class SoapServer {
     }
 
     public static class SoapServerBuilder {
-        private final SoapServer server;
-
-        public SoapServerBuilder() {
-            server = new SoapServer();
-        }
+        private final SoapServer server = new SoapServer();
 
         public SoapServerBuilder reuseAddress(boolean value) {
             server.reuseAddress = value;

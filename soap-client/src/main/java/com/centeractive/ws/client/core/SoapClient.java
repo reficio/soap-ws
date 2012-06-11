@@ -70,8 +70,9 @@ public final class SoapClient {
     }
 
     private void configureTls() {
-        if (tlsEnabled == false)
+        if (tlsEnabled == false) {
             return;
+        }
         try {
             TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init(keyStore);
@@ -164,8 +165,9 @@ public final class SoapClient {
             }
             return response.toString();
         } finally {
-            if (outputWriter != null)
+            if (outputWriter != null) {
                 IOUtils.closeQuietly(outputWriter);
+            }
         }
     }
 
@@ -192,10 +194,12 @@ public final class SoapClient {
     }
 
     private void cleanupResources() {
-        if (inputStream != null)
+        if (inputStream != null) {
             IOUtils.closeQuietly(inputStream);
-        if (outputStream != null)
+        }
+        if (outputStream != null) {
             IOUtils.closeQuietly(outputStream);
+        }
     }
 
     /**
@@ -249,7 +253,7 @@ public final class SoapClient {
      * Builder to construct a properly populated SoapClient
      */
     public static class Builder {
-        SoapClient client = new SoapClient();
+        private final SoapClient client = new SoapClient();
 
         private URL keyStoreUrl;
         private String keyStoreType = JKS_KEYSTORE;
