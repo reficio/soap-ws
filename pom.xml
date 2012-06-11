@@ -6,7 +6,7 @@
     <artifactId>soap-ws</artifactId>
     <packaging>pom</packaging>
     <version>1.0.1-SNAPSHOT</version>
-    <name>soap-ws - parent</name>
+    <name>soap-ws</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -189,7 +189,7 @@
                         <version>2.4.0</version>
                         <configuration>
                             <xmlOutput>true</xmlOutput>
-                            <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
+                            <excludeFilterFile>src/main/resources/findbugs-exclude.xml</excludeFilterFile>
                         </configuration>
                     </plugin>
                 </plugins>
