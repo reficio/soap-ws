@@ -18,8 +18,6 @@
  */
 package com.centeractive.ws.server.protocol;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -40,10 +38,15 @@ public class GenericSoapMessageFactory implements SoapMessageFactory, Initializi
 
     private static final String REQUEST_CONTEXT_ATTRIBUTE = "GenericSoapMessageFactory";
 
-    private SaajSoapMessageFactory soap11 = new SaajSoapMessageFactory();
-    private SaajSoapMessageFactory soap12 = new SaajSoapMessageFactory();
+    private final SaajSoapMessageFactory soap11;
+    private final SaajSoapMessageFactory soap12;
+    private SoapProtocolChooser soapProtocolChooser;
 
-    private SoapProtocolChooser soapProtocolChooser = new SimpleSoapProtocolChooser();
+    public GenericSoapMessageFactory() {
+        this.soap11 = new SaajSoapMessageFactory();
+        this.soap12 = new SaajSoapMessageFactory();
+        this.soapProtocolChooser = new SimpleSoapProtocolChooser();
+    }
 
     private void setMessageFactoryForRequestContext(SaajSoapMessageFactory factory) {
         RequestAttributes attributes = RequestContextHolder.getRequestAttributes();

@@ -44,8 +44,10 @@ public class SimpleSoapProtocolChooser implements SoapProtocolChooser {
         }
         return false;
     }
+
     public boolean useSoap12(TransportInputStream transportInputStream) throws IOException {
         return useSoap11(transportInputStream) == false;
     }
+
 }
 

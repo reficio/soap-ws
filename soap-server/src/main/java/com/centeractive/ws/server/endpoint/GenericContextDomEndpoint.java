@@ -46,7 +46,11 @@ public class GenericContextDomEndpoint extends AbstractDomPayloadEndpoint implem
 
     private final static Log log = LogFactory.getLog(GenericContextDomEndpoint.class);
 
-    private ConcurrentHashMap<String, RequestResponder> services = new ConcurrentHashMap<String, RequestResponder>();
+    private final ConcurrentHashMap<String, RequestResponder> services;
+
+    public GenericContextDomEndpoint() {
+        this.services = new ConcurrentHashMap<String, RequestResponder>();
+    }
 
     @Override
     protected Element invokeInternal(Element requestElement, Document responseDocument) throws Exception {
