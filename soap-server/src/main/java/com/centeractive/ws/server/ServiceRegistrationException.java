@@ -19,6 +19,8 @@
 package com.centeractive.ws.server;
 
 /**
+ * Exception thrown when an service registration error occurs (for example a double registration)
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */

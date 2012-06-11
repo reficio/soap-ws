@@ -19,6 +19,7 @@
 package com.centeractive.ws.server.endpoint;
 
 import com.centeractive.ws.server.ServiceRegistrationException;
+import com.centeractive.ws.server.SoapServerException;
 import com.centeractive.ws.server.responder.RequestResponder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,7 +50,7 @@ public class GenericContextDomEndpoint extends AbstractDomPayloadEndpoint implem
 
     @Override
     protected Element invokeInternal(Element requestElement, Document responseDocument) throws Exception {
-        throw new RuntimeException("This method is not implemented - it SHOULD NOT be used.");
+        throw new SoapServerException("This method is not implemented - it SHOULD NOT be used.");
     }
 
     @Override
@@ -81,7 +82,7 @@ public class GenericContextDomEndpoint extends AbstractDomPayloadEndpoint implem
 
     private Source handleNoResponderFault(Source request) {
         String msg = String.format("There is no service under the requested context path [%s]", getRequestContextPath());
-        throw new RuntimeException(msg);
+        throw new SoapServerException(msg);
     }
 
     private HttpServletRequest getHttpServletRequest() {

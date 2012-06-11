@@ -19,6 +19,7 @@
 package com.centeractive.ws.server.endpoint;
 
 import com.centeractive.ws.builder.soap.XmlUtils;
+import com.centeractive.ws.server.SoapServerException;
 import org.springframework.ws.WebServiceMessage;
 
 import javax.xml.transform.Result;
@@ -47,7 +48,7 @@ public class GenericSoapMessage implements WebServiceMessage {
 
     @Override
     public Result getPayloadResult() {
-        throw new RuntimeException("This method is not implemented - it SHOULD NOT be used.");
+        throw new SoapServerException("This method is not implemented - it SHOULD NOT be used.");
     }
 
     @Override

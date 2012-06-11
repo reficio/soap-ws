@@ -19,6 +19,8 @@
 package com.centeractive.ws.server;
 
 /**
+ * Top-level exception type thrown from SoapServer
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */

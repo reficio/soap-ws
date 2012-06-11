@@ -88,7 +88,7 @@ public final class SoapServer {
         try {
             server.start();
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new SoapServerException(ex);
         }
     }
 
@@ -96,7 +96,7 @@ public final class SoapServer {
         try {
             server.stop();
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new SoapServerException(ex);
         }
     }
 

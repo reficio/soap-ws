@@ -70,7 +70,7 @@ public class SimpleServerTest {
                 return portToCheck;
             }
         }
-        throw new RuntimeException("Crazy stuff is happening, no free port available");
+        throw new SoapServerException("Crazy stuff is happening, no free port available");
     }
 
     public static SoapServer getServer() {

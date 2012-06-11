@@ -21,6 +21,7 @@ package com.centeractive.ws.server.responder;
 import com.centeractive.ws.builder.core.SoapBuilder;
 import com.centeractive.ws.builder.soap.WsdlUtils;
 import com.centeractive.ws.builder.soap.domain.OperationWrapper;
+import com.centeractive.ws.server.SoapServerException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -246,7 +247,7 @@ public abstract class AbstractResponder implements RequestResponder {
             }
             return null;
         } catch (OperationNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new SoapServerException(e);
         }
     }
 

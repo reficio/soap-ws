@@ -19,6 +19,7 @@
 package com.centeractive.ws.builder.utils;
 
 
+import com.centeractive.ws.builder.SoapBuilderException;
 import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -65,7 +66,7 @@ public class Wsdl11Writer {
             baseURIwsdlNameMap.put(definition.getDocumentBaseURI(), name + ".wsdl");
             writeWSDL(definition, name + ".wsdl", new HashMap<String, String>(), baseURIwsdlNameMap);
         } catch (Exception e) {
-            throw new RuntimeException("WSDL writing failed!", e);
+            throw new SoapBuilderException("WSDL writing failed!", e);
         }
     }
 
@@ -232,7 +233,7 @@ public class Wsdl11Writer {
                 writer.close();
             }
         } catch (Exception ex) {
-            throw new RuntimeException("Unexpected error", ex);
+            throw new SoapBuilderException("Unexpected error", ex);
         }
 
     }

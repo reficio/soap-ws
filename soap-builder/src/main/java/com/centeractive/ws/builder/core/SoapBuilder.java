@@ -148,7 +148,7 @@ public class SoapBuilder {
         try {
             return file.toURI().toURL();
         } catch (MalformedURLException e) {
-            throw new RuntimeException("Error saving url", e);
+            throw new SoapBuilderException("Error saving url", e);
         }
     }
 

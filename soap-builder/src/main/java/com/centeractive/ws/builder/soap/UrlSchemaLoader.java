@@ -18,6 +18,7 @@
  */
 package com.centeractive.ws.builder.soap;
 
+import com.centeractive.ws.builder.SoapBuilderException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
@@ -64,22 +65,22 @@ public class UrlSchemaLoader implements SchemaLoader, DefinitionLoader
 	}
 
     public void setProgressInfo(String info) {
-        throw new RuntimeException("Not Implemented");
+        throw new SoapBuilderException("Not Implemented");
     }
 
     public boolean isAborted() {
-        throw new RuntimeException("Not Implemented");
+        throw new SoapBuilderException("Not Implemented");
     }
 
     public boolean abort() {
-        throw new RuntimeException("Not Implemented");
+        throw new SoapBuilderException("Not Implemented");
     }
 
     public void setNewBaseURI(String uri) {
-        throw new RuntimeException("Not Implemented");
+        throw new SoapBuilderException("Not Implemented");
     }
 
     public String getFirstNewURI() {
-        throw new RuntimeException("Not Implemented");
+        throw new SoapBuilderException("Not Implemented");
     }
 }

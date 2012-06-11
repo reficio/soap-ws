@@ -22,6 +22,7 @@ import com.centeractive.ws.builder.core.SoapBuilder;
 import com.centeractive.ws.builder.core.SoapContext;
 import com.centeractive.ws.builder.soap.XmlUtils;
 import com.centeractive.ws.builder.soap.domain.OperationWrapper;
+import com.centeractive.ws.server.SoapServerException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.ws.soap.SoapMessage;
@@ -56,7 +57,7 @@ public class AutoResponder extends AbstractResponder {
             Source responseSource = XmlUtils.xmlStringToSource(response);
             return responseSource;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new SoapServerException(e);
         }
     }
 
