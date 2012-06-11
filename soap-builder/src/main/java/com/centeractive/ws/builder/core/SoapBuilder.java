@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class was extracted from the soapUI code base by centeractive ag in June 2012.
+ * This class was extracted from the soapUI code base by centeractive ag in October 2011.
  * The main reason behind the extraction was to separate the code that is responsible
  * for the generation of the SOAP messages from the rest of the soapUI's code that is
  * tightly coupled with other modules, such as soapUI's graphical user interface, etc.
