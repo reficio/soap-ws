@@ -22,7 +22,10 @@ package com.centeractive.ws.client.core;
  * @author Tom Bujok
  * @since 1.0.0
  */
-class SoapClientConstants {
+final class SoapClientConstants {
+
+    private SoapClientConstants() {
+    }
 
     public final static String
             HTTP = "HTTP",

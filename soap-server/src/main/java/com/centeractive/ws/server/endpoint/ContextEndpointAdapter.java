@@ -31,7 +31,7 @@ import javax.xml.transform.Source;
  */
 public class ContextEndpointAdapter extends PayloadEndpointAdapter {
 
-    public void invoke(MessageContext messageContext, Object endpoint) throws Exception {
+    public void invoke(MessageContext messageContext, Object endpoint) {
         ContextPayloadEndpoint payloadEndpoint = (ContextPayloadEndpoint) endpoint;
         Source requestSource = messageContext.getRequest().getPayloadSource();
         Source responseSource = payloadEndpoint.invoke(requestSource, messageContext);

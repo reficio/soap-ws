@@ -53,15 +53,15 @@ public class GenericContextDomEndpoint extends AbstractDomPayloadEndpoint implem
     }
 
     @Override
-    protected Element invokeInternal(Element requestElement, Document responseDocument) throws Exception {
+    protected Element invokeInternal(Element requestElement, Document responseDocument) {
         throw new SoapServerException("This method is not implemented - it SHOULD NOT be used.");
     }
 
     @Override
-    public Source invoke(Source request, MessageContext messageContext) throws Exception {
+    public Source invoke(Source request, MessageContext messageContext) {
         RequestResponder requestResponder = getRequestResponderBySessionRequestContextPath();
         if (noResponderForRequestFound(requestResponder)) {
-            handleNoResponderFault(request);
+            handleNoResponderFault();
         }
         SoapMessage msg = (SoapMessage) messageContext.getRequest();
         Source response = requestResponder.respond(msg);
@@ -84,7 +84,7 @@ public class GenericContextDomEndpoint extends AbstractDomPayloadEndpoint implem
         return false;
     }
 
-    private Source handleNoResponderFault(Source request) {
+    private Source handleNoResponderFault() {
         String msg = String.format("There is no service under the requested context path [%s]", getRequestContextPath());
         throw new SoapServerException(msg);
     }
@@ -114,7 +114,7 @@ public class GenericContextDomEndpoint extends AbstractDomPayloadEndpoint implem
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         log.info("Generic SOAP endpoint initialized");
     }
 }

@@ -37,6 +37,6 @@ public interface ContextPayloadEndpoint extends PayloadEndpoint {
      * @return the payload of the response message, may be <code>null</code> to indicate no response
      * @throws Exception if an exception occurs
      */
-    Source invoke(Source request, MessageContext messageContext) throws Exception;
+    Source invoke(Source request, MessageContext messageContext);
 
 }

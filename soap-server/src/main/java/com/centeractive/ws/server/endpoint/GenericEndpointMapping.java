@@ -32,7 +32,7 @@ public class GenericEndpointMapping extends AbstractEndpointMapping {
     private ContextPayloadEndpoint genericEndpoint;
 
     @Override
-    protected Object getEndpointInternal(MessageContext messageContext) throws Exception {
+    protected Object getEndpointInternal(MessageContext messageContext) {
         return genericEndpoint;
     }
 

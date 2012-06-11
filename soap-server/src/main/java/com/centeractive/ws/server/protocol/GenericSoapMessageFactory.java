@@ -72,7 +72,7 @@ public class GenericSoapMessageFactory implements SoapMessageFactory, Initializi
         factory.afterPropertiesSet();
     }
 
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         configureFactory(soap11, SoapVersion.SOAP_11);
         configureFactory(soap12, SoapVersion.SOAP_12);
     }

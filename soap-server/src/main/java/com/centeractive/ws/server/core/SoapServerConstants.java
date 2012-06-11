@@ -22,7 +22,11 @@ package com.centeractive.ws.server.core;
  * @author Tom Bujok
  * @since 1.0.0
  */
-class SoapServerConstants {
+final class SoapServerConstants {
+
+    private SoapServerConstants() {
+    }
+
     public static final int HTTP_PORT = 8080;
     public static final int HTTPS_PORT = 8443;
     public static final int CONNECTION_MAX_IDLE_TIME_IN_SECONDS = 60;
@@ -42,4 +46,5 @@ class SoapServerConstants {
     public static final String CORE_POOL_SIZE_PROP_KEY = "core.pool.size";
     public static final String MAX_POOL_SIZE_PROP_KEY = "max.pool.size";
     public static final String KEEP_ALIVE_PROP_KEY = "keep.alive.time";
+
 }
