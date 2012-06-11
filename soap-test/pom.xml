@@ -5,7 +5,6 @@
     <groupId>com.centeractive</groupId>
     <artifactId>soap-test</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.1-SNAPSHOT</version>
     <name>soap-test - client-server integration tests</name>
 
     <parent>
@@ -20,6 +19,7 @@
             <groupId>com.centeractive</groupId>
             <artifactId>soap-builder</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.centeractive</groupId>
@@ -32,24 +32,22 @@
             <groupId>com.centeractive</groupId>
             <artifactId>soap-client</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.centeractive</groupId>
             <artifactId>soap-server</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.googlecode.guava-osgi</groupId>
             <artifactId>guava-osgi</artifactId>
-            <version>9.0.0</version>
+            <scope>test</scope>
         </dependency>
-
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

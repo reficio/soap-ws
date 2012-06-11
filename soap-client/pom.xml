@@ -5,7 +5,6 @@
     <groupId>com.centeractive</groupId>
     <artifactId>soap-client</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.1-SNAPSHOT</version>
     <name>soap-client - XML based SOAP client</name>
 
     <parent>
@@ -16,48 +15,28 @@
     </parent>
 
     <dependencies>
-
         <dependency>
             <groupId>com.centeractive</groupId>
             <artifactId>soap-builder</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.guava-osgi</groupId>
             <artifactId>guava-osgi</artifactId>
-            <version>9.0.0</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

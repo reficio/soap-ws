@@ -2,7 +2,6 @@ package com.centeractive.ws.client.core;
 
 import com.centeractive.ws.client.SoapClientException;
 import com.centeractive.ws.client.TransmissionException;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import sun.misc.BASE64Encoder;

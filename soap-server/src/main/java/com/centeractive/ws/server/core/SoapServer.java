@@ -18,7 +18,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
 import javax.servlet.ServletContext;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
@@ -139,7 +138,6 @@ public final class SoapServer {
         }
         if (https) {
             checkNotNull(keyStorePath, "keyStore has to be set in https mode");
-            checkNotNull(keyStorePassword, "keyStorePassword has to be set in https mode");
             SslSelectChannelConnector httpsConnector = context.getBean("sslConnector", SslSelectChannelConnector.class);
             configureHttpsConnector(httpsConnector);
             server.addConnector(httpsConnector);
