@@ -20,10 +20,10 @@ package com.centeractive.ws.client.core;
 
 import com.centeractive.ws.client.SoapClientException;
 import com.centeractive.ws.client.TransmissionException;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import sun.misc.BASE64Encoder;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -278,7 +278,7 @@ public final class SoapClient {
             checkNotNull(user);
             checkNotNull(password);
             String basicAuthCredentials = user + ":" + password;
-            return new BASE64Encoder().encode(basicAuthCredentials.getBytes(Charset.forName("UTF-8")));
+            return Base64.encodeBase64String(basicAuthCredentials.getBytes(Charset.forName("UTF-8")));
         }
 
         /**
