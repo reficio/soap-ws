@@ -5,7 +5,7 @@
     <groupId>com.centeractive</groupId>
     <artifactId>soap-test</artifactId>
     <packaging>jar</packaging>
-    <name>soap-test - client-server integration tests</name>
+    <name>soap-test - XML client-server integration tests</name>
 
     <parent>
         <groupId>com.centeractive</groupId>

@@ -21,7 +21,6 @@ package com.centeractive.ws.server;
 import com.centeractive.ws.builder.utils.ResourceUtils;
 import com.centeractive.ws.client.core.SoapClient;
 import com.centeractive.ws.server.core.SoapServer;
-import java.io.File;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.*;
@@ -52,7 +51,7 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
                 .keyStoreUrl(getTestKeyStoreUrl())
                 .keyStorePassword(getTestKeyStorePassword())
                 .httpsPort(HOST_PORT)
-                .create();
+                .build();
         server.start();
     }
 
@@ -71,7 +70,7 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
                 .url("https://" + endpointUrl)
                 .keyStoreUrl(getTestKeyStoreUrl())
                 .keyStorePassword(getTestKeyStorePassword())
-                .create();
+                .build();
         return client.post(soapAction, request);
     }
 

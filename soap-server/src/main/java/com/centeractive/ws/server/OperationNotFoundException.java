@@ -16,18 +16,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centeractive.ws.server.responder;
+package com.centeractive.ws.server;
 
 /**
+ * Exception thrown when the invoked binding operation is not found in the WSDL
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */
-class OperationNotFoundException extends Exception {
-    OperationNotFoundException(String message) {
+public class OperationNotFoundException extends SoapServerException {
+    public OperationNotFoundException(String message) {
         super(message);
     }
 
-    OperationNotFoundException(String message, Throwable cause) {
+    public OperationNotFoundException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    public OperationNotFoundException(Throwable cause) {
+        super(cause);
     }
 }

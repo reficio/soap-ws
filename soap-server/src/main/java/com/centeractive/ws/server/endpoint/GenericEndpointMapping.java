@@ -18,17 +18,21 @@
  */
 package com.centeractive.ws.server.endpoint;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.server.endpoint.mapping.AbstractEndpointMapping;
 
 /**
+ * Endpoint mapping that always invokes the generic endpoint
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */
 public class GenericEndpointMapping extends AbstractEndpointMapping {
 
+
+    /**
+     * Generic endpoint that handles all invocations
+     */
     private ContextPayloadEndpoint genericEndpoint;
 
     @Override

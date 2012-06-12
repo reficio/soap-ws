@@ -25,6 +25,8 @@ import java.io.IOException;
 
 
 /**
+ * Describes the functionality of SOAP version verification
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */

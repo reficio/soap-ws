@@ -24,18 +24,30 @@ import java.io.IOException;
 import java.util.Iterator;
 
 /**
+ * Chooses which soap version is used in the transmission.
+ * It is a simple implementation that verifies the the content-type header.
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */
 public class SimpleSoapProtocolChooser implements SoapProtocolChooser {
 
+    private static final String CONTENT_TYPE_HEADER_NAME = "content-type";
+    private static final String CONTENT_TYPE_HEADER_CONTENT_SOAP_11 = "text/xml";
+
+    /**
+     * @param transportInputStream input stream from the SOAP client
+     * @return true if SOAP 1.1 is used
+     * @throws IOException in case an error occurs
+     */
+    @Override
     public boolean useSoap11(TransportInputStream transportInputStream) throws IOException {
         for (Iterator headerNames = transportInputStream.getHeaderNames(); headerNames.hasNext(); ) {
             String headerName = (String) headerNames.next();
             for (Iterator headerValues = transportInputStream.getHeaders(headerName); headerValues.hasNext(); ) {
                 String headerValue = (String) headerValues.next();
-                if (headerName.toLowerCase().contains("content-type")) {
-                    if (headerValue.trim().toLowerCase().contains("text/xml")) {
+                if (headerName.toLowerCase().contains(CONTENT_TYPE_HEADER_NAME)) {
+                    if (headerValue.trim().toLowerCase().contains(CONTENT_TYPE_HEADER_CONTENT_SOAP_11)) {
                         return true;
                     }
 
@@ -45,6 +57,12 @@ public class SimpleSoapProtocolChooser implements SoapProtocolChooser {
         return false;
     }
 
+    /**
+     * @param transportInputStream input stream from the SOAP client
+     * @return true if SOAP 1.2 is used
+     * @throws IOException in case an error occurs
+     */
+    @Override
     public boolean useSoap12(TransportInputStream transportInputStream) throws IOException {
         return useSoap11(transportInputStream) == false;
     }

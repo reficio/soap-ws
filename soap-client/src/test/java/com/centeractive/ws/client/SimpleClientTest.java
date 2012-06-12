@@ -37,7 +37,7 @@ public class SimpleClientTest {
             SoapClient client = SoapClient.builder()
                     .url("http://test.ch:9999")
                     .connectTimeoutInMillis(1000)
-                    .create();
+                    .build();
             client.post("<xml/>");
         } catch (TransmissionException ex) {
             assertTrue(ex.getCause() instanceof SocketTimeoutException);

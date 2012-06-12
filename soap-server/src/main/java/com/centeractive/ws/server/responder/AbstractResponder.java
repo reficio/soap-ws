@@ -21,10 +21,9 @@ package com.centeractive.ws.server.responder;
 import com.centeractive.ws.builder.core.SoapBuilder;
 import com.centeractive.ws.builder.soap.WsdlUtils;
 import com.centeractive.ws.builder.soap.domain.OperationWrapper;
+import com.centeractive.ws.server.OperationNotFoundException;
 import com.centeractive.ws.server.SoapServerException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.ws.soap.SoapMessage;
 import org.w3c.dom.Node;
 
@@ -38,6 +37,24 @@ import javax.xml.transform.dom.DOMSource;
 import java.util.*;
 
 /**
+ * Convenience class that implements the RequestResponder interface and
+ * contains a mechanism that matches the request to an operation from the Binding
+ * RequestResponder method is implemented, but a new abstract respond method is added
+ * which contains the invoked operation as an argument.
+ * <p/>
+ * Tries to match using the following mechanisms:
+ * - SOAP Action mapping
+ * - RCP bindings are matched using single top-level tag with the name of the invoked operation
+ * - Document bindings are matched by input types and then by input names
+ * <p/>
+ * Thanks to Spring SOAPAction in both SOAP versions is treated transparently.
+ * <p/>
+ * Resources about SOAP-Action mystery in SOAP 1.1:
+ * http://ws-rx.blogspot.com/2006/01/web-services-design-tips-soapaction.html
+ * http://www.w3.org/TR/2000/NOTE-SOAP-20000508/#_Toc478383528
+ * http://www.oreillynet.com/xml/blog/2002/11/unraveling_the_mystery_of_soap.html
+ * http://damithakumarage.wordpress.com/2008/02/12/soap-action-and-addressing-action/
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */
@@ -48,6 +65,12 @@ public abstract class AbstractResponder implements RequestResponder {
     protected final Binding binding;
     protected final boolean rpc;
 
+    /**
+     * Constructs a responder for the specified binding of the builder
+     *
+     * @param builder     Soap builder used to construct messages
+     * @param bindingName Binding to be used - builders may contain many bindings
+     */
     public AbstractResponder(SoapBuilder builder, QName bindingName) {
         this.builder = builder;
         this.bindingName = bindingName;
@@ -55,10 +78,16 @@ public abstract class AbstractResponder implements RequestResponder {
         this.rpc = WsdlUtils.isRpc(binding);
     }
 
+    /**
+     * @return returns true if the binding is an RPC binding
+     */
     protected boolean isRpc() {
         return rpc;
     }
 
+    /**
+     * @return returns true if the binding is an Document binding
+     */
     protected boolean isDocument() {
         return isRpc() == false;
     }
@@ -108,6 +137,19 @@ public abstract class AbstractResponder implements RequestResponder {
         return nodes;
     }
 
+    /**
+     * Matches the SoapMessage to an binding operation
+     * <p/>
+     * Tries to match using the following mechanisms:
+     * - SOAP Action mapping
+     * - RCP bindings are matched using single top-level tag with the name of the invoked operation
+     * - Document bindings are matched by input types and then by input names
+     * <p/>
+     *
+     * @param message message passed by the SOAP client
+     * @return the BindingOperation matched to the message
+     * @throws OperationNotFoundException if operation not found in the binding
+     */
     private BindingOperation getInvokedOperation(SoapMessage message) throws OperationNotFoundException {
         // SOAP action mapping - cheapest and fastest as no request analysis is required
         BindingOperation invokedOperation = null;
@@ -169,12 +211,14 @@ public abstract class AbstractResponder implements RequestResponder {
         return matchToOperationName(root);
     }
 
-    // last chance matching -> for example when a non ws-compliant document-literal service specifies
-    //   wsdl:part using type instead of element tag
-    // Resources:
-    //   http://stackoverflow.com/questions/1172118/what-is-the-difference-between-type-and-element-in-wsdl
-    //   http://www.xfront.com/ElementVersusType.html
-    //   http://www.xfront.com/GlobalVersusLocal.html !!!
+    /**
+     * Last matching mechanism ->
+     * When a non ws-compliant document-literal service specifies wsdl:part using the type instead of the element tag
+     * Resources:
+     * http://stackoverflow.com/questions/1172118/what-is-the-difference-between-type-and-element-in-wsdl
+     * http://www.xfront.com/ElementVersusType.html
+     * http://www.xfront.com/GlobalVersusLocal.html !!!
+     */
     @SuppressWarnings("unchecked")
     private BindingOperation getOperationByInputTypes(Set<Node> rootNodes) {
         for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {
@@ -203,7 +247,10 @@ public abstract class AbstractResponder implements RequestResponder {
         return null;
     }
 
-    // document style -> there is not encoded operation name - matching based on the input style
+
+    /**
+     * document style service -> there is not encoded operation name - matching based on the input style
+     */
     @SuppressWarnings("unchecked")
     private BindingOperation getOperationByInputNames(Set<Node> rootNodes) {
         Stack<BindingOperation> matchedOperations = new Stack<BindingOperation>();
@@ -229,18 +276,19 @@ public abstract class AbstractResponder implements RequestResponder {
     }
 
     /**
-     * SOAP-Action mystery (1.1):
-     * http://ws-rx.blogspot.com/2006/01/web-services-design-tips-soapaction.html
-     * http://www.w3.org/TR/2000/NOTE-SOAP-20000508/#_Toc478383528
-     * http://www.oreillynet.com/xml/blog/2002/11/unraveling_the_mystery_of_soap.html
-     * http://damithakumarage.wordpress.com/2008/02/12/soap-action-and-addressing-action/
+     * Implementation of the RequestResponder bare method.
+     * It matches the SoapMessage to the binding operation and invokes the
+     * abstract respond method that contains OperationWrapper as an argument.
+     *
+     * @param message SOAP message passed by the client
+     * @return response in the XML source format containing the whole SOAP envelope
      */
     @Override
     public Source respond(SoapMessage message) {
         try {
             BindingOperation invokedOperation = getInvokedOperation(message);
             if (isRequestResponseOperation(invokedOperation)) {
-                OperationWrapper operation = builder.getOperation(binding, invokedOperation, message.getSoapAction());
+                OperationWrapper operation = SoapBuilder.getOperation(binding, invokedOperation, message.getSoapAction());
                 return respond(operation, message);
             }
             return null;
@@ -249,6 +297,16 @@ public abstract class AbstractResponder implements RequestResponder {
         }
     }
 
+    /**
+     * Abstract method that should be implemented by overriding classes.
+     * This method is invoked whenever a request is send by the client.
+     * InvokedOperation may be passed to a SoapBuilder to construct the
+     * response to the request that was sent by the client.
+     *
+     * @param invokedOperation operation from the binding that is matched to the SOAP message
+     * @param message          SOAP message passed by the client
+     * @return response in the XML source format containing the whole SOAP envelope
+     */
     public abstract Source respond(OperationWrapper invokedOperation, SoapMessage message);
 
 }

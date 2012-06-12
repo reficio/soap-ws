@@ -44,7 +44,7 @@ public class PlainCooperationTest extends AbstractCooperationTest {
     public void initializeServer() {
         server = SoapServer.builder()
                 .httpPort(HOST_PORT)
-                .create();
+                .build();
         server.start();
     }
 
@@ -59,7 +59,7 @@ public class PlainCooperationTest extends AbstractCooperationTest {
 
     @Override
     protected String postRequest(String endpointUrl, String request, String soapAction) {
-        SoapClient client = SoapClient.builder().url("http://" + endpointUrl).create();
+        SoapClient client = SoapClient.builder().url("http://" + endpointUrl).build();
         return client.post(soapAction, request);
     }
 

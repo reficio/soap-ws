@@ -31,6 +31,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * SOAP message factory that enables the exposition of a SOAP endpoint using both SOAP 1.1 and SOAP 1.2 versions.
+ * It uses the SoapProtocolChooser to check which version of SOAP is used.
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */
@@ -38,8 +41,17 @@ public class GenericSoapMessageFactory implements SoapMessageFactory, Initializi
 
     private static final String REQUEST_CONTEXT_ATTRIBUTE = "GenericSoapMessageFactory";
 
+    /**
+     * Factory for SOAP 1.1 messages
+     */
     private final SaajSoapMessageFactory soap11;
+    /**
+     * Factory for SOAP 1.2 messages
+     */
     private final SaajSoapMessageFactory soap12;
+    /**
+     * Chooses the version of SOAP protocol
+     */
     private SoapProtocolChooser soapProtocolChooser;
 
     public GenericSoapMessageFactory() {
@@ -72,15 +84,18 @@ public class GenericSoapMessageFactory implements SoapMessageFactory, Initializi
         factory.afterPropertiesSet();
     }
 
+    @Override
     public void afterPropertiesSet() {
         configureFactory(soap11, SoapVersion.SOAP_11);
         configureFactory(soap12, SoapVersion.SOAP_12);
     }
 
+    @Override
     public SoapMessage createWebServiceMessage() {
         return getMessageFactoryForRequestContext().createWebServiceMessage();
     }
 
+    @Override
     public SoapMessage createWebServiceMessage(InputStream inputStream) throws IOException {
         setMessageFactoryForRequestContext(soap11);
         if (inputStream instanceof TransportInputStream) {

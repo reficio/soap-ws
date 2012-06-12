@@ -47,4 +47,6 @@ final class SoapServerConstants {
     public static final String MAX_POOL_SIZE_PROP_KEY = "max.pool.size";
     public static final String KEEP_ALIVE_PROP_KEY = "keep.alive.time";
 
+    public static final int SECONDS_TO_MILLIS_RATIO = 1000;
+
 }

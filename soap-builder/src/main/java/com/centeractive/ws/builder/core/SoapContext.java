@@ -129,9 +129,10 @@ public class SoapContext {
 
         /**
          * Builds populated context instance
+         *
          * @return
          */
-        public SoapContext create() {
+        public SoapContext build() {
             return new SoapContext(exampleContent, typeComment, skipComments,
                     buildOptional, alwaysBuildHeaders);
         }

@@ -18,23 +18,26 @@
  */
 package com.centeractive.ws.server.endpoint;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.server.endpoint.adapter.PayloadEndpointAdapter;
 
 import javax.xml.transform.Source;
 
 /**
+ * It is an extension of the @see org.springframework.ws.server.endpoint.adapter.PayloadEndpointAdapter.
+ * It is implemented in such a way that expects the ContextPayloadEndpoint which expects the context of the message in the
+ * invoke method. This adapter provides this message context to the endpoint. It also sets the reply in the context by populating
+ * the GenericSoapMessage - which contains the whole SOAP message (envelope = header + body).
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */
 public class ContextEndpointAdapter extends PayloadEndpointAdapter {
 
+    @Override
     public void invoke(MessageContext messageContext, Object endpoint) {
         ContextPayloadEndpoint payloadEndpoint = (ContextPayloadEndpoint) endpoint;
-        Source requestSource = messageContext.getRequest().getPayloadSource();
-        Source responseSource = payloadEndpoint.invoke(requestSource, messageContext);
+        Source responseSource = payloadEndpoint.invoke(messageContext);
         GenericSoapMessage message = new GenericSoapMessage(responseSource);
         messageContext.setResponse(message);
     }

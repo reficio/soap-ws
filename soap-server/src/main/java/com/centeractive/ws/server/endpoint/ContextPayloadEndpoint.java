@@ -30,13 +30,15 @@ import javax.xml.transform.Source;
 public interface ContextPayloadEndpoint extends PayloadEndpoint {
 
     /**
-     * Invokes the endpoint with the given request payload, and possibly returns a response.
+     * Invokes the endpoint with the given request and possibly returns a response.
+     * It extends the functionality of a @see org.springframework.ws.server.endpoint.PayloadEnpoint
+     * by decorating the invocation of the invoke method -> it get the context of the message as an argument
+     * enabling the user to control the invocation in a more detailed way.
      *
-     * @param request the payload of the request message, may be <code>null</code>
-     * @param messageContext
+     * @param messageContext the context of the message containg the request and (possible response)
      * @return the payload of the response message, may be <code>null</code> to indicate no response
      * @throws Exception if an exception occurs
      */
-    Source invoke(Source request, MessageContext messageContext);
+    Source invoke(MessageContext messageContext);
 
 }

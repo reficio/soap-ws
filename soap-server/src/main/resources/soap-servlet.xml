@@ -8,7 +8,6 @@
 
     <bean id="adapter" class="com.centeractive.ws.server.endpoint.ContextEndpointAdapter"/>
 
-
     <bean class="com.centeractive.ws.server.endpoint.GenericEndpointMapping">
         <property name="genericEndpoint" ref="endpoint"/>
         <property name="interceptors">
@@ -20,32 +19,8 @@
                     <property name="logRequest" value="true"/>
                     <property name="logResponse" value="true"/>
                 </bean>
-
-                <!--
-                <bean id="validatingInterceptor"
-                      class="org.springframework.ws.soap.server.endpoint.interceptor.PayloadValidatingInterceptor">
-                    <property name="schema" value="/WEB-INF/wsdl/rpc.encoded/stockquote-schema.xsd"/>
-                    <property name="validateRequest" value="true"/>
-                    <property name="validateResponse" value="true"/>
-                </bean>
-                -->
-
             </list>
         </property>
     </bean>
-
-    <!-- http://localhost:9191/spring-ws/stockquote-schema.xsd -->
-    <!--
-    <bean id="stockquote-schema" class="org.springframework.xml.xsd.SimpleXsdSchema">
-        <property name="xsd" value="/WEB-INF/wsdl/rpc.encoded/stockquote-schema.xsd"/>
-    </bean>
-    -->
-
-    <!-- http://localhost:9191/spring-ws/stockquote-ws.wsdl -->
-    <!--
-    <bean id="stockquote-ws" class="org.springframework.ws.wsdl.wsdl11.SimpleWsdl11Definition">
-        <property name="wsdl" value="/WEB-INF/wsdl/rpc.encoded/stockquote-ws.wsdl"/>
-    </bean>
-    -->
 
 </beans>

@@ -23,12 +23,16 @@ import org.springframework.ws.soap.SoapMessage;
 import javax.xml.transform.Source;
 
 /**
+ * Interface describing the functionality of a SOAP Request Responder
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */
 public interface RequestResponder {
 
     /**
+     * Returns a response to a SOAP message.<br/>
+     * <p/>
      * How to get full SOAP message envelope (envelope = header + body):
      * msg.getEnvelope().getSource()
      * <p/>
@@ -43,6 +47,9 @@ public interface RequestResponder {
      * <p/>
      * How to convert XML Source to XML String:
      * XmlUtils.sourceToXmlString(source);
+     *
+     * @param request SOAP message to handle
+     * @return response in the XML source format containing the whole SOAP envelope
      */
     Source respond(SoapMessage request);
 

@@ -43,7 +43,7 @@ public class TrickyCooperationTest extends AbstractCooperationTest {
     public void initializeServer() {
         server = SoapServer.builder()
                 .httpPort(HOST_PORT)
-                .create();
+                .build();
         server.start();
     }
 
@@ -58,7 +58,7 @@ public class TrickyCooperationTest extends AbstractCooperationTest {
 
     @Override
     protected String postRequest(String endpointUrl, String request, String soapAction) {
-        SoapClient client = SoapClient.builder().url("http://" + endpointUrl).create();
+        SoapClient client = SoapClient.builder().url("http://" + endpointUrl).build();
         try {
             String response = null;
             for (int i = 0; i < 30; i++) {

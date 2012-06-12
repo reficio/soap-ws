@@ -22,8 +22,6 @@ import com.centeractive.ws.server.ServiceRegistrationException;
 import com.centeractive.ws.server.SoapServerException;
 import com.centeractive.ws.server.endpoint.GenericContextDomEndpoint;
 import com.centeractive.ws.server.responder.RequestResponder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.mortbay.jetty.AbstractConnector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
@@ -43,9 +41,15 @@ import java.util.List;
 import java.util.Properties;
 
 import static com.centeractive.ws.server.core.SoapServerConstants.*;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * SOAP server enables the user to handle a SOAP communication on a purely XML level.
+ * It supports plain HTTP as well as HTTPS communication.
+ * When it comes to SOAP it supports SOAP 1.1 and 1.2
+ * This class may throw an unchecked @see com.centeractive.ws.server.SoapServerException
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */
@@ -73,6 +77,9 @@ public final class SoapServer {
     // ----------------------------------------------------------------
     // PUBLIC API
     // ----------------------------------------------------------------
+    /**
+     * Starts the SOAP server
+     */
     public void start() {
         try {
             server.start();
@@ -81,6 +88,9 @@ public final class SoapServer {
         }
     }
 
+    /**
+     * Stops the SOAP server (does not release the allocated resources)
+     */
     public void stop() {
         try {
             server.stop();
@@ -89,26 +99,44 @@ public final class SoapServer {
         }
     }
 
+    /**
+     * Stops the SOAP server and deallocates resources
+     */
     public void destroy() {
         stop();
         context.close();
     }
 
+    /**
+     * Registers responder under specified context path. Only one responder may be registered under one context path.
+     *
+     * @param contextPath
+     * @param responder
+     * @throws ServiceRegistrationException thrown if a registration error occurs - for example duplicate responder registered
+     */
     public void registerRequestResponder(String contextPath, RequestResponder responder) throws ServiceRegistrationException {
         checkNotNull(contextPath, "contextPath cannot be null");
         checkNotNull(responder, "responder cannot be null");
         endpoint.registerRequestResponder(contextPath, responder);
     }
 
+    /**
+     * Unregisters responder from the specified context path
+     *
+     * @param contextPath
+     * @throws ServiceRegistrationException thrown if an unregistration error occurs - for example no responder registerd
+     */
     public void unregisterRequestResponder(String contextPath) throws ServiceRegistrationException {
         checkNotNull(contextPath, "contextPath cannot be null");
         endpoint.unregisterRequestResponder(contextPath);
     }
 
+    /**
+     * @return a list of registered context paths
+     */
     public List<String> getRegisteredContextPaths() {
         return Collections.list(endpoint.getRegisteredContextPaths());
     }
-
 
     // ----------------------------------------------------------------
     // INTERNAL API
@@ -163,7 +191,7 @@ public final class SoapServer {
 
     private AbstractConnector configureGenericConnector(AbstractConnector connector) {
         connector.setAcceptors(acceptorThreads);
-        connector.setMaxIdleTime(connectionMaxIdleTimeInSeconds * 1000);
+        connector.setMaxIdleTime(connectionMaxIdleTimeInSeconds * SECONDS_TO_MILLIS_RATIO);
         return connector;
     }
 
@@ -202,60 +230,97 @@ public final class SoapServer {
     private SoapServer() {
     }
 
-    public static SoapServerBuilder builder() {
-        return new SoapServerBuilder();
-    }
-
+    /**
+     * Builder to construct a properly populated SoapServer
+     */
     public static class SoapServerBuilder {
         private final SoapServer server = new SoapServer();
 
+
+        /**
+         * @param value Sets the reuseAddress on the underlying @see java.net.Socket
+         * @return
+         */
         public SoapServerBuilder reuseAddress(boolean value) {
             server.reuseAddress = value;
             return this;
         }
 
+        /**
+         * @param value Sets the http port on which the server listens
+         * @return
+         */
         public SoapServerBuilder httpPort(int value) {
             server.http = true;
             server.httpPort = value;
             return this;
         }
 
+        /**
+         * @param value Sets the https port on which the server listens. Has to be positive.
+         * @return
+         */
         public SoapServerBuilder httpsPort(int value) {
+            checkArgument(value >= 0);
             server.https = true;
             server.httpsPort = value;
             return this;
         }
 
+        /**
+         * @param value Sets the connection max idle time in seconds. Has to be positive.
+         * @return
+         */
         public SoapServerBuilder connectionMaxIdleTimeInSeconds(int value) {
+            checkArgument(value >= 0);
             server.connectionMaxIdleTimeInSeconds = value;
             return this;
         }
 
+        /**
+         * @param value Sets the number of http server connector acceptor threads. Has to be positive.
+         * @return
+         */
         public SoapServerBuilder acceptorThreads(int value) {
+            checkArgument(value >= 0);
             server.acceptorThreads = value;
             return this;
         }
 
+        /**
+         * @param value Sets the number of http server core threads. Has to be positive.
+         * @return
+         */
         public SoapServerBuilder coreThreads(int value) {
+            checkArgument(value >= 0);
             server.coreThreads = value;
             return this;
         }
 
+        /**
+         * @param value Sets the maximal number of threads that the http server may spawn. Has to be positive.
+         * @return
+         */
         public SoapServerBuilder maxThreads(int value) {
+            checkArgument(value >= 0);
             server.maxThreads = value;
             return this;
         }
 
+        /**
+         * @param value Sets the value of thread keep alive in seconds. Has to be positive.
+         * @return
+         */
         public SoapServerBuilder threadKeepAliveTimeInSeconds(int value) {
+            checkArgument(value >= 0);
             server.threadKeepAliveTimeInSeconds = value;
             return this;
         }
 
-        public SoapServer create() {
-            server.configure();
-            return server;
-        }
-
+        /**
+         * @param value Specifies the URL of the keystore to be used in the SOAP communication. Null is not accepted.
+         * @return
+         */
         public SoapServerBuilder keyStoreUrl(URL value) {
             try {
                 server.keyStorePath = value.toURI().getPath();
@@ -265,19 +330,49 @@ public final class SoapServer {
             }
         }
 
+        /**
+         * @param path Specifies the local path of the keystore to be used in the SOAP communication. Null is not accepted.
+         * @return
+         */
         public SoapServerBuilder keyStorePath(String path) {
             server.keyStorePath = path;
             return this;
         }
 
+        /**
+         * @param value Specifies the type of the keystore. Null is not accepted.
+         * @return
+         */
         public SoapServerBuilder keyStoreType(String value) {
             server.keyStoreType = value;
             return this;
         }
 
+        /**
+         * @param value keystore password. Null is accepted.
+         * @return
+         */
         public SoapServerBuilder keyStorePassword(String value) {
             server.keyStorePassword = value;
             return this;
         }
+
+        /**
+         * Builds populated SoapServer instance
+         *
+         * @return
+         */
+        public SoapServer build() {
+            server.configure();
+            return server;
+        }
     }
+
+    /**
+     * @return a new instance of a SoapServer Builder
+     */
+    public static SoapServerBuilder builder() {
+        return new SoapServerBuilder();
+    }
+
 }

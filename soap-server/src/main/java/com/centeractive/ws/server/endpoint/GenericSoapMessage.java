@@ -20,10 +20,8 @@ package com.centeractive.ws.server.endpoint;
 
 import com.centeractive.ws.builder.soap.XmlUtils;
 import com.centeractive.ws.server.SoapServerException;
-import org.apache.commons.io.input.CharSequenceReader;
 import org.springframework.ws.WebServiceMessage;
 
-import javax.sound.sampled.AudioFormat;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import java.io.IOException;
@@ -33,11 +31,16 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 
 /**
+ * Implementation of a generic WebServiceMessage that contains the whole envelope in the source (envelope = header + body).
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */
 public class GenericSoapMessage implements WebServiceMessage {
 
+    /**
+     * Source containing the whole SOAP envelope (envelope = header + body).
+     */
     private final Source source;
 
     public GenericSoapMessage(Source source) {

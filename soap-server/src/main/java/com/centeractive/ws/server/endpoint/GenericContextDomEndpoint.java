@@ -38,6 +38,12 @@ import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * Implementation of the ContextPayloadEndpoint and AbstractDomPayloadEndpoint. It handles all SOAP requests.
+ * It checks the context path of the request and then gets the responder registered under that context path.
+ * If an responder exists it is invoked passing the message context to it, if it does not exist an exception
+ * is thrown.
+ * It also contains the API to register, unregister responders and get all responders registered in this endpoint.
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */
@@ -46,19 +52,35 @@ public class GenericContextDomEndpoint extends AbstractDomPayloadEndpoint implem
 
     private final static Log log = LogFactory.getLog(GenericContextDomEndpoint.class);
 
+    /**
+     * Map containing all registered context paths and request responders
+     */
     private final ConcurrentHashMap<String, RequestResponder> services;
 
     public GenericContextDomEndpoint() {
         this.services = new ConcurrentHashMap<String, RequestResponder>();
     }
 
+    /**
+     * Empty method included here to be compliant with the AbstractDomPayloadEndpoint.
+     * Not used here as it does not enable the user to get the whole SOAP envelope.
+     *
+     * @param requestElement
+     * @param responseDocument
+     * @return
+     */
     @Override
     protected Element invokeInternal(Element requestElement, Document responseDocument) {
         throw new SoapServerException("This method is not implemented - it SHOULD NOT be used.");
     }
 
+    /**
+     * Implementation of the invoke message that gets the MessageContext. It enables the responders to the the whole
+     * SOAP envelope (and not only the request element);
+     * The responders are invoked with that context. If there's no responder an exception is thrown.
+     */
     @Override
-    public Source invoke(Source request, MessageContext messageContext) {
+    public Source invoke(MessageContext messageContext) {
         RequestResponder requestResponder = getRequestResponderBySessionRequestContextPath();
         if (noResponderForRequestFound(requestResponder)) {
             handleNoResponderFault();
@@ -97,18 +119,34 @@ public class GenericContextDomEndpoint extends AbstractDomPayloadEndpoint implem
         return getHttpServletRequest().getRequestURI();
     }
 
+    /**
+     * Enables to register a responder under the specified context path
+     *
+     * @param contextPath to be used by the responder
+     * @param responder   request responder
+     * @throws ServiceRegistrationException thrown if error occurs, for example path is already taken
+     */
     public void registerRequestResponder(String contextPath, RequestResponder responder) throws ServiceRegistrationException {
         if (services.putIfAbsent(contextPath, responder) != null) {
             throw new ServiceRegistrationException(String.format("Specified context path [%s] is already taken", contextPath));
         }
     }
 
-    public void unregisterRequestResponder(String contextPath)  throws ServiceRegistrationException {
+    /**
+     * Unregisters the responder from the specified context path
+     *
+     * @param contextPath context path from which the responder should be removed
+     * @throws ServiceRegistrationException thrown if error occurs, for example no service under the specified path
+     */
+    public void unregisterRequestResponder(String contextPath) throws ServiceRegistrationException {
         if (services.remove(contextPath) == null) {
             throw new ServiceRegistrationException(String.format("There was no service under the specified context path [%s]", contextPath));
         }
     }
 
+    /**
+     * @return Returns an enumeration of the taken context paths
+     */
     public Enumeration<String> getRegisteredContextPaths() {
         return services.keys();
     }

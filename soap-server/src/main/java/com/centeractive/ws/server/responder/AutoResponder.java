@@ -23,14 +23,17 @@ import com.centeractive.ws.builder.core.SoapContext;
 import com.centeractive.ws.builder.soap.XmlUtils;
 import com.centeractive.ws.builder.soap.domain.OperationWrapper;
 import com.centeractive.ws.server.SoapServerException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.ws.soap.SoapMessage;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 
 /**
+ * Convenience class to create SOAP mock services.
+ * It replies with an sample response to all requests send to this responder.
+ * SoapContext passed in the constructor may be used to fine-tune the generation
+ * of the sample responses.
+ *
  * @author Tom Bujok
  * @since 1.0.0
  */
@@ -38,11 +41,25 @@ public class AutoResponder extends AbstractResponder {
 
     private final SoapContext context;
 
+    /**
+     * Constructs an auto responder for the specified binding of the builder
+     *
+     * @param builder     Soap builder used to construct messages
+     * @param bindingName Binding to be used - builders may contain many bindings
+     */
     public AutoResponder(SoapBuilder builder, QName bindingName) {
         super(builder, bindingName);
-        context = SoapContext.builder().exampleContent(true).create();
+        context = SoapContext.builder().exampleContent(true).build();
     }
 
+    /**
+     * Constructs an auto responder for the specified binding of the builder, fine-tuning the content of the generated messages
+     * by passing the SoapContext
+     *
+     * @param builder     Soap builder used to construct messages
+     * @param bindingName Binding to be used - builders may contain many bindings
+     * @param context     Contect that is passed to the builder to fine-tune the content of the generated responses
+     */
     public AutoResponder(SoapBuilder builder, QName bindingName, SoapContext context) {
         super(builder, bindingName);
         this.context = context;

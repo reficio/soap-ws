@@ -76,7 +76,7 @@ public class SimpleServerTest {
     public static SoapServer getServer() {
         SoapServer server = SoapServer.builder()
                 .httpPort(getFreePort())
-                .create();
+                .build();
         return server;
     }
 
@@ -86,7 +86,7 @@ public class SimpleServerTest {
         assertTrue(isPortAvailable(port));
         SoapServer server = SoapServer.builder()
                 .httpPort(port)
-                .create();
+                .build();
         server.start();
         assertFalse(isPortAvailable(port));
         server.stop();

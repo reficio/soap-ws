@@ -37,10 +37,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * SOAP client. Enables to communicate with SOAP server on a purely XML level.
- * Supports SSL/TLS, basic-authentication and java.net.Proxy.
- * Supports SOAP 1.1 and 1.2 - SOAPAction attribute is properly placed, either in the header (SOAP 1.1) or in the content (SOAP 1.2).
+ * SOAP client enables the user to communicate with a SOAP server on a purely XML level.
+ * It supports SSL/TLS, basic-authentication and java.net.Proxy.
+ * When it comes to SOAP it supports version 1.1 and 1.2 - SOAPAction attribute is automatically properly placed,
+ * either in the header (SOAP 1.1) or in the content (SOAP 1.2).
  * SOAP version recognition is based on the SOAP namespace included in the payload.
+ * This class may throw an unchecked @see com.centeractive.ws.client.SoapClientException
  *
  * @author Tom Bujok
  * @since 1.0.0
@@ -66,9 +68,52 @@ public final class SoapClient {
     private int readTimeoutInMillis = INFINITE_TIMEOUT;
     private int connectTimeoutInMillis = INFINITE_TIMEOUT;
 
-    private SoapClient() {
+    // ----------------------------------------------------------------
+    // PUBLIC API
+    // ----------------------------------------------------------------
+
+    /**
+     * Post the SOAP message to the SOAP server without specifying the SOAPAction
+     *
+     * @param requestEnvelope SOAP message envelope
+     * @return The result returned by the SOAP server
+     */
+    public String post(String requestEnvelope) {
+        return post(null, requestEnvelope);
     }
 
+    /**
+     * Post the SOAP message to the SOAP server specifying the SOAPAction
+     *
+     * @param soapAction      SOAPAction attribute
+     * @param requestEnvelope SOAP message envelope
+     * @return The result returned by the SOAP server
+     */
+    public String post(String soapAction, String requestEnvelope) {
+        log.debug(String.format("Sending request to host=[%s] action=[%s] request:%n%s", serverUrl.toString(),
+                soapAction, requestEnvelope));
+        openConnection();
+        configureTls();
+        configureConnection();
+        decorateConnectionWithSoap(soapAction, requestEnvelope);
+        String response = transmit(requestEnvelope);
+        log.debug("Received response:\n" + requestEnvelope);
+        return response;
+    }
+
+    /**
+     * Disconnects from the SOAP server
+     * Underlying connection is persistent by default:
+     *
+     * @link http://docs.oracle.com/javase/1.5.0/docs/guide/net/http-keepalive.html
+     */
+    public void disconnect() {
+        connection.disconnect();
+    }
+
+    // ----------------------------------------------------------------
+    // INTERNAL API
+    // ----------------------------------------------------------------
     private void configureTls() {
         if (tlsEnabled == false) {
             return;
@@ -202,51 +247,17 @@ public final class SoapClient {
         }
     }
 
-    /**
-     * Disconnects from the SOAP server
-     * Underlying connection is persistent by default:
-     *
-     * @link http://docs.oracle.com/javase/1.5.0/docs/guide/net/http-keepalive.html
-     */
-    public void disconnect() {
-        connection.disconnect();
-    }
-
-
-    /**
-     * Post the SOAP message to the SOAP server without specifying the SOAPAction
-     *
-     * @param requestEnvelope SOAP message envelope
-     * @return The result returned by the SOAP server
-     */
-    public String post(String requestEnvelope) {
-        return post(null, requestEnvelope);
-    }
-
-    /**
-     * Post the SOAP message to the SOAP server specifying the SOAPAction
-     *
-     * @param soapAction      SOAPAction attribute
-     * @param requestEnvelope SOAP message envelope
-     * @return The result returned by the SOAP server
-     */
-    public String post(String soapAction, String requestEnvelope) {
-        log.debug(String.format("Sending request to host=[%s] action=[%s] request:%n%s", serverUrl.toString(),
-                soapAction, requestEnvelope));
-        openConnection();
-        configureTls();
-        configureConnection();
-        decorateConnectionWithSoap(soapAction, requestEnvelope);
-        String response = transmit(requestEnvelope);
-        log.debug("Received response:\n" + requestEnvelope);
-        return response;
-    }
-
-    static class SoapHostnameVerifier implements HostnameVerifier {
+    private static class SoapHostnameVerifier implements HostnameVerifier {
         @Override
         public boolean verify(String urlHost, SSLSession sslSession) {
             return true;
         }
+    }
+
+    // ----------------------------------------------------------------
+    // BUILDER API
+    // ----------------------------------------------------------------
+    private SoapClient() {
     }
 
     /**
@@ -271,7 +282,7 @@ public final class SoapClient {
         }
 
         /**
-         * @param url URL of the SOAP server to whom the client should send messages. Has to be not-null.
+         * @param url URL of the SOAP server to whom the client should send messages. Null is not accepted.
          * @return
          */
         public Builder url(String url) {
@@ -288,8 +299,8 @@ public final class SoapClient {
         /**
          * Enables basic authentication while communication with the SOAP server
          *
-         * @param user     User for the basic-authentication
-         * @param password Password for the basic-authentication
+         * @param user     User for the basic-authentication. Null is not accepted.
+         * @param password Password for the basic-authentication. Null is not accepted.
          * @return
          */
         public Builder basicAuth(String user, String password) {
@@ -300,8 +311,8 @@ public final class SoapClient {
         /**
          * Enables basic authentication while communication with the proxy server
          *
-         * @param user     User for the basic-authentication
-         * @param password Password for the basic-authentication
+         * @param user     User for the basic-authentication. Null is not accepted.
+         * @param password Password for the basic-authentication. Null is not accepted.
          * @return
          */
         public Builder proxyAuth(String user, String password) {
@@ -310,7 +321,7 @@ public final class SoapClient {
         }
 
         /**
-         * @param keyStore Specifies the keystore to be used in the SOAP communication
+         * @param keyStore Specifies the keystore to be used in the SOAP communication. Null is not accepted.
          * @return
          */
         public Builder keyStore(KeyStore keyStore) {
@@ -320,7 +331,7 @@ public final class SoapClient {
         }
 
         /**
-         * @param value Specifies the URL of the keystore to be used in the SOAP communication
+         * @param value Specifies the URL of the keystore to be used in the SOAP communication. Null is not accepted.
          * @return
          */
         public Builder keyStoreUrl(URL value) {
@@ -330,7 +341,7 @@ public final class SoapClient {
         }
 
         /**
-         * @param value Specifies the type of the keystore
+         * @param value Specifies the type of the keystore. Null is not accepted.
          * @return
          */
         public Builder keyStoreType(String value) {
@@ -340,7 +351,7 @@ public final class SoapClient {
         }
 
         /**
-         * @param value keystore password
+         * @param value keystore password. Null is accepted.
          * @return
          */
         public Builder keyStorePassword(String value) {
@@ -362,7 +373,7 @@ public final class SoapClient {
         }
 
         /**
-         * @param value Specifies the proxy type
+         * @param value Specifies the proxy type. Null is not accepted.
          * @return
          */
         public Builder proxyType(Proxy.Type value) {
@@ -372,7 +383,7 @@ public final class SoapClient {
         }
 
         /**
-         * @param value Specifies the proxy host (IP or hostname)
+         * @param value Specifies the proxy host (IP or hostname). Null is not accepted.
          * @return
          */
         public Builder proxyHost(String value) {
@@ -382,7 +393,7 @@ public final class SoapClient {
         }
 
         /**
-         * @param value Specifies the proxy port
+         * @param value Specifies the proxy port. Has to be positive.
          * @return
          */
         public Builder proxyPort(int value) {
@@ -392,7 +403,7 @@ public final class SoapClient {
         }
 
         /**
-         * @param value Specifies the SSL Context. By default it's SSLv3
+         * @param value Specifies the SSL Context. By default it's SSLv3. Null is not accepted.
          * @return
          */
         public Builder sslContext(String value) {
@@ -402,7 +413,7 @@ public final class SoapClient {
         }
 
         /**
-         * @param value Specifies the timeout in millisecond for the read operation
+         * @param value Specifies the timeout in millisecond for the read operation. Has to be positive.
          * @return
          */
         public Builder readTimeoutInMillis(int value) {
@@ -412,7 +423,7 @@ public final class SoapClient {
         }
 
         /**
-         * @param value Specifies the timeout in millisecond for the connect operation
+         * @param value Specifies the timeout in millisecond for the connect operation. Has to be positive.
          * @return
          */
         public Builder connectTimeoutInMillis(int value) {
@@ -426,7 +437,7 @@ public final class SoapClient {
          *
          * @return properly populated soap clients
          */
-        public SoapClient create() {
+        public SoapClient build() {
             validateAndInitKeystore();
             validateAndInitProxy();
             return client;
@@ -457,6 +468,9 @@ public final class SoapClient {
         }
     }
 
+    /**
+     * @return a new instance of a SoapClient Builder
+     */
     public static Builder builder() {
         return new Builder();
     }

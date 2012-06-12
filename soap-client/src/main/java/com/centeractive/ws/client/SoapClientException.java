@@ -19,7 +19,7 @@
 package com.centeractive.ws.client;
 
 /**
- * Top-level exception type thrown from SoapClient
+ * Top-level exception type thrown by SoapClient
  *
  * @author Tom Bujok
  * @since 1.0.0
