@@ -24,9 +24,9 @@ import org.junit.Test;
 import org.springframework.ws.soap.SoapMessage;
 
 import javax.xml.transform.Source;
+import java.io.File;
 import java.io.IOException;
-import java.net.DatagramSocket;
-import java.net.ServerSocket;
+import java.net.*;
 import java.util.List;
 
 import static junit.framework.Assert.assertFalse;
@@ -181,6 +181,14 @@ public class SimpleServerTest {
         String contextPath = "/test";
         SoapServer server = getServer();
         server.unregisterRequestResponder(contextPath);
+    }
+
+    @Test
+    public void urlWithSpace() throws MalformedURLException, URISyntaxException {
+        URL url = new File("/Users/tom/Keystore Location/SOAP/ssl/mykeystore").toURI().toURL();
+        System.out.println(url.toString());
+        System.out.println(url.toURI().getPath());
+        System.out.println(url.toURI().toString());
     }
 
 }

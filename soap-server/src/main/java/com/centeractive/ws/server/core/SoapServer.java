@@ -66,7 +66,7 @@ public final class SoapServer {
 
     private boolean http;
     private boolean https;
-    private String keyStorePath;
+    private URL keyStoreUrl;
     private String keyStoreType = KEYSTORE_TYPE;
     private String keyStorePassword;
 
@@ -77,6 +77,7 @@ public final class SoapServer {
     // ----------------------------------------------------------------
     // PUBLIC API
     // ----------------------------------------------------------------
+
     /**
      * Starts the SOAP server
      */
@@ -165,7 +166,7 @@ public final class SoapServer {
             server.addConnector(httpConnector);
         }
         if (https) {
-            checkNotNull(keyStorePath, "keyStore has to be set in https mode");
+            checkNotNull(keyStoreUrl, "keyStore has to be set in https mode");
             SslSelectChannelConnector httpsConnector = context.getBean(SSL_CONNECTOR_BEAN_NAME, SslSelectChannelConnector.class);
             configureHttpsConnector(httpsConnector);
             server.addConnector(httpsConnector);
@@ -183,7 +184,7 @@ public final class SoapServer {
         configureGenericConnector(connector);
         connector.setReuseAddress(reuseAddress);
         connector.setPort(httpsPort);
-        connector.setKeystore(keyStorePath);
+        connector.setKeystore(keyStoreUrl.toString());
         connector.setKeystoreType(keyStoreType);
         connector.setKeyPassword(keyStorePassword);
         return connector;
@@ -312,20 +313,8 @@ public final class SoapServer {
          * @return
          */
         public SoapServerBuilder keyStoreUrl(URL value) {
-            try {
-                server.keyStorePath = value.toURI().getPath();
-                return this;
-            } catch (URISyntaxException e) {
-                throw new SoapServerException(e);
-            }
-        }
-
-        /**
-         * @param path Specifies the local path of the keystore to be used in the SOAP communication. Null is not accepted.
-         * @return
-         */
-        public SoapServerBuilder keyStorePath(String path) {
-            server.keyStorePath = path;
+            checkNotNull(value);
+            server.keyStoreUrl = value;
             return this;
         }
 
