@@ -69,6 +69,7 @@ public final class SoapServer {
     private String keyStoreType = KEYSTORE_TYPE;
     private String keyStorePassword;
 
+    // runtime attributes
     private ClassPathXmlApplicationContext context;
     private Server server;
     private GenericContextDomEndpoint endpoint;
@@ -237,17 +238,18 @@ public final class SoapServer {
         private final SoapServer server = new SoapServer();
 
         /**
-         * @param value Sets the http port on which the server listens
+         * @param value Sets the http port on which the server listens. Has to be not negative.
          * @return
          */
         public SoapServerBuilder httpPort(int value) {
+            checkArgument(value >= 0);
             server.http = true;
             server.httpPort = value;
             return this;
         }
 
         /**
-         * @param value Sets the https port on which the server listens. Has to be positive.
+         * @param value Sets the https port on which the server listens. Has to be not negative.
          * @return
          */
         public SoapServerBuilder httpsPort(int value) {
@@ -258,7 +260,7 @@ public final class SoapServer {
         }
 
         /**
-         * @param value Sets the connection max idle time in seconds. Has to be positive.
+         * @param value Sets the connection max idle time in seconds. Has to be not negative.
          * @return
          */
         public SoapServerBuilder connectionMaxIdleTimeInSeconds(int value) {
@@ -298,7 +300,7 @@ public final class SoapServer {
         }
 
         /**
-         * @param value Sets the value of thread keep alive in seconds. Has to be positive.
+         * @param value Sets the value of thread keep alive in seconds. Has to be not negative.
          * @return
          */
         public SoapServerBuilder threadKeepAliveTimeInSeconds(int value) {
@@ -322,6 +324,7 @@ public final class SoapServer {
          * @return
          */
         public SoapServerBuilder keyStoreType(String value) {
+            checkNotNull(value);
             server.keyStoreType = value;
             return this;
         }

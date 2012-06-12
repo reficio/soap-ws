@@ -29,7 +29,6 @@ import org.springframework.ws.server.endpoint.mapping.AbstractEndpointMapping;
  */
 public class GenericEndpointMapping extends AbstractEndpointMapping {
 
-
     /**
      * Generic endpoint that handles all invocations
      */

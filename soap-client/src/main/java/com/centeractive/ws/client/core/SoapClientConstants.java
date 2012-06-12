@@ -61,7 +61,7 @@ final class SoapClientConstants {
             SOAP_1_2_NAMESPACE = "http://www.w3.org/2003/05/soap-envelope";
 
     public final static String
-            SSL_CONTEXT = "SSLv3",
+            SSL_CONTEXT_PROTOCOL = "SSLv3",
             TLS_CONTEXT = "TLS",
             JKS_KEYSTORE = "JKS";
 

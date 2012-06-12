@@ -51,6 +51,7 @@ public final class SoapClient {
 
     private final static Log log = LogFactory.getLog(SoapClient.class);
 
+    // attributes
     private URL serverUrl;
     private String basicAuthEncoded;
     private boolean tlsEnabled;
@@ -58,15 +59,16 @@ public final class SoapClient {
     private boolean strictHostVerification = false;
     private Proxy proxy;
     private String proxyAuthEncoded;
-    private String sslContext = SSL_CONTEXT;
-
-    private SSLContext context;
-    private HttpURLConnection connection;
-    private SSLSocketFactory sslSocketFactory;
-    private OutputStream outputStream = null;
-    private InputStream inputStream = null;
+    private String sslContextProtocol = SSL_CONTEXT_PROTOCOL;
     private int readTimeoutInMillis = INFINITE_TIMEOUT;
     private int connectTimeoutInMillis = INFINITE_TIMEOUT;
+
+    // runtime attributes
+    private HttpURLConnection connection;
+    private OutputStream outputStream = null;
+    private InputStream inputStream = null;
+    private SSLContext context;
+    private SSLSocketFactory sslSocketFactory;
 
     // ----------------------------------------------------------------
     // PUBLIC API
@@ -103,37 +105,19 @@ public final class SoapClient {
 
     /**
      * Disconnects from the SOAP server
-     * Underlying connection is persistent by default:
+     * Underlying connection is a persistent connection by default:
      *
      * @link http://docs.oracle.com/javase/1.5.0/docs/guide/net/http-keepalive.html
      */
     public void disconnect() {
-        connection.disconnect();
+        if (connection != null) {
+            connection.disconnect();
+        }
     }
 
     // ----------------------------------------------------------------
     // INTERNAL API
     // ----------------------------------------------------------------
-    private void configureTls() {
-        if (tlsEnabled == false) {
-            return;
-        }
-        try {
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            trustManagerFactory.init(keyStore);
-            X509TrustManager defaultTrustManager = (X509TrustManager) trustManagerFactory.getTrustManagers()[0];
-            context = SSLContext.getInstance(sslContext);
-            context.init(null, new TrustManager[]{defaultTrustManager}, null);
-            sslSocketFactory = context.getSocketFactory();
-            ((HttpsURLConnection) connection).setSSLSocketFactory(sslSocketFactory);
-            if (strictHostVerification == false) {
-                ((HttpsURLConnection) connection).setHostnameVerifier(new SoapHostnameVerifier());
-            }
-        } catch (GeneralSecurityException e) {
-            throw new SoapClientException("TLS/SSL setup failed", e);
-        }
-    }
-
     private void openConnection() {
         try {
             if (proxy != null) {
@@ -143,6 +127,26 @@ public final class SoapClient {
             }
         } catch (IOException e) {
             throw new SoapClientException("Connection initialization failed", e);
+        }
+    }
+
+    private void configureTls() {
+        if (tlsEnabled == false) {
+            return;
+        }
+        try {
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            trustManagerFactory.init(keyStore);
+            X509TrustManager defaultTrustManager = (X509TrustManager) trustManagerFactory.getTrustManagers()[0];
+            context = SSLContext.getInstance(sslContextProtocol);
+            context.init(null, new TrustManager[]{defaultTrustManager}, null);
+            sslSocketFactory = context.getSocketFactory();
+            ((HttpsURLConnection) connection).setSSLSocketFactory(sslSocketFactory);
+            if (strictHostVerification == false) {
+                ((HttpsURLConnection) connection).setHostnameVerifier(new SoapHostnameVerifier());
+            }
+        } catch (GeneralSecurityException e) {
+            throw new SoapClientException("TLS/SSL setup failed", e);
         }
     }
 
@@ -393,12 +397,12 @@ public final class SoapClient {
         }
 
         /**
-         * @param value Specifies the SSL Context. By default it's SSLv3. Null is not accepted.
+         * @param value Specifies the SSL Context Protocol. By default it's SSLv3. Null is not accepted.
          * @return
          */
-        public Builder sslContext(String value) {
+        public Builder sslContextProtocol(String value) {
             checkNotNull(value);
-            client.sslContext = value;
+            client.sslContextProtocol = value;
             return this;
         }
 
