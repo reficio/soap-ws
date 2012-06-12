@@ -285,7 +285,7 @@ public final class SoapClient {
          * @param url URL of the SOAP server to whom the client should send messages. Null is not accepted.
          * @return
          */
-        public Builder url(String url) {
+        public Builder serverUrl(String url) {
             checkNotNull(url);
             try {
                 client.serverUrl = new URL(url);
@@ -305,28 +305,6 @@ public final class SoapClient {
          */
         public Builder basicAuth(String user, String password) {
             client.basicAuthEncoded = encodeBasicCredentials(user, password);
-            return this;
-        }
-
-        /**
-         * Enables basic authentication while communication with the proxy server
-         *
-         * @param user     User for the basic-authentication. Null is not accepted.
-         * @param password Password for the basic-authentication. Null is not accepted.
-         * @return
-         */
-        public Builder proxyAuth(String user, String password) {
-            client.proxyAuthEncoded = encodeBasicCredentials(user, password);
-            return this;
-        }
-
-        /**
-         * @param keyStore Specifies the keystore to be used in the SOAP communication. Null is not accepted.
-         * @return
-         */
-        public Builder keyStore(KeyStore keyStore) {
-            checkNotNull(keyStore);
-            client.keyStore = keyStore;
             return this;
         }
 
@@ -403,6 +381,18 @@ public final class SoapClient {
         }
 
         /**
+         * Enables basic authentication while communication with the proxy server
+         *
+         * @param user     User for the basic-authentication. Null is not accepted.
+         * @param password Password for the basic-authentication. Null is not accepted.
+         * @return
+         */
+        public Builder proxyBasicAuth(String user, String password) {
+            client.proxyAuthEncoded = encodeBasicCredentials(user, password);
+            return this;
+        }
+
+        /**
          * @param value Specifies the SSL Context. By default it's SSLv3. Null is not accepted.
          * @return
          */
@@ -413,7 +403,7 @@ public final class SoapClient {
         }
 
         /**
-         * @param value Specifies the timeout in millisecond for the read operation. Has to be positive.
+         * @param value Specifies the timeout in millisecond for the read operation. Has to be not negative.
          * @return
          */
         public Builder readTimeoutInMillis(int value) {
@@ -423,7 +413,7 @@ public final class SoapClient {
         }
 
         /**
-         * @param value Specifies the timeout in millisecond for the connect operation. Has to be positive.
+         * @param value Specifies the timeout in millisecond for the connect operation. Has to be not negative.
          * @return
          */
         public Builder connectTimeoutInMillis(int value) {

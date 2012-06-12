@@ -67,7 +67,7 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
     @Override
     protected String postRequest(String endpointUrl, String request, String soapAction) {
         SoapClient client = SoapClient.builder()
-                .url("https://" + endpointUrl)
+                .serverUrl("https://" + endpointUrl)
                 .keyStoreUrl(getTestKeyStoreUrl())
                 .keyStorePassword(getTestKeyStorePassword())
                 .build();

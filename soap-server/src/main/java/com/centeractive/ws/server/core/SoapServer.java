@@ -236,16 +236,6 @@ public final class SoapServer {
     public static class SoapServerBuilder {
         private final SoapServer server = new SoapServer();
 
-
-        /**
-         * @param value Sets the reuseAddress on the underlying @see java.net.Socket
-         * @return
-         */
-        public SoapServerBuilder reuseAddress(boolean value) {
-            server.reuseAddress = value;
-            return this;
-        }
-
         /**
          * @param value Sets the http port on which the server listens
          * @return
@@ -282,7 +272,7 @@ public final class SoapServer {
          * @return
          */
         public SoapServerBuilder acceptorThreads(int value) {
-            checkArgument(value >= 0);
+            checkArgument(value > 0);
             server.acceptorThreads = value;
             return this;
         }
@@ -292,7 +282,7 @@ public final class SoapServer {
          * @return
          */
         public SoapServerBuilder coreThreads(int value) {
-            checkArgument(value >= 0);
+            checkArgument(value > 0);
             server.coreThreads = value;
             return this;
         }
@@ -302,7 +292,7 @@ public final class SoapServer {
          * @return
          */
         public SoapServerBuilder maxThreads(int value) {
-            checkArgument(value >= 0);
+            checkArgument(value > 0);
             server.maxThreads = value;
             return this;
         }
@@ -354,6 +344,15 @@ public final class SoapServer {
          */
         public SoapServerBuilder keyStorePassword(String value) {
             server.keyStorePassword = value;
+            return this;
+        }
+
+        /**
+         * @param value Sets the reuseAddress on the underlying @see java.net.Socket
+         * @return
+         */
+        public SoapServerBuilder reuseAddress(boolean value) {
+            server.reuseAddress = value;
             return this;
         }
 

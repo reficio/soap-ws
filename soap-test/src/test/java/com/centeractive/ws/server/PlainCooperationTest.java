@@ -59,7 +59,7 @@ public class PlainCooperationTest extends AbstractCooperationTest {
 
     @Override
     protected String postRequest(String endpointUrl, String request, String soapAction) {
-        SoapClient client = SoapClient.builder().url("http://" + endpointUrl).build();
+        SoapClient client = SoapClient.builder().serverUrl("http://" + endpointUrl).build();
         return client.post(soapAction, request);
     }
 
