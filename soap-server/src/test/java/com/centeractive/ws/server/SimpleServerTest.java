@@ -183,12 +183,4 @@ public class SimpleServerTest {
         server.unregisterRequestResponder(contextPath);
     }
 
-    @Test
-    public void urlWithSpace() throws MalformedURLException, URISyntaxException {
-        URL url = new File("/Users/tom/Keystore Location/SOAP/ssl/mykeystore").toURI().toURL();
-        System.out.println(url.toString());
-        System.out.println(url.toURI().getPath());
-        System.out.println(url.toURI().toString());
-    }
-
 }
