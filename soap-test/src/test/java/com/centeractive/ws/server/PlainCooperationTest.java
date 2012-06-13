@@ -63,20 +63,6 @@ public class PlainCooperationTest extends AbstractCooperationTest {
         return client.post(soapAction, request);
     }
 
-//    @Test
-//    public void testServices() throws Exception {
-//        for (int serviceId = 1; serviceId <= 22; serviceId++) {
-//            // verifyServiceBehavior(serviceId);
-//
-//            String testMethod = " @Test\n" +
-//                    "    public void testService%d() throws Exception {\n" +
-//                    "        verifyServiceBehavior(%d);\n" +
-//                    "    }";
-//
-//            System.out.println(String.format(testMethod, serviceId, serviceId));
-//        }
-//    }
-
     @Test
     public void testService1() throws Exception {
         verifyServiceBehavior(1);
@@ -150,6 +136,24 @@ public class PlainCooperationTest extends AbstractCooperationTest {
     @Test
     public void testService15() throws Exception {
         verifyServiceBehavior(15);
+    }
+
+    @Test
+    public void testService15_noSoapAction() throws Exception {
+        TransmissionException expected = null;
+        try {
+            verifyServiceBehavior(15, false);
+        } catch (TransmissionException ex) {
+            ex.printStackTrace();
+            expected = ex;
+        }
+        assertNotNull(expected);
+        assertEquals(expected.getErrorCode(), 500);
+    }
+
+    @Test
+    public void testService15_withSoapAction() throws Exception {
+        verifyServiceBehavior(15, true);
     }
 
     @Test
