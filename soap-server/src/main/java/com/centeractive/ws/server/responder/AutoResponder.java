@@ -68,7 +68,7 @@ public class AutoResponder extends AbstractResponder {
     @Override
     public Source respond(OperationWrapper invokedOperation, SoapMessage message) {
         try {
-            String response = builder.buildSoapMessageFromOutput(invokedOperation, context);
+            String response = getBuilder().buildSoapMessageFromOutput(invokedOperation, context);
             return XmlUtils.xmlStringToSource(response);
         } catch (Exception e) {
             throw new SoapServerException(e);

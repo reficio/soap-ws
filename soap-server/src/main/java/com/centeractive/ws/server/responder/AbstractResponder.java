@@ -41,10 +41,14 @@ import javax.xml.transform.Source;
  */
 public abstract class AbstractResponder implements RequestResponder {
 
-    protected final SoapBuilder builder;
-    protected final QName bindingName;
-    protected final Binding binding;
-    protected final SoapOperationMatcher soapOperationMatcher;
+    private final SoapBuilder builder;
+    private final QName bindingName;
+    private final Binding binding;
+    private final SoapOperationMatcher soapOperationMatcher;
+
+    public SoapBuilder getBuilder() {
+        return builder;
+    }
 
     /**
      * Constructs a responder for the specified binding of the builder

@@ -30,14 +30,14 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 /**
- * Test the post the message 30 consecutive times
+ * Test the post the message X consecutive times
  *
  * @author Tom Bujok
  * @since 1.0.0
  */
 public class TrickyCooperationTest extends AbstractCooperationTest {
 
-    private final static Log log = LogFactory.getLog(PlainCooperationTest.class);
+    private final static Log log = LogFactory.getLog(PlainHttpCooperationTest.class);
 
     @Before
     public void initializeServer() {

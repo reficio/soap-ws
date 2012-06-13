@@ -36,9 +36,12 @@ import static junit.framework.Assert.assertNotNull;
  * @author Tom Bujok
  * @since 1.0.0
  */
-public class PlainCooperationTest extends AbstractCooperationTest {
+public class PlainHttpCooperationTest extends AbstractCooperationTest {
 
-    private final static Log log = LogFactory.getLog(PlainCooperationTest.class);
+    private final static Log log = LogFactory.getLog(PlainHttpCooperationTest.class);
+
+    private final static boolean SKIP_SOAP_ACTION = false;
+    private final static boolean POST_SOAP_ACTION = true;
 
     @Before
     public void initializeServer() {
@@ -134,15 +137,10 @@ public class PlainCooperationTest extends AbstractCooperationTest {
     }
 
     @Test
-    public void testService15() throws Exception {
-        verifyServiceBehavior(15);
-    }
-
-    @Test
     public void testService15_noSoapAction() throws Exception {
         TransmissionException expected = null;
         try {
-            verifyServiceBehavior(15, false);
+            verifyServiceBehavior(15, SKIP_SOAP_ACTION);
         } catch (TransmissionException ex) {
             ex.printStackTrace();
             expected = ex;
@@ -153,7 +151,7 @@ public class PlainCooperationTest extends AbstractCooperationTest {
 
     @Test
     public void testService15_withSoapAction() throws Exception {
-        verifyServiceBehavior(15, true);
+        verifyServiceBehavior(15, POST_SOAP_ACTION);
     }
 
     @Test
@@ -208,7 +206,7 @@ public class PlainCooperationTest extends AbstractCooperationTest {
     public void testService24_noSoapAction_soap11() throws Exception {
         TransmissionException expected = null;
         try {
-            verifyServiceBehavior(24, false);
+            verifyServiceBehavior(24, SKIP_SOAP_ACTION);
         } catch (TransmissionException ex) {
             ex.printStackTrace();
             expected = ex;
@@ -219,12 +217,12 @@ public class PlainCooperationTest extends AbstractCooperationTest {
 
     @Test
     public void testService24_withSoapAction_soap11() throws Exception {
-        verifyServiceBehavior(24, true);
+        verifyServiceBehavior(24, POST_SOAP_ACTION);
     }
 
     @Test
     public void testService25() throws Exception {
-        verifyServiceBehavior(25, true);
+        verifyServiceBehavior(25, POST_SOAP_ACTION);
     }
 
 
