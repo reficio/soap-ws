@@ -38,7 +38,7 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
     private final static Log log = LogFactory.getLog(HttpsCooperationTest.class);
 
     protected URL getTestKeyStoreUrl() {
-        return ResourceUtils.getResourceWithAbsolutePackagePath("/keystores/my dir", ".keystore");
+        return ResourceUtils.getResourceWithAbsolutePackagePath("/keystores/multi-cert-keystore", ".keystore");
     }
 
     protected String getTestKeyStorePassword() {
