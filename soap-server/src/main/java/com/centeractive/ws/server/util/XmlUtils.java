@@ -29,7 +29,10 @@ import java.util.Set;
  * @author Tom Bujok
  * @since 1.0.0
  */
-public class XmlUtils {
+public final class XmlUtils {
+
+    private XmlUtils() {
+    }
 
     public static Set<String> getNodeNames(Set<Node> nodes) {
         Set<String> names = new HashSet<String>();

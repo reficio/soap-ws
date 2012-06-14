@@ -286,10 +286,10 @@ public final class SoapClient {
         }
 
         /**
-         * @param url URL of the SOAP server to whom the client should send messages. Null is not accepted.
+         * @param url URL of the SOAP endpoint to whom the client should send messages. Null is not accepted.
          * @return
          */
-        public Builder serverUrl(String url) {
+        public Builder endpointUrl(String url) {
             checkNotNull(url);
             try {
                 client.serverUrl = new URL(url);
@@ -313,20 +313,20 @@ public final class SoapClient {
         }
 
         /**
-         * @param value Specifies the URL of the keystore to be used in the SOAP communication. Null is not accepted.
+         * @param value Specifies the URL of the truststore to use in the SOAP communication. Null is not accepted.
          * @return
          */
-        public Builder keyStoreUrl(URL value) {
+        public Builder trustStoreUrl(URL value) {
             checkNotNull(value);
             keyStoreUrl = value;
             return this;
         }
 
         /**
-         * @param value Specifies the type of the keystore. Null is not accepted.
+         * @param value Specifies the type of the truststore. Null is not accepted.
          * @return
          */
-        public Builder keyStoreType(String value) {
+        public Builder trustStoreType(String value) {
             checkNotNull(value);
             keyStoreType = value;
             return this;
@@ -336,7 +336,7 @@ public final class SoapClient {
          * @param value keystore password. Null is accepted.
          * @return
          */
-        public Builder keyStorePassword(String value) {
+        public Builder trustStorePassword(String value) {
             if (value != null) {
                 keyStorePassword = value.toCharArray();
             }
