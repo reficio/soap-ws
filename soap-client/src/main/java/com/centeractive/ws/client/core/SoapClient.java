@@ -333,7 +333,7 @@ public final class SoapClient {
         }
 
         /**
-         * @param value keystore password. Null is accepted.
+         * @param value truststore password. Null is accepted.
          * @return
          */
         public Builder trustStorePassword(String value) {

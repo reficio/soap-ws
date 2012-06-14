@@ -310,7 +310,8 @@ public final class SoapServer {
         }
 
         /**
-         * @param value Specifies the URL of the keystore to be used in the SOAP communication. Null is not accepted.
+         * @param value Specifies the URL of the keystore to use in the SOAP communication. Null is not accepted. If there's more than
+         *              one certificate in the keystore it is undefined which of them will be used
          * @return
          */
         public SoapServerBuilder keyStoreUrl(URL value) {
