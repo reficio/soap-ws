@@ -43,22 +43,21 @@ Yes, that's what soap-ws can do for you. But it can do much more, just dive in a
 * soap client - proxy with basic authenticationsupport
 * soap client - proper SOAPAction support in both SOAP versions
 
-
 ### Modules
 #### soap-builder
 Responsible for the generation of SOAP XML messages. 
 
 #### soap-client
-Responsible for the generation of SOAP XML messages. 
+Responsible for the communication with a SOAP endpoint.
 
 #### soap-server
-Responsible for the generation of SOAP XML messages. 
+Responsible for exposing SOAP endpoints and handling the requests.
 
 #### soap-examples
-Responsible for the generation of SOAP XML messages. 
+Contains a few example how to use soap-ws.
 
 #### soap-test
-Responsible for the generation of SOAP XML messages. 
+Integration test project. Test soap-client and soap-server in many tricky ways.
 
 ### License:
 The project is open-source and distributed under the Apache license, Version 2.0.
@@ -85,10 +84,13 @@ modifies some parts of the soapUI's code in good faith, making every effort not
 to impair any existing functionality and to supplement it according to our
 requirements, applying best practices of software design.
 
-
 ## User Guide
 
 ### Quickstart
+TODO
 
 
+## Who's behind it?
+centeractive ag
+www.centeractive.com
 
