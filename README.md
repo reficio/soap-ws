@@ -1,10 +1,9 @@
 # soap-ws
 
-## A lightweight and easy-to-use Java library to handle the SOAP message generation and transmission on a purely XML level.
+## A lightweight and easy-to-use Java library to handle SOAP on a purely XML level.
 
 ### Intro
-Welcome to soap-ws! This is a lightweight and easy-to-use Java library to handle SOAP message generation
-and SOAP message transmission on a purely XML level. With the usage of this library
+Welcome to soap-ws! This is a lightweight and easy-to-use Java library to handle SOAP message generation and SOAP message transmission on a purely XML level. With the usage of this library
 within few lines of code you can easily import your WSDL and generate SOAP messages directly in an XML format. 
 Then you can use the SoapClient to transmit this message over HTTP(s) to a web-service endpoint. 
 Finally, you can run SoapServer to receive SOAP messages and and respond to them. 
@@ -12,7 +11,7 @@ And all of that requires no classes or stubs generation - everything happens dir
 
 
 ### Why should you use soap-ws?
-Read this carefully and check if you know what we are talking about:
+Read this carefully and check if you know what we are talking about.
 
 * Have you ever had problems with the versioning of web-service endpoints? Have you ever had to address the problem how to deal with many versions of the same classes generated from two versions of the same WSDL in one code base? Did you try to prefix the classes, change the package, or do any other mambo-jambo tricks that are clearly against the best-practices of software design?
 * Have you every tried to chain and orchestrate a few web-service invocations applying some XSLT transformation to the consecutive responses forwarding them to the next endpoint? Have you ever seen how cumbersome it is using Java generated ws clients/servers?
@@ -32,37 +31,53 @@ Yes, that's what soap-ws can do for you. But it can do much more, just dive in a
 * supports SSL
 
 ### Main features
-* soap-builder - soap message generation in the XML format on the basis of imported WSDL 
-* soap-builder - fetch and store of a hierarchical WSDL with hierarchical XSD included in it
-* soap server - endpoint exposition - communication and message handling purely in the XML format
-* soap server - auto-responder - respond to a soap request with a sample content - in an unit-test
-* soap server - HTTP and HTTPS support
-* soap server - extensive operation matcher - match a request to a BindingOperation from the WSDL
-* soap client - communication and message handling purely in the XML format
-* soap client - basic authentication and SSL support
-* soap client - proxy with basic authenticationsupport
-* soap client - proper SOAPAction support in both SOAP versions
 
-### Modules
-#### soap-builder
-Responsible for the generation of SOAP XML messages. 
+soap-builder:
 
-#### soap-client
-Responsible for the communication with a SOAP endpoint.
+* soap message generation in the XML format on the basis of imported WSDL 
+* fetch and store of a hierarchical WSDL with hierarchical XSD included in it
 
-#### soap-server
-Responsible for exposing SOAP endpoints and handling the requests.
+soap-server:
 
-#### soap-examples
-Contains a few example how to use soap-ws.
+* endpoint exposition - communication and message handling purely in the XML format
+* auto-responder - respond to a soap request with a sample content - in an unit-test
+* HTTP and HTTPS support
+* extensive operation matcher - match a request to a BindingOperation from the WSDL
 
-#### soap-test
-Integration test project. Test soap-client and soap-server in many tricky ways.
+soap-client:
 
-### License:
+* communication and message handling purely in the XML format
+* basic authentication and SSL support
+* proxy with basic authenticationsupport
+* proper SOAPAction support in both SOAP versions
+
+### License
 The project is open-source and distributed under the Apache license, Version 2.0.
 One module (soap-builder) is distributed under the LGPL 2.1 license (see the Note).
 You can confidently use soap-ws in your commercial project.
+
+
+
+## User Guide
+
+### Quickstart
+TODO
+
+
+### Project modules
+* soap-builder - responsible for the generation of SOAP XML messages.
+* soap-client - responsible for the communication with a SOAP endpoint.
+* soap-server - responsible for exposing SOAP endpoints and handling the requests.
+* soap-examples - contains a few example how to use soap-ws.
+* soap-test - contains integration tests - tests soap-client and soap-server in many tricky ways.
+
+
+## Last but not lease
+
+### Who's behind it?
+centeractive ag
+
+www.centeractive.com
 
 ### Note
 This project contains classes extracted from the soapUI code base by centeractive ag
@@ -83,14 +98,3 @@ source code under a free and open-source licence. centeractive ag extracted and
 modifies some parts of the soapUI's code in good faith, making every effort not
 to impair any existing functionality and to supplement it according to our
 requirements, applying best practices of software design.
-
-## User Guide
-
-### Quickstart
-TODO
-
-
-## Who's behind it?
-centeractive ag
-www.centeractive.com
-
