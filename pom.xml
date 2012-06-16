@@ -12,66 +12,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <parent>
-        <groupId>com.centeractive</groupId>
-        <artifactId>centeractive</artifactId>
-        <version>1</version>
-    </parent>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <version>1.10.b1</version>
-                <configuration>
-                    <strictCheck>true</strictCheck>
-                    <basedir>${basedir}</basedir>
-                    <header>src/main/resources/license.txt</header>
-                    <quiet>false</quiet>
-                    <failIfMissing>true</failIfMissing>
-                    <aggregate>false</aggregate>
-                    <includes>
-                        <include>src/**</include>
-                        <include>**/test/**</include>
-                    </includes>
-                    <excludes>
-                        <exclude>target/**</exclude>
-                        <exclude>**/resources/**</exclude>
-                        <exclude>.clover/**</exclude>
-                    </excludes>
-                    <useDefaultExcludes>true</useDefaultExcludes>
-                    <mapping>
-                        <jwc>XML_STYLE</jwc>
-                        <application>XML_STYLE</application>
-                        <myFileExtension>JAVADOC_STYLE</myFileExtension>
-                    </mapping>
-                    <useDefaultMapping>true</useDefaultMapping>
-                    <properties>
-                        <year>${project.inceptionYear}</year>
-                        <company>centeractive ag</company>
-                    </properties>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <modules>
         <module>soap-builder</module>
         <module>soap-client</module>
@@ -197,6 +137,116 @@
             </build>
         </profile>
     </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.10.b1</version>
+                <configuration>
+                    <strictCheck>true</strictCheck>
+                    <basedir>${basedir}</basedir>
+                    <header>src/main/resources/license.txt</header>
+                    <quiet>false</quiet>
+                    <failIfMissing>true</failIfMissing>
+                    <aggregate>false</aggregate>
+                    <includes>
+                        <include>src/**</include>
+                        <include>**/test/**</include>
+                    </includes>
+                    <excludes>
+                        <exclude>target/**</exclude>
+                        <exclude>**/resources/**</exclude>
+                        <exclude>.clover/**</exclude>
+                    </excludes>
+                    <useDefaultExcludes>true</useDefaultExcludes>
+                    <mapping>
+                        <jwc>XML_STYLE</jwc>
+                        <application>XML_STYLE</application>
+                        <myFileExtension>JAVADOC_STYLE</myFileExtension>
+                    </mapping>
+                    <useDefaultMapping>true</useDefaultMapping>
+                    <properties>
+                        <year>${project.inceptionYear}</year>
+                        <company>centeractive ag</company>
+                    </properties>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.4</version>
+                <extensions>true</extensions>
+                <inherited>true</inherited>
+                <configuration>
+                    <instructions>
+                        <Implementation-Title>${project.artifactId}</Implementation-Title>
+                        <Implementation-Version>${project.version}</Implementation-Version>
+                        <Bundle-Name>${project.artifactId}</Bundle-Name>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>{local-packages};version=${project.version};-noimport:=true</Export-Package>
+                        <Import-Package>*</Import-Package>
+                        <Private-Package>!*</Private-Package>
+                        <_versionpolicy-impl>[$(version;==;$(@)),$(version;=+;$(@)))</_versionpolicy-impl>
+                        <_versionpolicy-uses>[$(version;==;$(@)),$(version;+;$(@)))</_versionpolicy-uses>
+                        <_versionpolicy>[$(version;==;$(@)),$(version;+;$(@)))</_versionpolicy>
+                        <_failok>false</_failok>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ftp</artifactId>
+                <version>1.0-beta-7</version>
+            </extension>
+        </extensions>
+
+    </build>
 
 
 </project>
