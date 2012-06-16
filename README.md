@@ -13,7 +13,7 @@ And all of that requires no classes or stubs generation - everything happens dir
 ### Why should you use soap-ws?
 Read this carefully and check if you know what we are talking about.
 
-* Have you ever had problems with the versioning of web-service endpoints? Have you ever had to address the problem how to deal with many versions of the same classes generated from two versions of the same WSDL in one code base? Did you try to prefix the classes, change the package, or do any other mambo-jambo tricks that are clearly against the best-practices of software design?
+* Have you ever had problems with the versioning of web-service endpoints? Have you ever had to address the problem how to deal with many versions of the same classes generated from two versions of the same WSDL in one code base? Did you try to prefix the classes, change the package, or do any other mambo-jumbo tricks that are clearly against the best-practices of software design?
 * Have you every tried to chain and orchestrate a few web-service invocations applying some XSLT transformation to the consecutive responses forwarding them to the next endpoint? Have you ever seen how cumbersome it is using Java generated ws clients/servers?
 * Have you ever had to re-generate the ws-stubs, recompile and redeploy you application because of a tiny change in the WSDL?
 * Have you every been confused why you generate all these domain and stub classes to invoke one simple web-service operation and to get a plain response that could be processed with XSTL one-liner?
@@ -48,7 +48,7 @@ soap-client:
 
 * communication and message handling purely in the XML format
 * basic authentication and SSL support
-* proxy with basic authenticationsupport
+* proxy with basic authentication support
 * proper SOAPAction support in both SOAP versions
 
 ### License
@@ -60,56 +60,88 @@ You can confidently use soap-ws in your commercial project.
 
 ## User Guide
 
-### Quickstart
+### Quick-start
 
 #### Add soap-ws to your maven project
-In order to use soap-ws in your project you have to declare soap-ws in the dependencies section of your pom.xml. You can add soap-builder, soap-client, soap-server or all of them, dependening on the fact which components you want to use.
+In order to use soap-ws in your project you have to declare soap-ws in the dependencies section of your pom.xml. You can add soap-builder, soap-client, soap-server or all of them, depending on the fact which components you want to use.
 ```xml
 <dependencies>
-        <dependency>
-            <groupId>com.centeractive</groupId>
-            <artifactId>soap-builder</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.centeractive</groupId>
-            <artifactId>soap-client</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.centeractive</groupId>
-            <artifactId>soap-server</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
-        </dependency>
+	<dependency>
+    	<groupId>com.centeractive</groupId>
+        <artifactId>soap-builder</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+        <groupId>com.centeractive</groupId>
+        <artifactId>soap-client</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+        <groupId>com.centeractive</groupId>
+        <artifactId>soap-server</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
+    </dependency>
 </dependencies>
 ```
 soap-ws is not yet located in the central maven repo, thus you also have to add an additional repository to your config.
 ```xml
 <repositories>
-        <repository>
-            <id>centeractive</id>
-            <url>TODO</url>
-        </repository>
+	<repository>
+    	<id>centeractive</id>
+        <url>TODO</url>
+    </repository>
 </repositories>
 ```
 
 #### soap-builder
+SoapBuilder object is responsible for the generation of the XML SOAP messages. You have 2 ways to initialize SoapBuilder. You can simply invoke the constructor specifying the location of the WSDL file. 
+```java
+SoapBuilder builder = new SoapBuilder(wsdlUrl); 
+SoapBuilder builder = new SoapBuilder(wsdlUrl); 
+```
+You can also use the static factory method to recursively download WSDL and schemas to the specified location and instantiate SoapBuilder using the local copy of the files.
+```java
+SoapBuilder builder = new SoapBuilder(wsdlUrl, targetFolder, wsdlName); 
+```
+
+To generate SOAP message in the XML format just invoke one of the methods whose names begins with build* prefix (they are often overloaded).
+```java
+builder.buildEmptyMessage
+builder.buildFault
+builder.buildSoapMessageFromInput
+builder.buildSoapMessageFromOutput
+```
+
+Last, but not least. In most of the cases, you can relay on the default settings of the context the specifies how messages are generate, but if you would like to change it you have to populate the SoapContext object and pass it either to the constructor (from that moment on, SoapBuilder will use this context as the default one), or to single methods, changing the context of the generation for time span of single method invocation. You can also overwrite the default context by invoking the setContext() method. In order to populate a SoapContext object use the fluent builder. 
+```java
+SoapContext context = SoapContext.builder()
+	.alwaysBuildHeaders(true)
+    .buildOptional(true)
+    .exampleContent(true)            
+    .typeComment(true)
+    .skipComments(false)
+    .build(); 
+```
 
 #### soap-client
-You can create an instance of a soap-client using the fluent builder. If you want to use a plain HTTP connection without tweaking any advance option you are good to go with the following snippet:
+You can create an instance of a soap-client using a fluent builder. If you want to use a plain HTTP connection without tweaking any advance options you are good to go with the following snippet:
 ```java
 SoapClient client = SoapClient.builder()
 	.endpointUrl("http://example.com/endpoint")
 	.build();
-client.post(soapAction, message);
+```
+Then, you can send a SOAP envelope (as a String) invoking the post() method:
+```java
+client.post(soapAction, envelope);
+```
+
+You can also skip the SOAPAction and send a message only:
+```java
+client.post(envelope);
 ```
 
 #### soap-server
-
-
-
-### Maven repo
-TODO
+Use a similar builder to create an instance of the soap-server. 
 
 ### Project modules
 * soap-builder - responsible for the generation of SOAP XML messages.
@@ -143,7 +175,7 @@ an XML level.
 
 centeractive ag would like to express strong appreciation to SmartBear Software and
 to the whole team of soapUI's developers for creating soapUI and for releasing its
-source code under a free and open-source licence. centeractive ag extracted and
+source code under a free and open-source license. centeractive ag extracted and
 modifies some parts of the soapUI's code in good faith, making every effort not
 to impair any existing functionality and to supplement it according to our
 requirements, applying best practices of software design.
