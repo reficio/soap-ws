@@ -61,8 +61,55 @@ You can confidently use soap-ws in your commercial project.
 ## User Guide
 
 ### Quickstart
-TODO
 
+#### Add soap-ws to your maven project
+In order to use soap-ws in your project you have to declare soap-ws in the dependencies section of your pom.xml. You can add soap-builder, soap-client, soap-server or all of them, dependening on the fact which components you want to use.
+```xml
+<dependencies>
+        <dependency>
+            <groupId>com.centeractive</groupId>
+            <artifactId>soap-builder</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.centeractive</groupId>
+            <artifactId>soap-client</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.centeractive</groupId>
+            <artifactId>soap-server</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+</dependencies>
+```
+soap-ws is not yet located in the central maven repo, thus you also have to add an additional repository to your config.
+```xml
+<repositories>
+        <repository>
+            <id>centeractive</id>
+            <url>TODO</url>
+        </repository>
+</repositories>
+```
+
+#### soap-builder
+
+#### soap-client
+You can create an instance of a soap-client using the fluent builder. If you want to use a plain HTTP connection without tweaking any advance option you are good to go with the following snippet:
+```java
+SoapClient client = SoapClient.builder()
+	.endpointUrl("http://example.com/endpoint")
+	.build();
+client.post(soapAction, message);
+```
+
+#### soap-server
+
+
+
+### Maven repo
+TODO
 
 ### Project modules
 * soap-builder - responsible for the generation of SOAP XML messages.
@@ -72,9 +119,11 @@ TODO
 * soap-test - contains integration tests - tests soap-client and soap-server in many tricky ways.
 
 
-## Last but not lease
+## Last but not least
 
 ### Who's behind it?
+Tom Bujok [tom.bujok@centeractive.com, tom.bujok@reficio.org]
+
 centeractive ag
 
 www.centeractive.com
