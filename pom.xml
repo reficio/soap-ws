@@ -7,6 +7,15 @@
     <packaging>pom</packaging>
     <version>1.0.1-SNAPSHOT</version>
     <name>soap-ws</name>
+    <description>
+        soap-ws is a lightweight and easy-to-use Java library to handle SOAP message generation and SOAP message transmission
+        on a purely XML level. With the usage of this library within few lines of code you can easily import your WSDL and generate
+        SOAP messages directly in an XML format. Then you can use the SoapClient to transmit this message over HTTP(s) to a web-service
+        endpoint. Finally, you can run SoapServer to receive SOAP messages and and respond to them. And all of that requires no classes
+        or stubs generation - everything happens directly in an XML format.
+    </description>
+    <url>http://github.com/centeractive/soap-ws</url>
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,7 +50,7 @@
             <organization>centeractive ag</organization>
             <organizationUrl>http://www.centeractive.com</organizationUrl>
             <roles>
-                <role>architect</role>
+                <role>project lead</role>
                 <role>developer</role>
             </roles>
             <timezone>+1</timezone>
@@ -93,7 +102,7 @@
             <dependency>
                 <groupId>com.googlecode.guava-osgi</groupId>
                 <artifactId>guava-osgi</artifactId>
-                <version>11.0.1</version>
+                <version>11.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.schema</groupId>
@@ -102,41 +111,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <repositories>
-        <repository>
-            <id>eviware</id>
-            <url>http://www.eviware.com/repository/maven2/</url>
-        </repository>
-    </repositories>
-
-    <profiles>
-        <profile>
-            <id>findbugs</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>findbugs-maven-plugin</artifactId>
-                        <version>2.4.0</version>
-                        <executions>
-                            <execution>
-                                <id>findbugs</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>findbugs</goal>
-                                </goals>
-                                <configuration>
-                                    <xmlOutput>true</xmlOutput>
-                                    <excludeFilterFile>src/main/resources/findbugs-exclude.xml</excludeFilterFile>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
     <build>
         <plugins>
@@ -190,18 +164,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <version>2.3.4</version>
@@ -225,6 +187,18 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.1.2</version>
                 <executions>
@@ -237,6 +211,33 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.8.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <extensions>
             <extension>
@@ -245,8 +246,41 @@
                 <version>1.0-beta-7</version>
             </extension>
         </extensions>
-
     </build>
 
+    <repositories>
+        <repository>
+            <id>eviware</id>
+            <url>http://www.eviware.com/repository/maven2/</url>
+        </repository>
+    </repositories>
+
+    <profiles>
+        <profile>
+            <id>findbugs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <version>2.4.0</version>
+                        <executions>
+                            <execution>
+                                <id>findbugs</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>findbugs</goal>
+                                </goals>
+                                <configuration>
+                                    <xmlOutput>true</xmlOutput>
+                                    <excludeFilterFile>src/main/resources/findbugs-exclude.xml</excludeFilterFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
