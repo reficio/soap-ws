@@ -223,7 +223,7 @@ That's a lot of stuff! Try it out now and leave send us some feedback!
 ## Last but not least
 
 ### Who's behind it?
-Tom Bujok [tom.bujok@centeractive.com, tom.bujok@reficio.org]
+Tom Bujok [tom.bujok@centeractive.com, tom.bujok@gmail.com]
 
 centeractive ag
 
