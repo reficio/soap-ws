@@ -102,7 +102,7 @@
             <dependency>
                 <groupId>com.googlecode.guava-osgi</groupId>
                 <artifactId>guava-osgi</artifactId>
-                <version>11.0.1-SNAPSHOT</version>
+                <version>11.0.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.schema</groupId>
