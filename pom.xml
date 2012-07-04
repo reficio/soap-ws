@@ -253,6 +253,10 @@
             <id>eviware</id>
             <url>http://www.eviware.com/repository/maven2/</url>
         </repository>
+        <repository>
+            <id>jboss</id>
+            <url>https://repository.jboss.org/nexus/content/repositories/deprecated/</url>
+        </repository>
     </repositories>
 
     <profiles>

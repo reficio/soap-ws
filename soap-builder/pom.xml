@@ -64,15 +64,14 @@
             <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>net.sourceforge.saxon</groupId>
+            <groupId>net.sf.saxon</groupId>
             <artifactId>saxon</artifactId>
             <version>9.1.0.8</version>
         </dependency>
         <dependency>
-            <groupId>net.sourceforge.saxon</groupId>
-            <artifactId>saxon</artifactId>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon-dom</artifactId>
             <version>9.1.0.8</version>
-            <classifier>dom</classifier>
         </dependency>
         <dependency>
             <groupId>wsrf</groupId>
