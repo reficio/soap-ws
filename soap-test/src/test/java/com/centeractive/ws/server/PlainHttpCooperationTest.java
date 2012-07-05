@@ -142,7 +142,6 @@ public class PlainHttpCooperationTest extends AbstractCooperationTest {
         try {
             verifyServiceBehavior(15, SKIP_SOAP_ACTION);
         } catch (TransmissionException ex) {
-            // ex.printStackTrace();
             expected = ex;
         }
         assertNotNull(expected);
@@ -195,7 +194,6 @@ public class PlainHttpCooperationTest extends AbstractCooperationTest {
         try {
             verifyServiceBehavior(23);
         } catch (TransmissionException ex) {
-//            ex.printStackTrace();
             expected = ex;
         }
         assertNotNull(expected);
@@ -208,7 +206,6 @@ public class PlainHttpCooperationTest extends AbstractCooperationTest {
         try {
             verifyServiceBehavior(24, SKIP_SOAP_ACTION);
         } catch (TransmissionException ex) {
-//            ex.printStackTrace();
             expected = ex;
         }
         assertNotNull(expected);

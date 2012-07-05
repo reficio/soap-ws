@@ -75,7 +75,6 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
                 .trustStoreUrl(getTestKeyStoreUrl())
                 .trustStorePassword(getTestKeyStorePassword())
                 .build();
-        // log.info("[\n"+request+"\n]");
         return client.post(soapAction, request);
     }
 
