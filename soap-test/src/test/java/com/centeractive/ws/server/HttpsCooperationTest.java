@@ -53,6 +53,10 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
                 .httpsPort(HOST_PORT)
                 .build();
         server.start();
+        try {
+            Thread.sleep(500); // timing issues occured
+        } catch (InterruptedException e) {
+        }
     }
 
     @After
@@ -71,7 +75,7 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
                 .trustStoreUrl(getTestKeyStoreUrl())
                 .trustStorePassword(getTestKeyStorePassword())
                 .build();
-        log.info("[\n"+request+"\n]");
+        // log.info("[\n"+request+"\n]");
         return client.post(soapAction, request);
     }
 
