@@ -54,7 +54,7 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
                 .build();
         server.start();
         try {
-            Thread.sleep(500); // timing issues occured
+            Thread.sleep(1000); // timing issues occured
         } catch (InterruptedException e) {
         }
     }
