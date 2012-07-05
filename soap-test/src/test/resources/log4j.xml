@@ -30,6 +30,10 @@
         </layout>
     </appender>
 
+    <logger name="com.centeractive.ws.server.HttpsCooperationTest">
+        <level value="info"/>
+    </logger>
+
     <logger name="com.centeractive">
         <level value="error"/>
     </logger>
