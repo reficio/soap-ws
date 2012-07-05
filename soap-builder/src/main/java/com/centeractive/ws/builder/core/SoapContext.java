@@ -76,7 +76,7 @@ public class SoapContext {
          * Specifies if to generate example SOAP message content
          *
          * @param value
-         * @return
+         * @return builder
          */
         public ContextBuilder exampleContent(boolean value) {
             this.exampleContent = value;
@@ -87,7 +87,7 @@ public class SoapContext {
          * Specifies if to generate SOAP message type comments
          *
          * @param value
-         * @return
+         * @return builder
          */
         public ContextBuilder typeComment(boolean value) {
             this.typeComment = value;
@@ -98,7 +98,7 @@ public class SoapContext {
          * Specifies if to skip SOAP message comments
          *
          * @param value
-         * @return
+         * @return builder
          */
         public ContextBuilder skipComments(boolean value) {
             this.skipComments = value;
@@ -109,7 +109,7 @@ public class SoapContext {
          * Specifies if to generate content for elements marked as optional
          *
          * @param value
-         * @return
+         * @return builder
          */
         public ContextBuilder buildOptional(boolean value) {
             this.buildOptional = value;
@@ -120,7 +120,7 @@ public class SoapContext {
          * Specifies if to always build SOAP headers
          *
          * @param value
-         * @return
+         * @return builder
          */
         public ContextBuilder alwaysBuildHeaders(boolean value) {
             this.alwaysBuildHeaders = value;
@@ -130,7 +130,7 @@ public class SoapContext {
         /**
          * Builds populated context instance
          *
-         * @return
+         * @return fully populated soap context
          */
         public SoapContext build() {
             return new SoapContext(exampleContent, typeComment, skipComments,

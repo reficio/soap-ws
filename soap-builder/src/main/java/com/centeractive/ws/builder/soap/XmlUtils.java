@@ -530,15 +530,15 @@ public final class XmlUtils
 		return parse( new InputSource( new StringReader( xmlString ) ) );
 	}
 
-	public static void dumpParserErrors( XmlObject xmlObject )
-	{
-		List<?> errors = new ArrayList<Object>();
-		xmlObject.validate( new XmlOptions().setErrorListener( errors ) );
-		for( Iterator<?> i = errors.iterator(); i.hasNext(); )
-		{
-			System.out.println( i.next() );
-		}
-	}
+//	public static void dumpParserErrors( XmlObject xmlObject )
+//	{
+//		List<?> errors = new ArrayList<Object>();
+//		xmlObject.validate( new XmlOptions().setErrorListener( errors ) );
+//		for( Iterator<?> i = errors.iterator(); i.hasNext(); )
+//		{
+//			//System.out.println( i.next() );
+//		}
+//	}
 
 //	public static String transferValues( String source, String dest )
 //	{

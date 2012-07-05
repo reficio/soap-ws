@@ -31,6 +31,7 @@ import java.util.List;
 
 import static junit.framework.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -101,13 +102,19 @@ public class SimpleServerTest {
         server.destroy();
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void startStopDestroyCannotResurrect() {
         SoapServer server = getServer();
         server.start();
         server.stop();
         server.destroy();
-        server.start();
+        RuntimeException caught = null;
+        try {
+            server.start();
+        } catch (RuntimeException ex) {
+            caught = ex;
+        }
+        assertNotNull(caught);
     }
 
     @Test

@@ -239,7 +239,7 @@ public final class SoapServer {
 
         /**
          * @param value Sets the http port on which the server listens. Has to be not negative.
-         * @return
+         * @return builder
          */
         public SoapServerBuilder httpPort(int value) {
             checkArgument(value >= 0);
@@ -250,7 +250,7 @@ public final class SoapServer {
 
         /**
          * @param value Sets the https port on which the server listens. Has to be not negative.
-         * @return
+         * @return builder
          */
         public SoapServerBuilder httpsPort(int value) {
             checkArgument(value >= 0);
@@ -261,7 +261,7 @@ public final class SoapServer {
 
         /**
          * @param value Sets the connection max idle time in seconds. Has to be not negative.
-         * @return
+         * @return builder
          */
         public SoapServerBuilder connectionMaxIdleTimeInSeconds(int value) {
             checkArgument(value >= 0);
@@ -271,7 +271,7 @@ public final class SoapServer {
 
         /**
          * @param value Sets the number of http server connector acceptor threads. Has to be positive.
-         * @return
+         * @return builder
          */
         public SoapServerBuilder acceptorThreads(int value) {
             checkArgument(value > 0);
@@ -281,7 +281,7 @@ public final class SoapServer {
 
         /**
          * @param value Sets the number of http server core threads. Has to be positive.
-         * @return
+         * @return builder
          */
         public SoapServerBuilder coreThreads(int value) {
             checkArgument(value > 0);
@@ -291,7 +291,7 @@ public final class SoapServer {
 
         /**
          * @param value Sets the maximal number of threads that the http server may spawn. Has to be positive.
-         * @return
+         * @return builder
          */
         public SoapServerBuilder maxThreads(int value) {
             checkArgument(value > 0);
@@ -301,7 +301,7 @@ public final class SoapServer {
 
         /**
          * @param value Sets the value of thread keep alive in seconds. Has to be not negative.
-         * @return
+         * @return builder
          */
         public SoapServerBuilder threadKeepAliveTimeInSeconds(int value) {
             checkArgument(value >= 0);
@@ -312,7 +312,7 @@ public final class SoapServer {
         /**
          * @param value Specifies the URL of the keystore to use in the SOAP communication. Null is not accepted. If there's more than
          *              one certificate in the keystore it is undefined which of them will be used
-         * @return
+         * @return builder
          */
         public SoapServerBuilder keyStoreUrl(URL value) {
             checkNotNull(value);
@@ -322,7 +322,7 @@ public final class SoapServer {
 
         /**
          * @param value Specifies the type of the keystore. Null is not accepted.
-         * @return
+         * @return builder
          */
         public SoapServerBuilder keyStoreType(String value) {
             checkNotNull(value);
@@ -332,7 +332,7 @@ public final class SoapServer {
 
         /**
          * @param value keystore password. Null is accepted.
-         * @return
+         * @return builder
          */
         public SoapServerBuilder keyStorePassword(String value) {
             server.keyStorePassword = value;
@@ -341,7 +341,7 @@ public final class SoapServer {
 
         /**
          * @param value Sets the reuseAddress on the underlying @see java.net.Socket
-         * @return
+         * @return builder
          */
         public SoapServerBuilder reuseAddress(boolean value) {
             server.reuseAddress = value;
@@ -351,7 +351,7 @@ public final class SoapServer {
         /**
          * Builds populated SoapServer instance
          *
-         * @return
+         * @return builder
          */
         public SoapServer build() {
             server.configure();

@@ -287,7 +287,7 @@ public final class SoapClient {
 
         /**
          * @param url URL of the SOAP endpoint to whom the client should send messages. Null is not accepted.
-         * @return
+         * @return builder
          */
         public Builder endpointUrl(String url) {
             checkNotNull(url);
@@ -305,7 +305,7 @@ public final class SoapClient {
          *
          * @param user     User for the basic-authentication. Null is not accepted.
          * @param password Password for the basic-authentication. Null is not accepted.
-         * @return
+         * @return builder
          */
         public Builder basicAuth(String user, String password) {
             client.basicAuthEncoded = encodeBasicCredentials(user, password);
@@ -314,7 +314,7 @@ public final class SoapClient {
 
         /**
          * @param value Specifies the URL of the truststore to use in the SOAP communication. Null is not accepted.
-         * @return
+         * @return builder
          */
         public Builder trustStoreUrl(URL value) {
             checkNotNull(value);
@@ -324,7 +324,7 @@ public final class SoapClient {
 
         /**
          * @param value Specifies the type of the truststore. Null is not accepted.
-         * @return
+         * @return builder
          */
         public Builder trustStoreType(String value) {
             checkNotNull(value);
@@ -334,7 +334,7 @@ public final class SoapClient {
 
         /**
          * @param value truststore password. Null is accepted.
-         * @return
+         * @return builder
          */
         public Builder trustStorePassword(String value) {
             if (value != null) {
@@ -347,7 +347,7 @@ public final class SoapClient {
          * Enables strict host verification
          *
          * @param value strict host verification enables/disabled
-         * @return
+         * @return builder
          */
         public Builder strictHostVerification(boolean value) {
             client.strictHostVerification = value;
@@ -356,7 +356,7 @@ public final class SoapClient {
 
         /**
          * @param value Specifies the proxy type. Null is not accepted.
-         * @return
+         * @return builder
          */
         public Builder proxyType(Proxy.Type value) {
             checkNotNull(value);
@@ -366,7 +366,7 @@ public final class SoapClient {
 
         /**
          * @param value Specifies the proxy host (IP or hostname). Null is not accepted.
-         * @return
+         * @return builder
          */
         public Builder proxyHost(String value) {
             checkNotNull(value);
@@ -376,7 +376,7 @@ public final class SoapClient {
 
         /**
          * @param value Specifies the proxy port. Has to be positive.
-         * @return
+         * @return builder
          */
         public Builder proxyPort(int value) {
             checkArgument(value > 0);
@@ -389,7 +389,7 @@ public final class SoapClient {
          *
          * @param user     User for the basic-authentication. Null is not accepted.
          * @param password Password for the basic-authentication. Null is not accepted.
-         * @return
+         * @return builder
          */
         public Builder proxyBasicAuth(String user, String password) {
             client.proxyAuthEncoded = encodeBasicCredentials(user, password);
@@ -398,7 +398,7 @@ public final class SoapClient {
 
         /**
          * @param value Specifies the SSL Context Protocol. By default it's SSLv3. Null is not accepted.
-         * @return
+         * @return builder
          */
         public Builder sslContextProtocol(String value) {
             checkNotNull(value);
@@ -408,7 +408,7 @@ public final class SoapClient {
 
         /**
          * @param value Specifies the timeout in millisecond for the read operation. Has to be not negative.
-         * @return
+         * @return builder
          */
         public Builder readTimeoutInMillis(int value) {
             checkArgument(value >= 0);
@@ -418,7 +418,7 @@ public final class SoapClient {
 
         /**
          * @param value Specifies the timeout in millisecond for the connect operation. Has to be not negative.
-         * @return
+         * @return builder
          */
         public Builder connectTimeoutInMillis(int value) {
             checkArgument(value >= 0);

@@ -30,17 +30,21 @@
         </layout>
     </appender>
 
+    <logger name="org.mortbay.log">
+        <level value="fatal"/>
+    </logger>
+
     <logger name="com.centeractive">
-        <level value="error"/>
+        <level value="fatal"/>
     </logger>
 
     <logger name="org.springframework">
-        <level value="error"/>
+        <level value="fatal"/>
     </logger>
 
     <!-- Root Logger -->
     <root>
-        <priority value="error"/>
+        <priority value="fatal"/>
         <appender-ref ref="console"/>
     </root>
 

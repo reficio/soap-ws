@@ -31,16 +31,16 @@
     </appender>
 
     <logger name="com.centeractive">
-        <level value="warn"/>
+        <level value="error"/>
     </logger>
 
     <logger name="org.springframework">
-        <level value="warn"/>
+        <level value="error"/>
     </logger>
 
     <!-- Root Logger -->
     <root>
-        <priority value="warn"/>
+        <priority value="error"/>
         <appender-ref ref="console"/>
     </root>
 
