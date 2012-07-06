@@ -98,40 +98,40 @@ The usage of SoapBuilder is a bit complex. It is a consequence of two facts: its
 
 SoapBuilder object is responsible for the generation of the XML SOAP messages. The simplest way of initializing the SoapBuilder object is to invoke the constructor specifying the URL of the WSDL file. 
 ```java
-SoapBuilder builder = new SoapBuilder(wsdlUrl); 
+    SoapBuilder builder = new SoapBuilder(wsdlUrl);
 ```
 Soap builder reads the specified WSDL file recursively,) fetching all included WSDL and XSD files, and constructs an underlying Definition object that is the Java-based representation of the WSDL (see WSDL4j to read more about the Definitoin). You can get the underlying definition object by invoking the build.getDefinition() method.
 ```java
-builder.getDefinition()
+    builder.getDefinition()
 ```
 In order to generate a SOAP message you have to specify the Binding and the BindingOperation (coming directly from the Definition object). 
 To check what binding and operation are defined in the WSDL invoke the following methods (see WSDL4J doc for more details on Definition, Binding and BindingOperation):
 ```java
-builder.getDefinition().getAllBindings();
-binding.getBindingOperations();
+    builder.getDefinition().getAllBindings();
+    binding.getBindingOperations();
 ```
 
 When you decide which binding and BindingOperation you want to use just invoke the static SoapBuilder.getOperation() to build the wrapper object that can be easily consumed by the generation engine:
 ```java
-OperationWrapper operationWrapper = builder.getOperation(binding, bindingOperation);
+    OperationWrapper operationWrapper = builder.getOperation(binding, bindingOperation);
 ```
 Now you are good to go. To generate SOAP message in the XML format just invoke one of the methods whose names begins with build* prefix (they are often overloaded) passing the OperationWrapper object that specifies the target operation.
 ```java
-String envelopeInput = builder.buildSoapMessageFromInput(operationWrapper);
-String envelopeOutput = builder.buildSoapMessageFromOutput(operationWrapper);
+    String envelopeInput = builder.buildSoapMessageFromInput(operationWrapper);
+    String envelopeOutput = builder.buildSoapMessageFromOutput(operationWrapper);
 ```
 
 You can also build generic empty messages invoking buildEmptyMessage or buildFault.
 
 Last, but not least. In most of the cases, you can relay on the default settings of the context the specifies how messages are generate, but if you would like to change it you have to populate the SoapContext object and pass it either to the constructor (from that moment on, SoapBuilder will use this context as the default one), or to single methods, changing the context of the generation for time span of single method invocation. You can also overwrite the default context by invoking the setContext() method. In order to populate a SoapContext object use the fluent builder. 
 ```java
-SoapContext context = SoapContext.builder()
-	.alwaysBuildHeaders(true)
-    .buildOptional(true)
-    .exampleContent(true)            
-    .typeComment(true)
-    .skipComments(false)
-    .build(); 
+    SoapContext context = SoapContext.builder()
+        .alwaysBuildHeaders(true)
+        .buildOptional(true)
+        .exampleContent(true)
+        .typeComment(true)
+        .skipComments(false)
+        .build();
 ```
 
 OK, now the easy part begins...
@@ -139,66 +139,66 @@ OK, now the easy part begins...
 #### soap-client
 You can create an instance of a soap-client using a fluent builder. If you want to use a plain HTTP connection without tweaking any advance options you are good to go with the following snippet:
 ```java
-SoapClient client = SoapClient.builder()
-	.endpointUrl("http://example.com/endpoint")
-	.build();
+    SoapClient client = SoapClient.builder()
+        .endpointUrl("http://example.com/endpoint")
+        .build();
 ```
 Then, you can send a SOAP envelope (as a String) invoking the post() method:
 ```java
-client.post(soapAction, envelope);
+    client.post(soapAction, envelope);
 ```
 
 You can also skip the SOAPAction header and send the envelope only:
 ```java
-client.post(envelope);
+    client.post(envelope);
 ```
 Isn't it easy? But it's gonna be even better :)
 
 #### soap-server
 Use a similar builder to create an instance of the soap-server. 
 ```java
-SoapServer server = SoapServer.builder()
-                .httpPort(8080)
-                .build();
+    SoapServer server = SoapServer.builder()
+                    .httpPort(8080)
+                    .build();
 ```
 You can start and stop the server using start/stop methods
 ```java
-server.start();
-server.stop();
+    server.start();
+    server.stop();
 ```
 
 Now we would like to turn our server into a mock server that responds to request generating a sample content that is complaint with the schema of the operation that is being invoked.
 To do that we have to create an AutoResponder and register it under the given context path.
 Autoresponder requires a SoapBuilder (that contains the WSDL) and the binding name which it should use. Keep in mind the there can be only one binding under one context path;
 ```java
-String contextPath = "exampleEndpoint";
-AutoResponder responder = new AutoResponder(soapBuilder, bindingName);
-server.registerResponder(contextPath, responder);
+    String contextPath = "exampleEndpoint";
+    AutoResponder responder = new AutoResponder(soapBuilder, bindingName);
+    server.registerResponder(contextPath, responder);
 ```
 From that moment our server will respond to request send to the "exampleEndpoint" context path.
 
 If you would like to handle the request yourself you just have to implement the RequestResponder interface. 
 ```java
-public interface RequestResponder {
- 	java.xml.Source respond(SoapMessage request);
-}
+    public interface RequestResponder {
+        java.xml.Source respond(SoapMessage request);
+    }
 ```
 
 It may be a bit cumbersome, as it is not that easy to match an XML request to the binding and operation, that is the reason why we provided an AbstractResponder that does all of that backstage.
 ```java
-public abstract class AbstractResponder implements RequestResponder {
- 	/**
-     * Abstract method that should be implemented by overriding classes.
-     * This method is invoked whenever a request is send by the client.
-     * InvokedOperation may be passed to a SoapBuilder to construct the
-     * response to the request that was sent by the client.
-     *
-     * @param invokedOperation operation from the binding that is matched to the SOAP message
-     * @param message          SOAP message passed by the client
-     * @return response in the XML source format containing the whole SOAP envelope
-     */
-    public abstract Source respond(OperationWrapper invokedOperation, SoapMessage message);
-}
+    public abstract class AbstractResponder implements RequestResponder {
+        /**
+         * Abstract method that should be implemented by overriding classes.
+         * This method is invoked whenever a request is send by the client.
+         * InvokedOperation may be passed to a SoapBuilder to construct the
+         * response to the request that was sent by the client.
+         *
+         * @param invokedOperation operation from the binding that is matched to the SOAP message
+         * @param message          SOAP message passed by the client
+         * @return response in the XML source format containing the whole SOAP envelope
+         */
+        public abstract Source respond(OperationWrapper invokedOperation, SoapMessage message);
+    }
 ```
 
 AbstractResponder does all the hard work for you to match the message to the BindingOperation from the WSDL. If it find it the respond() operation is invoked, if not a SOAP fault is send back to the client saying the operation has not been found.
