@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
+    <skin>
+        <groupId>org.reficio</groupId>
+        <artifactId>maven-skin</artifactId>
+        <version>1.0.0</version>
+    </skin>
+
+    <body>
+        <head>
+            <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js">
+            </script>
+
+            <script type="text/javascript">
+                $(document).ready(function(){
+                $("a:contains('About')").hide();
+                $("a:contains('JavaDocs')").attr('target', '_blank');
+                $("a:contains('Source Xref')").attr('target', '_blank');
+                $("a:contains('Cobertura Test Coverage')").attr('target', '_blank');
+                $("a:contains('Clover')").attr('target', '_blank');
+                });
+            </script>
+            <script type="text/javascript" language="javascript"
+                    src="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.js"></script>
+            <script type="text/javascript" language="javascript"
+                    src="http://google-code-prettify.googlecode.com/svn/trunk/src/lang-css.js"></script>
+            <script type="text/javascript">
+                function addLoadEvent(func) {
+                    var oldonload = window.onload;
+                    if (typeof window.onload != 'function') {
+                        window.onload = func;
+                    } else {
+                        window.onload = function() {
+                            if (oldonload) {
+                                oldonload();
+                            }
+                            func();
+                        }
+                    }
+                }
+                $(function() {
+                  $('pre').addClass('prettyprint');
+                });
+                addLoadEvent(prettyPrint);
+
+
+            </script>
+            <style type="text/css">
+                /* Pretty printing styles. Used with prettify.js. */
+
+                .str { color: #080; }
+                .kwd { color: #008; }
+                .com { color: #800; }
+                .typ { color: #606; }
+                .lit { color: #066; }
+                .pun { color: #660; }
+                .pln { color: #000; }
+                .tag { color: #008; }
+                .atn { color: #606; }
+                .atv { color: #080; }
+                .dec { color: #606; }
+                pre.prettyprint { padding: 2px; border: 1px solid #888; }
+
+                @media print {
+                .str { color: #060; }
+                .kwd { color: #006; font-weight: bold; }
+                .com { color: #600; font-style: italic; }
+                .typ { color: #404; font-weight: bold; }
+                .lit { color: #044; }
+                .pun { color: #440; }
+                .pln { color: #000; }
+                .tag { color: #006; font-weight: bold; }
+                .atn { color: #404; }
+                .atv { color: #060; }
+                }
+            </style>
+        </head>
+
+        <menu name="Overview">
+            <item name="Usage" href="">
+                <item name="Manual" href="manual.html"/>
+                <item name="FAQ" href="faq.html"/>
+            </item>
+        </menu>
+        $reports
+    </body>
+
+</project>

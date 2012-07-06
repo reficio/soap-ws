@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<faqs xmlns="http://maven.apache.org/FML/1.0.1"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
+      title="Frequently Asked Questions"
+      toplink="false">
+
+    <!--<menu ref="parent" />-->
+        <!--<menu ref="modules" />-->
+        <!--<menu ref="reports" />-->
+
+    <part id="general">
+        <title>General</title>
+
+        <faq id="whats-is-turbine">
+            <question>
+                What is Turbine?
+            </question>
+            <answer>
+                <p>
+                Turbine is the Java client of the STOMP protocol. It implements the latest version of the STOMP specification that has been released - version 1.0.
+                Implementation was fully contributed by the Reficio (TM) open source initiative.
+                </p>
+                <!--
+                <source>some source code</source>
+                <p>some markup goes here</p>
+                -->
+            </answer>
+        </faq>
+
+        <faq id="whats-is-turbine">
+            <question>
+                What is Stomp?
+            </question>
+            <answer>
+                <p>
+                Information from the Stomp website - http://stomp.codehaus.org/:
+                "The Stomp project is the Streaming Text Orientated Messaging Protocol site (or the Protocol Briefly Known as TTMP and Represented by the symbol :ttmp). Stomp provides an interoperable wire format so that any of the available Stomp Clients can communicate with any Stomp Message Broker to provide easy and widespread messaging interop among languages, platforms and brokers. Stomp is a very simple and easy to implement protocol, coming from the HTTP school of design; the server side may be hard to implement well, but it is very easy to write a client to get yourself connected. For example you can use Telnet to login to any Stomp broker and interact with it!"
+                </p>
+            </answer>
+        </faq>
+
+        <faq id="whats-is-turbine">
+            <question>
+                Why there is a need for another Java Stomp client?
+            </question>
+            <answer>
+                <p>
+                After having analyzed Java Stomp clients that are already available I realized that there is no production ready implementation that would be well-engineered, proficient, reliable, performance-oriented, well-documented and released under the liberal open-source Apache v2 licence.
+                Two implementations of Java Stomp clients that are available (Gozirra and StompJ) are really cool contributions, but in my humble opinion they do not fulfill the requirements that are specified above.
+                Project Gozirra has never achieved production maturity - it also seems that the development is abandoned for a while now. StompJ is not very active as well. What is more, it does not provide the end user with the soruce code.
+                That is the reason why I believe there was a gap to be filled - here is where Turbine comes into the game.
+                </p>
+            </answer>
+        </faq>
+
+        <faq id="whats-is-turbine">
+            <question>
+                Why does the version number contains some many digits?
+            </question>
+            <answer>
+                <p>
+                Version number looks more or less like this: X.X.Y.Y.Z, where:
+                <ul>
+                <li>X.X - is the version of the specification that the client implements</li>
+                <li>Y.Y - is the version of the client itself</li>
+                <li>Z - is the postfix, like RC, GA, etc.</li>
+                </ul>
+                </p>
+            </answer>
+        </faq>
+
+    </part>
+
+</faqs>
