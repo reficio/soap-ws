@@ -79,6 +79,9 @@ public class SoapClientExamplesTest {
         return responder;
     }
 
+    /**
+     * Here we're gonna simply post SOAP hardcoded message using SoapClient
+     */
     @Test
     public void invoke_tradePriceRequest_hardcodedMessages() throws IOException, SAXException {
 
@@ -116,19 +119,27 @@ public class SoapClientExamplesTest {
         assertTrue(XMLUnit.compareXML(expectedResponse, response).identical());
     }
 
+
+    /**
+     * Here we're gonna generate the SOAP message using SoapBuilder and post it using SoapClient
+     */
     @Test
     public void invoke_tradePriceRequest_generatedMessages() throws Exception, SAXException, WSDLException {
 
+        // construct the client
         String url = String.format("http://localhost:%d%s", port, contextPath);
         SoapClient client = SoapClient.builder()
                 .endpointUrl(url)
                 .build();
 
-        // assumption that our operation is the first operation in the WSDL's
+        // get the operation to invoked -> assumption our operation is the first operation in the WSDL's
         SoapOperation op = builder.getOperations().iterator().next();
 
+        // construct the request
         String request = builder.buildInputMessage(op);
+        // post the request to the server
         String response = client.post(request);
+        // get the response
         String expectedResponse = builder.buildOutputMessage(op);
 
         assertTrue(XMLUnit.compareXML(expectedResponse, response).identical());

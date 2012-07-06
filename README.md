@@ -69,17 +69,17 @@ In order to use soap-ws in your project you have to declare soap-ws in the depen
         <dependency>
             <groupId>com.centeractive</groupId>
             <artifactId>soap-builder</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.centeractive</groupId>
             <artifactId>soap-client</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.centeractive</groupId>
             <artifactId>soap-server</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 ```
@@ -87,7 +87,7 @@ soap-ws is not yet located in the central maven repo, thus you also have to add 
 ```xml
     <repositories>
         <repository>
-            <id>centeractive</id>
+            <id>reficio</id>
             <url>TODO</url>
         </repository>
     </repositories>
@@ -216,8 +216,9 @@ That's a lot of stuff! Try it out now and leave send us some feedback!
 * soap-builder - responsible for the generation of SOAP XML messages.
 * soap-client - responsible for the communication with a SOAP endpoint.
 * soap-server - responsible for exposing SOAP endpoints and handling the requests.
-* soap-examples - contains a few example how to use soap-ws.
 * soap-test - contains integration tests - tests soap-client and soap-server in many tricky ways.
+* soap-examples - contains a few example how to use soap-ws.
+* soap-legacy - legacy code extracted from 3rd party projects
 
 
 ## Last but not least
@@ -233,7 +234,7 @@ www.centeractive.com
 This project contains classes extracted from the soapUI code base by centeractive ag
 in October 2011. They are located in the soap-builder module. Every extracted class is
 annotated with an comment to fulfill he requirements of the LGPL 2.1 license under
-which soapUI is released. That is also the reason why soap-builder module is also
+which soapUI is released. That is also the reason why soap-legacy module is
 released under LGPL 2.1 license. All other soap-ws modules are released under Apache
 v.2 license. The main reason behind class the extraction was to separate the code that
 is responsible for the generation of the SOAP messages from the rest of the soapUI's

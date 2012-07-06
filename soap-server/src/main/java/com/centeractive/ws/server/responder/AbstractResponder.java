@@ -21,7 +21,6 @@ package com.centeractive.ws.server.responder;
 import com.centeractive.ws.builder.core.SoapBuilder;
 import com.centeractive.ws.builder.core.SoapOperation;
 import com.centeractive.ws.builder.core.SoapUtils;
-import com.centeractive.ws.builder.soap.SoapMessageBuilder;
 import com.centeractive.ws.server.OperationNotFoundException;
 import com.centeractive.ws.server.SoapServerException;
 import com.centeractive.ws.server.matcher.SoapOperationMatcher;

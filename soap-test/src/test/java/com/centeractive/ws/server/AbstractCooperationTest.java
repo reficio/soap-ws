@@ -21,7 +21,7 @@ package com.centeractive.ws.server;
 import com.centeractive.ws.builder.core.SoapBuilder;
 import com.centeractive.ws.builder.core.SoapOperation;
 import com.centeractive.ws.builder.core.SoapParser;
-import com.centeractive.ws.builder.soap.SoapMessageBuilder;
+import com.centeractive.ws.builder.core.SoapUtils;
 import com.centeractive.ws.builder.utils.XmlTestUtils;
 import com.centeractive.ws.server.core.SoapServer;
 import com.centeractive.ws.server.util.TestUtils;
@@ -98,7 +98,7 @@ public abstract class AbstractCooperationTest {
 
         String response = null;
         if (postSoapAction.booleanValue()) {
-            String soapAction = SoapMessageBuilder.getSOAPActionUri(op);
+            String soapAction = SoapUtils.getSOAPActionUri(op);
             response = postRequest(endpointUrl, request, soapAction);
         } else {
             response = postRequest(endpointUrl, request);

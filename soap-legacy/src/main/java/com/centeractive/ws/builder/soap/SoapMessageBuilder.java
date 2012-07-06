@@ -32,11 +32,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import javax.wsdl.*;
-import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBinding;
-import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.extensions.soap12.SOAP12Binding;
-import javax.wsdl.extensions.soap12.SOAP12Operation;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -243,17 +240,6 @@ public class SoapMessageBuilder {
     // ----------------------------------------------------------
     // INPUT MESSAGE GENERATORS
     // ----------------------------------------------------------
-//    public String buildSoapMessageFromInput(SoapOperation operation) throws Exception {
-//        return buildSoapMessageFromInput(operation, context);
-//    }
-//
-//    public String buildSoapMessageFromInput(SoapOperation operation, SoapContext context) throws Exception {
-//        Binding binding = getBindingByName(operation.getBindingName());
-//        BindingOperation bindingOperation = getBindingOperation(binding, operation);
-//        return buildSoapMessageFromInput(binding, bindingOperation, context);
-//
-//    }
-
     public String buildSoapMessageFromInput(Binding binding, BindingOperation bindingOperation, SoapContext context) throws Exception {
         SoapVersion soapVersion = getSoapVersion(binding);
         boolean inputSoapEncoded = WsdlUtils.isInputSoapEncoded(bindingOperation);
@@ -304,17 +290,6 @@ public class SoapMessageBuilder {
     // ----------------------------------------------------------
     // OUTPUT MESSAGE GENERATORS
     // ----------------------------------------------------------
-//    public String buildSoapMessageFromOutput(SoapOperation operation)
-//            throws Exception {
-//        return buildSoapMessageFromOutput(operation, context);
-//    }
-//
-//    public String buildSoapMessageFromOutput(SoapOperation operation, SoapContext context) throws Exception {
-//        Binding binding = getBindingByName(operation.getBindingName());
-//        BindingOperation bindingOperation = getBindingOperation(binding, operation);
-//        return buildSoapMessageFromOutput(binding, bindingOperation, context);
-//    }
-
     public String buildSoapMessageFromOutput(Binding binding, BindingOperation bindingOperation, SoapContext context) throws Exception {
         boolean inputSoapEncoded = WsdlUtils.isInputSoapEncoded(bindingOperation);
         SampleXmlUtil xmlGenerator = new SampleXmlUtil(inputSoapEncoded, context);
@@ -385,65 +360,6 @@ public class SoapMessageBuilder {
         return definitionWrapper;
     }
 
-//    public BindingOperation getBindingOperation(Binding binding, SoapOperation op) {
-//        BindingOperation operation = binding.getBindingOperation(op.getOperationName(),
-//                op.getOperationInputName(), op.getOperationOutputName());
-//        if (operation == null) {
-//            throw new SoapBuilderException("Operation not found");
-//        }
-//        return operation;
-//    }
-
-    public static String getSOAPActionUri(BindingOperation operation) {
-        List extensions = operation.getExtensibilityElements();
-        if (extensions != null) {
-            for (int i = 0; i < extensions.size(); i++) {
-                ExtensibilityElement extElement = (ExtensibilityElement) extensions.get(i);
-                if (extElement instanceof SOAPOperation) {
-                    SOAPOperation soapOp = (SOAPOperation) extElement;
-                    return soapOp.getSoapActionURI();
-                } else if (extElement instanceof SOAP12Operation) {
-                    SOAP12Operation soapOp = (SOAP12Operation) extElement;
-                    return soapOp.getSoapActionURI();
-                }
-            }
-        }
-        return null;
-    }
-
-    // removes "" from soap action
-    public static String normalizeSoapAction(String soapAction) {
-        String normalizedSoapAction = "";
-        if (soapAction != null && soapAction.length() > 0) {
-            normalizedSoapAction = soapAction;
-            if (soapAction.charAt(0) == '"' && soapAction.charAt(soapAction.length() - 1) == '"') {
-                normalizedSoapAction = soapAction.substring(1, soapAction.length() - 1).trim();
-            }
-        }
-        return normalizedSoapAction;
-    }
-
-//    public static SoapOperation getOperation(Binding binding, BindingOperation operation) {
-//        String soapAction = getSOAPActionUri(operation);
-//        if (operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
-//            return new SoapOperation(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-//                    operation.getBindingOutput().getName(), soapAction);
-//        } else {
-//            return new SoapOperation(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-//                    null, soapAction);
-//        }
-//    }
-//
-//    public static SoapOperation getOperation(Binding binding, BindingOperation operation, String soapAction) {
-//        if (operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
-//            return new SoapOperation(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-//                    operation.getBindingOutput().getName(), normalizeSoapAction(soapAction));
-//        } else {
-//            return new SoapOperation(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-//                    null, normalizeSoapAction(soapAction));
-//        }
-//    }
-
     public BindingOperation getOperationByName(QName bindingName, String operationName, String operationInputName, String operationOutputName) {
         Binding binding = getBindingByName(bindingName);
         if (binding == null) {
@@ -467,19 +383,6 @@ public class SoapMessageBuilder {
     public List<QName> getBindingNames() {
         return new ArrayList<QName>(definition.getAllBindings().keySet());
     }
-
-//    public List<SoapOperation> getOperationNames(QName bindingName) {
-//        Binding binding = getBindingByName(bindingName);
-//        return getOperationNames(binding);
-//    }
-//
-//    public List<SoapOperation> getOperationNames(Binding binding) {
-//        Set<SoapOperation> operationNames = new HashSet<SoapOperation>();
-//        for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {
-//            operationNames.add(getOperation(binding, operation));
-//        }
-//        return new ArrayList<SoapOperation>(operationNames);
-//    }
 
     // --------------------------------------------------------------------------
     // Internal methods - END OF PUBLIC API

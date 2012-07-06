@@ -55,10 +55,10 @@ public class SoapServerExamplesTest {
                 .build();
         server.start();
 
-        QName bindingName = new QName("http://centeractive.com/stockquote.wsdl", "StockQuoteSoapBinding");
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "stockquote-service.wsdl");
         SoapParser parser = new SoapParser(wsdlUrl);
-        final SoapBuilder builder = parser.getBuilder(bindingName);
+        // assumption -> we take the first binding
+        final SoapBuilder builder = parser.getBuilder(parser.getBindings().get(0));
         AbstractResponder customResponder = new AbstractResponder(builder) {
             @Override
             public Source respond(SoapOperation invokedOperation, SoapMessage message) {
