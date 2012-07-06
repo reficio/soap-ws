@@ -19,7 +19,8 @@
 package com.centeractive.ws.server.responder;
 
 import com.centeractive.ws.builder.core.SoapBuilder;
-import com.centeractive.ws.builder.soap.domain.OperationWrapper;
+import com.centeractive.ws.builder.core.SoapOperation;
+import com.centeractive.ws.builder.soap.SoapBuilderLegacy;
 import com.centeractive.ws.server.OperationNotFoundException;
 import com.centeractive.ws.server.SoapServerException;
 import com.centeractive.ws.server.matcher.SoapOperationMatcher;
@@ -42,7 +43,6 @@ import javax.xml.transform.Source;
 public abstract class AbstractResponder implements RequestResponder {
 
     private final SoapBuilder builder;
-    private final QName bindingName;
     private final Binding binding;
     private final SoapOperationMatcher soapOperationMatcher;
 
@@ -54,13 +54,11 @@ public abstract class AbstractResponder implements RequestResponder {
      * Constructs a responder for the specified binding of the builder
      *
      * @param builder     Soap builder used to construct messages
-     * @param bindingName Binding to be used - builders may contain many bindings
      */
-    public AbstractResponder(SoapBuilder builder, QName bindingName) {
+    public AbstractResponder(SoapBuilder builder) {
         this.builder = builder;
-        this.bindingName = bindingName;
-        this.binding = builder.getDefinition().getBinding(bindingName);
-        this.soapOperationMatcher = new SoapOperationMatcher(builder.getDefinition(), bindingName);
+        this.binding = builder.getBinding();
+        this.soapOperationMatcher = new SoapOperationMatcher(builder.getBinding());
     }
 
     /**
@@ -76,7 +74,7 @@ public abstract class AbstractResponder implements RequestResponder {
         try {
             BindingOperation invokedOperation = soapOperationMatcher.getInvokedOperation(message);
             if (soapOperationMatcher.isRequestResponseOperation(invokedOperation)) {
-                OperationWrapper operation = SoapBuilder.getOperation(binding, invokedOperation, message.getSoapAction());
+                SoapOperation operation = SoapBuilderLegacy.getOperation(binding, invokedOperation, message.getSoapAction());
                 return respond(operation, message);
             }
             return null;
@@ -95,6 +93,6 @@ public abstract class AbstractResponder implements RequestResponder {
      * @param message          SOAP message passed by the client
      * @return response in the XML source format containing the whole SOAP envelope
      */
-    public abstract Source respond(OperationWrapper invokedOperation, SoapMessage message);
+    public abstract Source respond(SoapOperation invokedOperation, SoapMessage message);
 
 }

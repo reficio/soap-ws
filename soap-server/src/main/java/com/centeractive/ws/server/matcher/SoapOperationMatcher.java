@@ -18,7 +18,7 @@
  */
 package com.centeractive.ws.server.matcher;
 
-import com.centeractive.ws.builder.core.SoapBuilder;
+import com.centeractive.ws.builder.soap.SoapBuilderLegacy;
 import com.centeractive.ws.builder.soap.WsdlUtils;
 import com.centeractive.ws.server.OperationNotFoundException;
 import com.centeractive.ws.server.util.XmlUtils;
@@ -26,7 +26,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.ws.soap.SoapMessage;
 import org.w3c.dom.Node;
 
-import javax.wsdl.*;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.OperationType;
+import javax.wsdl.Part;
 import javax.xml.namespace.QName;
 import javax.xml.transform.dom.DOMSource;
 import java.util.Collection;
@@ -54,13 +57,11 @@ import java.util.Set;
  */
 public class SoapOperationMatcher {
 
-    protected final QName bindingName;
     protected final Binding binding;
     protected final boolean rpc;
 
-    public SoapOperationMatcher(Definition definition, QName bindingName) {
-        this.bindingName = bindingName;
-        this.binding = definition.getBinding(bindingName);
+    public SoapOperationMatcher(Binding binding) {
+        this.binding = binding;
         this.rpc = WsdlUtils.isRpc(binding);
     }
 
@@ -124,7 +125,7 @@ public class SoapOperationMatcher {
 
 
     private BindingOperation getOperationBySoapAction(SoapMessage message) {
-        final String soapActionToMatch = SoapBuilder.normalizeSoapAction(message.getSoapAction());
+        final String soapActionToMatch = SoapBuilderLegacy.normalizeSoapAction(message.getSoapAction());
         // optimization - if no soap action skip the visitor
         if (StringUtils.isBlank(soapActionToMatch)) {
             return null;
@@ -132,7 +133,7 @@ public class SoapOperationMatcher {
         AggregatingVisitor<BindingOperation> visitor = new AggregatingVisitor<BindingOperation>() {
             @Override
             public void visit(BindingOperation operation) {
-                String soapAction = SoapBuilder.normalizeSoapAction(SoapBuilder.getSOAPActionUri(operation));
+                String soapAction = SoapBuilderLegacy.normalizeSoapAction(SoapBuilderLegacy.getSOAPActionUri(operation));
                 if (soapAction.equals(soapActionToMatch)) {
                     addResult(operation);
                 }

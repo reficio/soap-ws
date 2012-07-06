@@ -19,9 +19,10 @@
 package com.centeractive.ws.server.responder;
 
 import com.centeractive.ws.builder.core.SoapBuilder;
+import com.centeractive.ws.builder.core.SoapOperation;
+import com.centeractive.ws.builder.soap.SoapBuilderLegacy;
 import com.centeractive.ws.builder.core.SoapContext;
 import com.centeractive.ws.builder.soap.XmlUtils;
-import com.centeractive.ws.builder.soap.domain.OperationWrapper;
 import com.centeractive.ws.server.SoapServerException;
 import org.springframework.ws.soap.SoapMessage;
 
@@ -44,35 +45,12 @@ public class AutoResponder extends AbstractResponder {
     private final SoapContext context;
 
     /**
-     * Constructs an auto responder for the specified binding of the wsdl
-     *
-     * @param wsdlUrl     URL of the wsdl
-     * @param bindingName Binding to be used - builders may contain many bindings
-     * @param context     Contect that is passed to the builder to fine-tune the content of the generated responses
-     */
-    public AutoResponder(URL wsdlUrl, QName bindingName, SoapContext context) throws WSDLException {
-        super(new SoapBuilder(wsdlUrl), bindingName);
-        this.context = context;
-    }
-
-    /**
-     * Constructs an auto responder for the specified binding of the wsdl
-     *
-     * @param wsdlUrl     URL of the wsdl
-     * @param bindingName Binding to be used - builders may contain many bindings
-     */
-    public AutoResponder(URL wsdlUrl, QName bindingName) throws WSDLException {
-        this(wsdlUrl, bindingName, SoapContext.builder().exampleContent(true).build());
-    }
-
-    /**
      * Constructs an auto responder for the specified binding of the builder
      *
      * @param builder     Soap builder used to construct messages
-     * @param bindingName Binding to be used - builders may contain many bindings
      */
-    public AutoResponder(SoapBuilder builder, QName bindingName) {
-        super(builder, bindingName);
+    public AutoResponder(SoapBuilder builder) {
+        super(builder);
         this.context = SoapContext.builder().exampleContent(true).build();
     }
 
@@ -81,18 +59,17 @@ public class AutoResponder extends AbstractResponder {
      * by passing the SoapContext
      *
      * @param builder     Soap builder used to construct messages
-     * @param bindingName Binding to be used - builders may contain many bindings
      * @param context     Contect that is passed to the builder to fine-tune the content of the generated responses
      */
-    public AutoResponder(SoapBuilder builder, QName bindingName, SoapContext context) {
-        super(builder, bindingName);
+    public AutoResponder(SoapBuilder builder, SoapContext context) {
+        super(builder);
         this.context = context;
     }
 
     @Override
-    public Source respond(OperationWrapper invokedOperation, SoapMessage message) {
+    public Source respond(SoapOperation invokedOperation, SoapMessage message) {
         try {
-            String response = getBuilder().buildSoapMessageFromOutput(invokedOperation, context);
+            String response = getBuilder().buildOutputMessage(invokedOperation, context);
             return XmlUtils.xmlStringToSource(response);
         } catch (Exception e) {
             throw new SoapServerException(e);

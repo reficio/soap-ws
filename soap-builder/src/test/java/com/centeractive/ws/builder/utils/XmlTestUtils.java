@@ -40,7 +40,7 @@ public class XmlTestUtils {
 
     private final static Logger log = Logger.getLogger(XmlTestUtils.class);
 
-    public static String normalizeAndRemoveValues(String xmlContent)  {
+    public static String normalizeAndRemoveValues(String xmlContent) {
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
@@ -62,7 +62,7 @@ public class XmlTestUtils {
     }
 
     public static void processNode(Node node) throws Exception {
-        if(node.hasChildNodes()) {
+        if (node.hasChildNodes()) {
             for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
                 processNode(child);
             }

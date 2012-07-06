@@ -43,7 +43,7 @@ import java.util.Set;
  * modifies some parts of the soapUI's code in good faith, making every effort not
  * to impair any existing functionality and to supplement it according to our
  * requirements, applying best practices of software design.
- *
+ * <p/>
  * Changes done:
  * - changing location in the package structure
  * - removal of dependencies and code parts that are out of scope of SOAP message generation

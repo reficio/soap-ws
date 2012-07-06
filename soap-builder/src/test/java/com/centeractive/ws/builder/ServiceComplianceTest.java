@@ -19,6 +19,8 @@
 package com.centeractive.ws.builder;
 
 import com.centeractive.ws.builder.core.SoapBuilder;
+import com.centeractive.ws.builder.core.SoapOperation;
+import com.centeractive.ws.builder.core.SoapParser;
 import com.centeractive.ws.builder.utils.ResourceUtils;
 import com.centeractive.ws.builder.utils.XmlTestUtils;
 import com.ibm.wsdl.xml.WSDLReaderImpl;
@@ -27,17 +29,14 @@ import org.apache.log4j.Logger;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 
-import javax.wsdl.Binding;
-import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.wsdl.xml.WSDLReader;
+import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.List;
 
 import static junit.framework.Assert.assertTrue;
 
@@ -99,14 +98,17 @@ public class ServiceComplianceTest {
     @SuppressWarnings("unchecked")
     private static void testService(int testServiceId) throws Exception {
         URL wsdlUrl = getDefinitionUrl(testServiceId);
-        SoapBuilder builder = new SoapBuilder(wsdlUrl);
+        SoapParser parser = new SoapParser(wsdlUrl);
+        // SoapBuilderLegacy builder = new SoapBuilderLegacy(wsdlUrl);
 
-        for (Binding binding : (Collection<Binding>) builder.getDefinition().getAllBindings().values()) {
-            String bindingName =  binding.getQName().getLocalPart();
-            for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {
-                String request = builder.buildSoapMessageFromInput(SoapBuilder.getOperation(binding, operation));
-                String expectedRequest = getExpectedRequest(testServiceId, bindingName, operation.getName());
-                log.info(String.format("Comparing binding=[%s] operation=[%s]", bindingName, operation.getName()));
+
+        for (QName bindingQName : parser.getBindings()) {
+            String bindingName = bindingQName.getLocalPart();
+            SoapBuilder builder = parser.getBuilder(bindingQName);
+            for (SoapOperation operation : builder.getOperations()) {
+                String request = builder.buildInputMessage(operation);
+                String expectedRequest = getExpectedRequest(testServiceId, bindingName, operation.getOperationName());
+                log.info(String.format("Comparing binding=[%s] operation=[%s]", bindingName, operation.getOperationName()));
                 log.info("REQUEST:\n" + request);
                 log.info("EXPECTED_REQUEST:\n" + expectedRequest);
 
@@ -116,8 +118,8 @@ public class ServiceComplianceTest {
                 log.info("EXPECTED_REQUEST_NO_VALUES:\n" + expectedRequest);
                 assertTrue(XMLUnit.compareXML(expectedRequest, request).identical());
 
-                String response = builder.buildSoapMessageFromOutput(builder.getOperation(binding, operation));
-                String expectedResponse = getExpectedResponse(testServiceId, bindingName, operation.getName());
+                String response = builder.buildOutputMessage(operation);
+                String expectedResponse = getExpectedResponse(testServiceId, bindingName, operation.getOperationName());
                 log.info("RESPONSE:\n" + response);
                 log.info("EXPECTED_RESPONSE:\n" + expectedResponse);
 

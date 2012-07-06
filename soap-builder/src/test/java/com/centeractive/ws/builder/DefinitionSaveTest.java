@@ -18,16 +18,14 @@
  */
 package com.centeractive.ws.builder;
 
-import com.centeractive.ws.builder.core.SoapBuilder;
+import com.centeractive.ws.builder.core.SoapParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.wsdl.WSDLException;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,7 +65,6 @@ public class DefinitionSaveTest {
 
     public static File getGeneratedFolder(int serviceId) throws WSDLException, IOException {
         URL wsdlUrl = ServiceComplianceTest.getDefinitionUrl(serviceId);
-        SoapBuilder builder = new SoapBuilder(wsdlUrl);
         File tempFolder = File.createTempFile("maven-temp", Long.toString(System.nanoTime()));
         if (!tempFolder.delete()) {
             throw new RuntimeException("cannot delete tmp file");
@@ -76,7 +73,8 @@ public class DefinitionSaveTest {
             throw new RuntimeException("cannot create tmp folder");
         }
         String fileName = FilenameUtils.getBaseName(wsdlUrl.toString());
-        builder.saveWsdl(fileName, tempFolder);
+        SoapParser.saveWsdl(wsdlUrl, fileName, tempFolder);
+        // builder.saveWsdl(fileName, tempFolder);
         tempFolder.deleteOnExit();
         return tempFolder;
     }
@@ -139,148 +137,5 @@ public class DefinitionSaveTest {
             testDefinitionSave(serviceId);
         }
     }
-
-    @Test
-    @Ignore
-    public void testCreateAndSave() throws WSDLException, IOException, URISyntaxException {
-        int serviceId = 1;
-        URL wsdlUrl = ServiceComplianceTest.getDefinitionUrl(serviceId);
-        File tmpFolder = createTempFolder("testCreateAndSave");
-        SoapBuilder.createAndSave(wsdlUrl, tmpFolder, "tempWsdl");
-    }
-
-//    @Test
-//    @Ignore
-//    public void testWsdl11Write() throws Exception {
-//        WSDLFactory factory = WSDLFactory.newInstance();
-//        WSDLWriter writer = factory.newWSDLWriter();
-//        File f = new File("/opt/wsdl/");
-//        FileUtils.deleteDirectory(f);
-//        try {
-//            f.mkdirs();
-//        } catch (Exception e) {
-//        }
-//        URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("services/test07", "TestService.wsdl");
-//        WSDLFactory wsdlFactory = WSDLFactory.newInstance();
-//        WSDLReader wsdlReader = wsdlFactory.newWSDLReader();
-//        Definition def = wsdlReader.readWSDL(wsdlUrl.toString());
-//
-//        Wsdl11Writer writer11 = new Wsdl11Writer(f);
-//        writer11.writeWSDL("TestService", def);
-//    }
-//
-//
-//    @Test
-//    @Ignore
-//    public void testWsdl11Write2() throws Exception {
-//        WSDLFactory factory = WSDLFactory.newInstance();
-//        WSDLWriter writer = factory.newWSDLWriter();
-//        File f = new File("/opt/wsdl/");
-//        FileUtils.deleteDirectory(f);
-//        try {
-//            f.mkdirs();
-//        } catch (Exception e) {
-//        }
-//        // URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("services/test07", "TestService.wsdl");
-//        URL wsdlUrl = new URL("http://localhost:8088/mockTestServiceSoap?WSDL");
-//        WSDLFactory wsdlFactory = WSDLFactory.newInstance();
-//        WSDLReader wsdlReader = wsdlFactory.newWSDLReader();
-//        Definition def = wsdlReader.readWSDL(wsdlUrl.toString());
-//
-//        Wsdl11Writer writer11 = new Wsdl11Writer(f);
-//        writer11.writeWSDL("TestService", def);
-//    }
-
-//    @Test
-//    public void testPureWsdl4j() throws WSDLException, IOException {
-//        URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("services/test07", "TestService.wsdl");
-//        WSDLReader reader = new WSDLReaderImpl();
-//        reader.setFeature("javax.wsdl.verbose", true);
-//        reader.setFeature("javax.wsdl.importDocuments", true);
-//        Definition def = reader.readWSDL(wsdlUrl.toString());
-//
-//
-//        WSDLFactory factory = WSDLFactory.newInstance();
-//        WSDLWriter writer = factory.newWSDLWriter();
-////        writer.setFeature("javax.wsdl.verbose", true);
-//        // writer.setFeature("javax.wsdl.importDocuments", true);
-//        File f = new File("/opt/wsdl/");
-//        FileUtils.deleteDirectory(f);
-//        try {
-//            f.mkdirs();
-//        } catch (Exception e) {
-//        }
-//
-//
-//        File w = new File(f, "Test.wsdl");
-//        Writer wa = new FileWriter(w);
-//        writer.writeWSDL(def, wa);
-//        for (Import i : def.getImports()) {
-//
-//        }
-//    }
-
-
-//    @Test
-//    public void testWsdlReadManual() throws IOException {
-//
-//        File targetFolder = new File("/opt/wsdl/");
-//        FileUtils.deleteDirectory(targetFolder);
-//        try {
-//            targetFolder.mkdirs();
-//        } catch (Exception e) {
-//        }
-//        URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("services/test07", "TestService.wsdl");
-//        File wsdlFile = new File(wsdlUrl.getFile());
-//        WsdlImporter importer = new WsdlImporter();
-//        importer.importWsdl(wsdlFile, targetFolder);
-//    }
-
-//
-//    @Test
-//    public void urlSchema() throws WSDLException, MalformedURLException {
-//        // http://www.ibspan.waw.pl/~gawinec/example.wsdl
-//        URL wsdlUrl = new URL("http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL");
-//        WSDLFactory wsdlFactory = WSDLFactory.newInstance();
-//        WSDLReader wsdlReader = wsdlFactory.newWSDLReader();
-//        Definition def = wsdlReader.readWSDL(wsdlUrl.toString());
-//        File f = new File("/opt/wsdl");
-//        if (f.mkdirs() == false) {
-//            throw new RuntimeException("cannot create a folder");
-//        }
-//        SoapBuilder.saveWsdl("aaa", wsdlUrl, f);
-//    }
-//
-//    @Test
-//    public void load() throws MalformedURLException, WSDLException {
-//        URL url = new URL("file:/opt/wsdl/aaa.wsdl");
-//        SoapBuilder builder = new SoapBuilder(url);
-//    }
-
-//    @Test
-//    public void testWsdlRead() throws Exception {
-//
-//
-//        URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("services/test07", "TestService.wsdl");
-//        // SoapBuilder builder = new SoapBuilder(wsdlUrl);
-//
-//
-//        WSDLFactory wsdlFactory;
-//
-//        wsdlFactory = WSDLFactory.newInstance();
-//        WSDLReader wsdlReader = wsdlFactory.newWSDLReader();
-////        wsdlReader.setFeature("javax.wsdl.verbose", true);
-////        wsdlReader.setFeature("javax.wsdl.importDocuments", true);
-//        Definition def = wsdlReader.readWSDL(wsdlUrl.toString());
-//
-//        File f = new File("/opt/wsdl/");
-//        FileUtils.deleteDirectory(f);
-//        try {
-//            f.mkdirs();
-//        } catch (Exception e) {
-//        }
-//
-//
-//    }
 
 }

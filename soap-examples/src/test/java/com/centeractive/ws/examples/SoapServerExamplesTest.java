@@ -1,8 +1,9 @@
 package com.centeractive.ws.examples;
 
 import com.centeractive.ws.builder.core.SoapBuilder;
+import com.centeractive.ws.builder.core.SoapOperation;
+import com.centeractive.ws.builder.core.SoapParser;
 import com.centeractive.ws.builder.soap.XmlUtils;
-import com.centeractive.ws.builder.soap.domain.OperationWrapper;
 import com.centeractive.ws.builder.utils.ResourceUtils;
 import com.centeractive.ws.server.core.SoapServer;
 import com.centeractive.ws.server.responder.AbstractResponder;
@@ -39,7 +40,9 @@ public class SoapServerExamplesTest {
 
         QName bindingName = new QName("http://centeractive.com/stockquote.wsdl", "StockQuoteSoapBinding");
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "stockquote-service.wsdl");
-        AutoResponder responder = new AutoResponder(wsdlUrl, bindingName);
+
+        SoapParser parser = new SoapParser(wsdlUrl);
+        AutoResponder responder = new AutoResponder(parser.getBuilder(bindingName));
 
         server.registerRequestResponder("/service", responder);
         server.stop();
@@ -54,13 +57,14 @@ public class SoapServerExamplesTest {
 
         QName bindingName = new QName("http://centeractive.com/stockquote.wsdl", "StockQuoteSoapBinding");
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "stockquote-service.wsdl");
-        final SoapBuilder builder = new SoapBuilder(wsdlUrl);
-        AbstractResponder customResponder = new AbstractResponder(builder, bindingName) {
+        SoapParser parser = new SoapParser(wsdlUrl);
+        final SoapBuilder builder = parser.getBuilder(bindingName);
+        AbstractResponder customResponder = new AbstractResponder(builder) {
             @Override
-            public Source respond(OperationWrapper invokedOperation, SoapMessage message) {
+            public Source respond(SoapOperation invokedOperation, SoapMessage message) {
                 try {
                     // build the response using builder
-                    String response = builder.buildSoapMessageFromOutput(invokedOperation);
+                    String response = builder.buildOutputMessage(invokedOperation);
                     // here you can tweak the response -> for example with XSLT
                     //...
                     return XmlUtils.xmlStringToSource(response);

@@ -33,23 +33,22 @@ package com.centeractive.ws.builder.soap;
  * modifies some parts of the soapUI's code in good faith, making every effort not
  * to impair any existing functionality and to supplement it according to our
  * requirements, applying best practices of software design.
- *
+ * <p/>
  * Changes done:
  * - changing location in the package structure
  * - removal of dependencies and code parts that are out of scope of SOAP message generation
  * - minor fixes to make the class compile out of soapUI's code base
  */
 
-public interface DefinitionLoader extends SchemaLoader
-{
+public interface DefinitionLoader extends SchemaLoader {
 
-	void setProgressInfo(String info);
+    void setProgressInfo(String info);
 
-	boolean isAborted();
+    boolean isAborted();
 
-	boolean abort();
+    boolean abort();
 
-	void setNewBaseURI(String uri);
+    void setNewBaseURI(String uri);
 
-	String getFirstNewURI();
+    String getFirstNewURI();
 }

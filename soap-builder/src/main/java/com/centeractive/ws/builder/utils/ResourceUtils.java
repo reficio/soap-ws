@@ -45,8 +45,8 @@ public class ResourceUtils {
         // first attempt - outside/inside jar file
         resource = clazz.getClass().getResource(resourcePath);
         // second attempt - servlet container - inside application lib folder
-        if(resource == null) {
-            if(resourcePath.charAt(0) == '/') {
+        if (resource == null) {
+            if (resourcePath.charAt(0) == '/') {
                 String resourcePathWithoutLeadingSlash = resourcePath.substring(1);
                 resource = Thread.currentThread().getContextClassLoader().getResource(resourcePathWithoutLeadingSlash);
             }
@@ -65,9 +65,9 @@ public class ResourceUtils {
         // first attempt - outside/inside jar file
         resource = clazz.getClass().getResourceAsStream(resourcePath);
         // second attempt - servlet container - inside application lib folder
-        if(resource == null) {
+        if (resource == null) {
             ClassLoader classLoader = clazz.getClass().getClassLoader();
-            if(classLoader!=null)
+            if (classLoader != null)
                 resource = classLoader.getResourceAsStream(resourcePath);
         }
         return checkNotNull(resource, String.format("Resource [%s] loading failed", resourcePath));

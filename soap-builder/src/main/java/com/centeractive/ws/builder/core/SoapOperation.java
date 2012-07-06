@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.centeractive.ws.builder.soap.domain;
+package com.centeractive.ws.builder.core;
 
 import javax.xml.namespace.QName;
 
@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
  * @author Tom Bujok
  * @since 1.0.0
  */
-public class OperationWrapper {
+public class SoapOperation {
 
     private final QName bindingName;
     private final String operationName;
@@ -34,8 +34,8 @@ public class OperationWrapper {
     private final String operationOutputName;
     private final String soapAction;
 
-    public OperationWrapper(QName bindingName, String operationName, String operationInputName,
-                            String operationOutputName, String soapAction) {
+    public SoapOperation(QName bindingName, String operationName, String operationInputName,
+                         String operationOutputName, String soapAction) {
         this.bindingName = bindingName;
         this.operationName = operationName;
         this.operationInputName = operationInputName;

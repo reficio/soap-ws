@@ -91,7 +91,7 @@ public class SoapVersion11 extends AbstractSoapVersion {
                     "/xsds/", "soapEncoding.xsd");
             soapEncodingXml = XmlUtils.createXmlObject(soapEncodingXmlResource, options);
 
-        }catch(XmlException ex) {
+        } catch (XmlException ex) {
             throw new SoapBuilderException(ex);
         }
     }

@@ -33,7 +33,7 @@ public class SoapContext {
     private final boolean alwaysBuildHeaders;
 
     private SoapContext(boolean exampleContent, boolean typeComment, boolean skipComments,
-                       boolean buildOptional, boolean alwaysBuildHeaders) {
+                        boolean buildOptional, boolean alwaysBuildHeaders) {
         this.exampleContent = exampleContent;
         this.typeComment = typeComment;
         this.skipComments = skipComments;

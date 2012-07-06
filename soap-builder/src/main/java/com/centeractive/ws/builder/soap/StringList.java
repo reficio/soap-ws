@@ -36,64 +36,55 @@ import java.util.Collection;
  * modifies some parts of the soapUI's code in good faith, making every effort not
  * to impair any existing functionality and to supplement it according to our
  * requirements, applying best practices of software design.
- *
+ * <p/>
  * Changes done:
  * - changing location in the package structure
  * - removal of dependencies and code parts that are out of scope of SOAP message generation
  * - minor fixes to make the class compile out of soapUI's code base
  */
 
-public class StringList extends ArrayList<String>
-{
-	public StringList()
-	{
-		super();
-	}
+public class StringList extends ArrayList<String> {
+    public StringList() {
+        super();
+    }
 
-	public StringList(int initialCapacity)
-	{
-		super( initialCapacity );
-	}
+    public StringList(int initialCapacity) {
+        super(initialCapacity);
+    }
 
-	public StringList(String[] strings)
-	{
-		super( strings == null ? new StringList() : Arrays.asList( strings ) );
-	}
+    public StringList(String[] strings) {
+        super(strings == null ? new StringList() : Arrays.asList(strings));
+    }
 
-	public StringList(Object[] objects)
-	{
-		super();
+    public StringList(Object[] objects) {
+        super();
 
-		if( objects != null )
-		for( Object object : objects )
-			add( object == null ? null : object.toString() );
-	}
+        if (objects != null)
+            for (Object object : objects)
+                add(object == null ? null : object.toString());
+    }
 
-	public StringList(Collection<?> objects)
-	{
-		super();
+    public StringList(Collection<?> objects) {
+        super();
 
-		if( objects != null )
-		for( Object object : objects )
-			add( object == null ? null : object.toString() );
-	}
+        if (objects != null)
+            for (Object object : objects)
+                add(object == null ? null : object.toString());
+    }
 
-	public StringList(String paramStr)
-	{
-		this();
-		add( paramStr );
-	}
+    public StringList(String paramStr) {
+        this();
+        add(paramStr);
+    }
 
-	public void addAll( String[] strings )
-	{
-		if( strings != null && strings.length > 0 )
-		addAll( Arrays.asList( strings ) );
-	}
+    public void addAll(String[] strings) {
+        if (strings != null && strings.length > 0)
+            addAll(Arrays.asList(strings));
+    }
 
-	public String[] toStringArray()
-	{
-		return toArray( new String[size()] );
-	}
+    public String[] toStringArray() {
+        return toArray(new String[size()]);
+    }
 
 //	public static StringList fromXml( String value ) throws XmlException
 //	{
@@ -108,16 +99,13 @@ public class StringList extends ArrayList<String>
 //		return config.xmlText();
 //	}
 
-	public boolean containsValue( String value )
-	{
-		for( String stringElement : this )
-		{
-			if( stringElement.contains( value ) )
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+    public boolean containsValue(String value) {
+        for (String stringElement : this) {
+            if (stringElement.contains(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

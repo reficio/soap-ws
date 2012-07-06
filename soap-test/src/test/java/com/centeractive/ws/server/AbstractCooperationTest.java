@@ -19,7 +19,9 @@
 package com.centeractive.ws.server;
 
 import com.centeractive.ws.builder.core.SoapBuilder;
-import com.centeractive.ws.builder.soap.domain.OperationWrapper;
+import com.centeractive.ws.builder.core.SoapOperation;
+import com.centeractive.ws.builder.core.SoapParser;
+import com.centeractive.ws.builder.soap.SoapBuilderLegacy;
 import com.centeractive.ws.builder.utils.XmlTestUtils;
 import com.centeractive.ws.server.core.SoapServer;
 import com.centeractive.ws.server.util.TestUtils;
@@ -30,6 +32,7 @@ import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.OperationType;
 import javax.wsdl.WSDLException;
+import javax.xml.namespace.QName;
 import java.util.Collection;
 import java.util.List;
 
@@ -64,17 +67,18 @@ public abstract class AbstractCooperationTest {
     protected void verifyServiceBehavior(int testServiceId, Boolean postSoapAction) throws Exception {
         log.info(String.format("------------------- TESTING SERVICE [%d] -----------------------", testServiceId));
         String url = getUrlString();
-        SoapBuilder builder = TestUtils.createBuilderForService(testServiceId);
-        registerHandler(testServiceId, builder);
-        assertNotNull(builder);
-        for (Binding binding : (Collection<Binding>) builder.getDefinition().getAllBindings().values()) {
-            for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {
+        SoapParser parser = TestUtils.createParserForService(testServiceId);
+        registerHandler(testServiceId, parser);
+        assertNotNull(parser);
+        for (QName bindingName : parser.getBindings()) {
+            SoapBuilder builder = parser.getBuilder(bindingName);
+            for (SoapOperation operation : builder.getOperations()) {
                 if(postSoapAction == null) {
                     // test both with and without soap action
-                    testOperation(builder, binding, operation, url, testServiceId, Boolean.TRUE);
-                    testOperation(builder, binding, operation, url, testServiceId, Boolean.FALSE);
+                    testOperation(builder, operation, url, testServiceId, Boolean.TRUE);
+                    testOperation(builder, operation, url, testServiceId, Boolean.FALSE);
                 } else {
-                    testOperation(builder, binding, operation, url, testServiceId, postSoapAction);
+                    testOperation(builder, operation, url, testServiceId, postSoapAction);
                 }
             }
         }
@@ -82,31 +86,35 @@ public abstract class AbstractCooperationTest {
     }
 
 
-    private void testOperation(SoapBuilder builder, Binding binding, BindingOperation operation, String url,
+    private void testOperation(SoapBuilder builder, SoapOperation wrapper, String url,
                                  int testServiceId, Boolean postSoapAction) throws Exception {
-        OperationWrapper wrapper = builder.getOperation(binding, operation);
+
         log.info("Testing operation: " + wrapper);
-        String request = builder.buildSoapMessageFromInput(wrapper);
-        String contextPath = TestUtils.formatContextPath(testServiceId, binding);
+        String request = builder.buildInputMessage(wrapper);
+        String contextPath = TestUtils.formatContextPath(testServiceId, builder.getBindingName());
         String endpointUrl = formatEndpointAddress(url, contextPath);
+
+        Binding binding = builder.getBinding();
+        BindingOperation op = binding.getBindingOperation(wrapper.getOperationName(), wrapper.getOperationInputName(),
+                wrapper.getOperationOutputName());
 
         String response = null;
         if (postSoapAction.booleanValue()) {
-            String soapAction = SoapBuilder.getSOAPActionUri(operation);
+            String soapAction = SoapBuilderLegacy.getSOAPActionUri(op);
             response = postRequest(endpointUrl, request, soapAction);
         } else {
             response = postRequest(endpointUrl, request);
         }
 
-        if (operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
-            String expectedResponse = builder.buildSoapMessageFromOutput(builder.getOperation(binding, operation));
+        if (op.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
+            String expectedResponse = builder.buildOutputMessage(wrapper);
             boolean identical = XmlTestUtils.isIdenticalNormalizedWithoutValues(expectedResponse, response);
             assertTrue("Error during validation of service " + testServiceId, identical);
         }
     }
 
-    protected void registerHandler(int testServiceId, SoapBuilder builder) throws WSDLException {
-        TestUtils.registerService(server, testServiceId, builder);
+    protected void registerHandler(int testServiceId, SoapParser parser) throws WSDLException {
+        TestUtils.registerService(server, testServiceId, parser);
     }
 
     protected String getUrlString() {

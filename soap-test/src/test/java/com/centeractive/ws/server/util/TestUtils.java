@@ -19,6 +19,8 @@
 package com.centeractive.ws.server.util;
 
 import com.centeractive.ws.builder.core.SoapBuilder;
+import com.centeractive.ws.builder.core.SoapParser;
+import com.centeractive.ws.builder.soap.SoapBuilderLegacy;
 import com.centeractive.ws.builder.core.SoapContext;
 import com.centeractive.ws.builder.utils.ResourceUtils;
 import com.centeractive.ws.server.core.SoapServer;
@@ -28,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.wsdl.Binding;
 import javax.wsdl.WSDLException;
+import javax.xml.namespace.QName;
 import java.net.URL;
 import java.util.Collection;
 
@@ -41,15 +44,15 @@ public class TestUtils {
 
     private final static Log log = LogFactory.getLog(TestUtils.class);
 
-    public static SoapBuilder createBuilderForService(int testServiceId) throws WSDLException {
+    public static SoapParser createParserForService(int testServiceId) throws WSDLException {
         String path = getTestServiceFolderPath(testServiceId);
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath(path, "TestService.wsdl");
-        SoapBuilder builder = new SoapBuilder(wsdlUrl);
-        return builder;
+        SoapParser parser = new SoapParser(wsdlUrl);
+        return parser;
     }
 
-    public static String formatContextPath(int testServiceId, Binding binding) {
-        return "/service" + formatServiceId(testServiceId) + "_" + binding.getQName().getLocalPart();
+    public static String formatContextPath(int testServiceId, QName bindingName) {
+        return "/service" + formatServiceId(testServiceId) + "_" + bindingName.getLocalPart();
     }
 
     public static String getTestServiceFolderPath(int testServiceId) {
@@ -62,20 +65,21 @@ public class TestUtils {
     }
 
     public static void registerService(SoapServer server, int testServiceId) throws WSDLException {
-        SoapBuilder builder = TestUtils.createBuilderForService(testServiceId);
-        registerAutoResponderForAllServiceBindings(server, testServiceId, builder);
+        SoapParser parser = TestUtils.createParserForService(testServiceId);
+        registerAutoResponderForAllServiceBindings(server, testServiceId, parser);
     }
 
-    public static void registerService(SoapServer server, int testServiceId, SoapBuilder builder) throws WSDLException {
-        registerAutoResponderForAllServiceBindings(server, testServiceId, builder);
+    public static void registerService(SoapServer server, int testServiceId, SoapParser parser) throws WSDLException {
+        registerAutoResponderForAllServiceBindings(server, testServiceId, parser);
     }
 
-    public static void registerAutoResponderForAllServiceBindings(SoapServer server, int testServiceId, SoapBuilder builder) {
-        for (Binding binding : (Collection<Binding>) builder.getDefinition().getAllBindings().values()) {
-            String contextPath = TestUtils.formatContextPath(testServiceId, binding);
+    public static void registerAutoResponderForAllServiceBindings(SoapServer server, int testServiceId, SoapParser parser) {
+        for (QName bindingName : parser.getBindings()) {
+            String contextPath = TestUtils.formatContextPath(testServiceId, bindingName);
             log.info(String.format("Registering auto responder for service [%d] undex context path [%s]", testServiceId, contextPath));
             SoapContext context = SoapContext.builder().exampleContent(false).build();
-            server.registerRequestResponder(contextPath, new AutoResponder(builder, binding.getQName(), context));
+            SoapBuilder builder = parser.getBuilder(bindingName);
+            server.registerRequestResponder(contextPath, new AutoResponder(builder, context));
         }
     }
 

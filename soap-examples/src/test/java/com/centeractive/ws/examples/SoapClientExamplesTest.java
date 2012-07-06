@@ -20,7 +20,8 @@ package com.centeractive.ws.examples;
 
 import com.centeractive.ws.builder.core.SoapBuilder;
 import com.centeractive.ws.builder.core.SoapContext;
-import com.centeractive.ws.builder.soap.domain.OperationWrapper;
+import com.centeractive.ws.builder.core.SoapOperation;
+import com.centeractive.ws.builder.core.SoapParser;
 import com.centeractive.ws.builder.utils.ResourceUtils;
 import com.centeractive.ws.client.core.SoapClient;
 import com.centeractive.ws.server.core.SoapServer;
@@ -35,7 +36,6 @@ import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 
@@ -51,6 +51,7 @@ public class SoapClientExamplesTest {
 
     private static final URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "stockquote-service.wsdl");
     private static final QName bindingName = new QName("http://centeractive.com/stockquote.wsdl", "StockQuoteSoapBinding");
+    private static SoapBuilder builder;
 
 
     @BeforeClass
@@ -71,7 +72,10 @@ public class SoapClientExamplesTest {
 
     public static AutoResponder getAutoResponderForTestService() throws WSDLException {
         SoapContext context = SoapContext.builder().exampleContent(false).build();
-        AutoResponder responder = new AutoResponder(wsdlUrl, bindingName, context);
+        SoapParser parser = new SoapParser(wsdlUrl);
+        builder = parser.getBuilder(bindingName);
+
+        AutoResponder responder = new AutoResponder(builder, context);
         return responder;
     }
 
@@ -120,18 +124,12 @@ public class SoapClientExamplesTest {
                 .endpointUrl(url)
                 .build();
 
-        SoapBuilder builder = new SoapBuilder(wsdlUrl);
+        // assumption that our operation is the first operation in the WSDL's
+        SoapOperation op = builder.getOperations().iterator().next();
 
-        // get all bindings
-        Set<QName> bindings = builder.getBindingNames();
-        // get all operations from binding -> assumption that we take the first binding
-        Set<OperationWrapper> ops = builder.getOperationNames(bindings.iterator().next());
-        // assumption that we take the first operation
-        OperationWrapper op = ops.iterator().next();
-
-        String request = builder.buildSoapMessageFromInput(op);
+        String request = builder.buildInputMessage(op);
         String response = client.post(request);
-        String expectedResponse = builder.buildSoapMessageFromOutput(op);
+        String expectedResponse = builder.buildOutputMessage(op);
 
         assertTrue(XMLUnit.compareXML(expectedResponse, response).identical());
 

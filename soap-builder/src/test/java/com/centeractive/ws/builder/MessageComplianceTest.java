@@ -18,7 +18,7 @@
  */
 package com.centeractive.ws.builder;
 
-import com.centeractive.ws.builder.core.SoapBuilder;
+import com.centeractive.ws.builder.soap.SoapBuilderLegacy;
 import com.centeractive.ws.builder.soap.protocol.SoapVersion;
 import com.centeractive.ws.builder.utils.ResourceUtils;
 import org.apache.commons.io.FileUtils;
@@ -58,48 +58,48 @@ public class MessageComplianceTest {
 
     @Test
     public void testEmptyFaultSoap11() {
-        String emptyFaultSoap11 = SoapBuilder.buildEmptyFault(SoapVersion.Soap11);
-        log.info("\n"+emptyFaultSoap11);
+        String emptyFaultSoap11 = SoapBuilderLegacy.buildEmptyFault(SoapVersion.Soap11);
+        log.info("\n" + emptyFaultSoap11);
         String expectedMsg = getContent("messages", "EmptyFault11.xml");
         assertEquals(expectedMsg, emptyFaultSoap11);
     }
 
     @Test
     public void testEmptyFaultSoap12() {
-        String emptyFaultSoap12 = SoapBuilder.buildEmptyFault(SoapVersion.Soap12);
-        log.info("\n"+emptyFaultSoap12);
+        String emptyFaultSoap12 = SoapBuilderLegacy.buildEmptyFault(SoapVersion.Soap12);
+        log.info("\n" + emptyFaultSoap12);
         String expectedMsg = getContent("messages", "EmptyFault12.xml");
         assertEquals(expectedMsg, emptyFaultSoap12);
     }
 
     @Test
     public void testFaultSoap11() {
-        String faultSoap11 = SoapBuilder.buildFault("VersionMismatch", "Fault Message", SoapVersion.Soap11);
-        log.info("\n"+faultSoap11);
+        String faultSoap11 = SoapBuilderLegacy.buildFault("VersionMismatch", "Fault Message", SoapVersion.Soap11);
+        log.info("\n" + faultSoap11);
         String expectedMsg = getContent("messages", "FaultVersionMismatch11.xml");
         assertEquals(expectedMsg, faultSoap11);
     }
 
     @Test
     public void testFaultSoap12() {
-        String faultSoap12 = SoapBuilder.buildFault("VersionMismatch", "Fault Message", SoapVersion.Soap12);
-        log.info("\n"+faultSoap12);
+        String faultSoap12 = SoapBuilderLegacy.buildFault("VersionMismatch", "Fault Message", SoapVersion.Soap12);
+        log.info("\n" + faultSoap12);
         String expectedMsg = getContent("messages", "FaultVersionMismatch12.xml");
         assertEquals(expectedMsg, faultSoap12);
     }
 
     @Test
     public void testEmptyMessageSoap11() {
-        String emptyMessageSoap11 = SoapBuilder.buildEmptyMessage(SoapVersion.Soap11);
-        log.info("\n"+emptyMessageSoap11);
+        String emptyMessageSoap11 = SoapBuilderLegacy.buildEmptyMessage(SoapVersion.Soap11);
+        log.info("\n" + emptyMessageSoap11);
         String expectedMsg = getContent("messages", "EmptyMessage11.xml");
         assertEquals(expectedMsg, emptyMessageSoap11);
     }
 
     @Test
     public void testEmptyMessageSoap12() {
-        String emptyMessageSoap12 = SoapBuilder.buildEmptyMessage(SoapVersion.Soap12);
-        log.info("\n"+emptyMessageSoap12);
+        String emptyMessageSoap12 = SoapBuilderLegacy.buildEmptyMessage(SoapVersion.Soap12);
+        log.info("\n" + emptyMessageSoap12);
         String expectedMsg = getContent("messages", "EmptyMessage12.xml");
         assertEquals(expectedMsg, emptyMessageSoap12);
     }
