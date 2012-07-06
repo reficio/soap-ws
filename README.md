@@ -64,34 +64,34 @@ You can confidently use soap-ws in your commercial project.
 
 #### Add soap-ws to your maven project
 In order to use soap-ws in your project you have to declare soap-ws in the dependencies section of your pom.xml. You can add soap-builder, soap-client, soap-server or all of them, depending on the fact which components you want to use.
-```xml
-<dependencies>
-	<dependency>
-    	<groupId>com.centeractive</groupId>
-        <artifactId>soap-builder</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-        <groupId>com.centeractive</groupId>
-        <artifactId>soap-client</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-        <groupId>com.centeractive</groupId>
-        <artifactId>soap-server</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
-    </dependency>
-</dependencies>
-```
+
+    <dependencies>
+        <dependency>
+            <groupId>com.centeractive</groupId>
+            <artifactId>soap-builder</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.centeractive</groupId>
+            <artifactId>soap-client</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.centeractive</groupId>
+            <artifactId>soap-server</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
 soap-ws is not yet located in the central maven repo, thus you also have to add an additional repository to your config.
-```xml
-<repositories>
-	<repository>
-    	<id>centeractive</id>
-        <url>TODO</url>
-    </repository>
-</repositories>
-```
+
+    <repositories>
+        <repository>
+            <id>centeractive</id>
+            <url>TODO</url>
+        </repository>
+    </repositories>
+
 
 #### soap-builder
 The usage of SoapBuilder is a bit complex. It is a consequence of two facts: its code, that was inherited from a 3rd party project (see Note), is relatively complex. The second fact is just the complexity of a WSDL itself. There is a significant amount of work already planned to reimplement SoapBuilder, but for now, it's not that bad either.
