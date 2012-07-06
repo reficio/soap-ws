@@ -19,8 +19,8 @@
 package com.centeractive.ws.builder;
 
 import com.centeractive.ws.builder.core.SoapBuilder;
-import com.centeractive.ws.builder.utils.XmlTestUtils;
 import com.centeractive.ws.builder.utils.ResourceUtils;
+import com.centeractive.ws.builder.utils.XmlTestUtils;
 import com.ibm.wsdl.xml.WSDLReaderImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;

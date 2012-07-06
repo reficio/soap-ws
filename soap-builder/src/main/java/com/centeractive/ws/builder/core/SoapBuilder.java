@@ -45,8 +45,10 @@ import java.io.File;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This class was extracted from the soapUI code base by centeractive ag in October 2011.
@@ -91,6 +93,7 @@ public class SoapBuilder {
     // ----------------------------------------------------------
     // Constructors and factory methods
     // ----------------------------------------------------------
+
     /**
      * @param wsdlUrl url of the wsdl to import
      * @throws WSDLException thrown in case of import errors
@@ -120,7 +123,7 @@ public class SoapBuilder {
      * saved wsdl uri. If the import is not successful an exception will be thrown and files
      * will not be saved. Method expects that the targetFolder already exists.
      *
-     * @param wsdlUrl url of the wsdl to import
+     * @param wsdlUrl      url of the wsdl to import
      * @param targetFolder folder in which all the files are be stored - folder has to exist, no subfolders are created,
      * @param fileBaseName name of the top level file, without extension -> wsdl will be added by default
      * @return instance of the soap-builder which documentBaseUri is set to the url of the locally saved wsdl
@@ -412,7 +415,6 @@ public class SoapBuilder {
             return new OperationWrapper(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
                     null, soapAction);
         }
-
     }
 
     public static OperationWrapper getOperation(Binding binding, BindingOperation operation, String soapAction) {
@@ -423,22 +425,9 @@ public class SoapBuilder {
             return new OperationWrapper(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
                     null, normalizeSoapAction(soapAction));
         }
-
     }
 
-
-    // --------------------------------------------------------------------------
-    // Internal methods - END OF PUBLIC API
-    // --------------------------------------------------------------------------
-    private Binding getBindingByName(QName bindingName) {
-        Binding binding = this.definition.getBinding(bindingName);
-        if (binding == null) {
-            throw new SoapBuilderException("Binding not found");
-        }
-        return binding;
-    }
-
-    private BindingOperation getOperationByName(QName bindingName, String operationName, String operationInputName, String operationOutputName) {
+    public BindingOperation getOperationByName(QName bindingName, String operationName, String operationInputName, String operationOutputName) {
         Binding binding = getBindingByName(bindingName);
         if (binding == null) {
             return null;
@@ -450,6 +439,30 @@ public class SoapBuilder {
         return operation;
     }
 
+    public Binding getBindingByName(QName bindingName) {
+        Binding binding = this.definition.getBinding(bindingName);
+        if (binding == null) {
+            throw new SoapBuilderException("Binding not found");
+        }
+        return binding;
+    }
+
+    public Set<QName> getBindingNames() {
+        return definition.getAllBindings().keySet();
+    }
+
+    public Set<OperationWrapper> getOperationNames(QName bindingName) {
+        Binding binding = getBindingByName(bindingName);
+        Set<OperationWrapper> operationNames = new HashSet<OperationWrapper>();
+        for(BindingOperation operation : (List<BindingOperation>)binding.getBindingOperations()) {
+            operationNames.add(getOperation(binding, operation));
+        }
+        return operationNames;
+    }
+
+    // --------------------------------------------------------------------------
+    // Internal methods - END OF PUBLIC API
+    // --------------------------------------------------------------------------
 
     private static SoapVersion getSoapVersion(Binding binding) {
         List<?> list = binding.getExtensibilityElements();
@@ -718,6 +731,7 @@ public class SoapBuilder {
         }
         return emptyResponse;
     }
+
 
 
 }

@@ -35,7 +35,8 @@ import javax.wsdl.extensions.schema.SchemaImport;
 import javax.wsdl.extensions.schema.SchemaReference;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLWriter;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.*;
 
 /**

@@ -30,6 +30,13 @@
             <artifactId>soap-server</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.centeractive</groupId>
+            <artifactId>soap-test</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>com.googlecode.guava-osgi</groupId>

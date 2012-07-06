@@ -20,8 +20,8 @@ package com.centeractive.ws.builder.soap.protocol;
 
 import com.centeractive.ws.builder.SoapBuilderException;
 import com.centeractive.ws.builder.soap.Constants;
-import com.centeractive.ws.builder.utils.ResourceUtils;
 import com.centeractive.ws.builder.soap.XmlUtils;
+import com.centeractive.ws.builder.utils.ResourceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xmlbeans.*;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;

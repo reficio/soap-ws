@@ -24,19 +24,18 @@ package com.centeractive.ws.builder.utils;
  * Time: 10:31 AM
  */
 
-import java.io.ByteArrayInputStream;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import com.centeractive.ws.builder.soap.XmlUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class XmlComparator {
 

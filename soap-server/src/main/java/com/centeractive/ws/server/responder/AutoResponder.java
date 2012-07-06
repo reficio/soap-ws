@@ -25,8 +25,10 @@ import com.centeractive.ws.builder.soap.domain.OperationWrapper;
 import com.centeractive.ws.server.SoapServerException;
 import org.springframework.ws.soap.SoapMessage;
 
+import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
+import java.net.URL;
 
 /**
  * Convenience class to create SOAP mock services.
@@ -42,6 +44,28 @@ public class AutoResponder extends AbstractResponder {
     private final SoapContext context;
 
     /**
+     * Constructs an auto responder for the specified binding of the wsdl
+     *
+     * @param wsdlUrl     URL of the wsdl
+     * @param bindingName Binding to be used - builders may contain many bindings
+     * @param context     Contect that is passed to the builder to fine-tune the content of the generated responses
+     */
+    public AutoResponder(URL wsdlUrl, QName bindingName, SoapContext context) throws WSDLException {
+        super(new SoapBuilder(wsdlUrl), bindingName);
+        this.context = context;
+    }
+
+    /**
+     * Constructs an auto responder for the specified binding of the wsdl
+     *
+     * @param wsdlUrl     URL of the wsdl
+     * @param bindingName Binding to be used - builders may contain many bindings
+     */
+    public AutoResponder(URL wsdlUrl, QName bindingName) throws WSDLException {
+        this(wsdlUrl, bindingName, SoapContext.builder().exampleContent(true).build());
+    }
+
+    /**
      * Constructs an auto responder for the specified binding of the builder
      *
      * @param builder     Soap builder used to construct messages
@@ -49,7 +73,7 @@ public class AutoResponder extends AbstractResponder {
      */
     public AutoResponder(SoapBuilder builder, QName bindingName) {
         super(builder, bindingName);
-        context = SoapContext.builder().exampleContent(true).build();
+        this.context = SoapContext.builder().exampleContent(true).build();
     }
 
     /**
