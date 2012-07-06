@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.centeractive.ws.builder.core;
+package com.centeractive.ws.builder.soap;
 
 /**
  * Specifies the context of the SOAP message generation.

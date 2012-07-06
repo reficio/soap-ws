@@ -1,7 +1,8 @@
 package com.centeractive.ws.builder.core;
 
 import com.centeractive.ws.builder.SoapBuilderException;
-import com.centeractive.ws.builder.soap.SoapBuilderLegacy;
+import com.centeractive.ws.builder.soap.SoapContext;
+import com.centeractive.ws.builder.soap.SoapMessageBuilder;
 
 import javax.wsdl.Binding;
 import javax.wsdl.WSDLException;
@@ -16,11 +17,11 @@ import java.util.List;
  */
 public class SoapParser {
 
-    private final SoapBuilderLegacy builder;
+    private final SoapMessageBuilder builder;
 
     public SoapParser(URL wsdlUrl) {
         try {
-            builder = new SoapBuilderLegacy(wsdlUrl);
+            builder = new SoapMessageBuilder(wsdlUrl);
         } catch (WSDLException e) {
             throw new SoapBuilderException(e);
         }
@@ -41,7 +42,7 @@ public class SoapParser {
 
     public static void saveWsdl(URL wsdlUrl, String rootFileName, File folder) {
         try {
-            SoapBuilderLegacy.saveWsdl(rootFileName, wsdlUrl, folder);
+            SoapMessageBuilder.saveWsdl(rootFileName, wsdlUrl, folder);
         } catch (WSDLException e) {
             throw new SoapBuilderException(e);
         }

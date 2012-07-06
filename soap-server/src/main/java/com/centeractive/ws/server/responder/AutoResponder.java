@@ -20,16 +20,12 @@ package com.centeractive.ws.server.responder;
 
 import com.centeractive.ws.builder.core.SoapBuilder;
 import com.centeractive.ws.builder.core.SoapOperation;
-import com.centeractive.ws.builder.soap.SoapBuilderLegacy;
-import com.centeractive.ws.builder.core.SoapContext;
+import com.centeractive.ws.builder.soap.SoapContext;
 import com.centeractive.ws.builder.soap.XmlUtils;
 import com.centeractive.ws.server.SoapServerException;
 import org.springframework.ws.soap.SoapMessage;
 
-import javax.wsdl.WSDLException;
-import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
-import java.net.URL;
 
 /**
  * Convenience class to create SOAP mock services.

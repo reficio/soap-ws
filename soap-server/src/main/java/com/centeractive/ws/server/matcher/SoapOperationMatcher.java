@@ -18,7 +18,7 @@
  */
 package com.centeractive.ws.server.matcher;
 
-import com.centeractive.ws.builder.soap.SoapBuilderLegacy;
+import com.centeractive.ws.builder.soap.SoapMessageBuilder;
 import com.centeractive.ws.builder.soap.WsdlUtils;
 import com.centeractive.ws.server.OperationNotFoundException;
 import com.centeractive.ws.server.util.XmlUtils;
@@ -125,7 +125,7 @@ public class SoapOperationMatcher {
 
 
     private BindingOperation getOperationBySoapAction(SoapMessage message) {
-        final String soapActionToMatch = SoapBuilderLegacy.normalizeSoapAction(message.getSoapAction());
+        final String soapActionToMatch = SoapMessageBuilder.normalizeSoapAction(message.getSoapAction());
         // optimization - if no soap action skip the visitor
         if (StringUtils.isBlank(soapActionToMatch)) {
             return null;
@@ -133,7 +133,7 @@ public class SoapOperationMatcher {
         AggregatingVisitor<BindingOperation> visitor = new AggregatingVisitor<BindingOperation>() {
             @Override
             public void visit(BindingOperation operation) {
-                String soapAction = SoapBuilderLegacy.normalizeSoapAction(SoapBuilderLegacy.getSOAPActionUri(operation));
+                String soapAction = SoapMessageBuilder.normalizeSoapAction(SoapMessageBuilder.getSOAPActionUri(operation));
                 if (soapAction.equals(soapActionToMatch)) {
                     addResult(operation);
                 }

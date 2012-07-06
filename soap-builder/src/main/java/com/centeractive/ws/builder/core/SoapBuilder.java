@@ -1,5 +1,7 @@
 package com.centeractive.ws.builder.core;
 
+import com.centeractive.ws.builder.soap.SoapContext;
+
 import javax.wsdl.Binding;
 import javax.xml.namespace.QName;
 import java.util.List;

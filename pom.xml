@@ -22,6 +22,7 @@
     </properties>
 
     <modules>
+        <module>soap-legacy</module>
         <module>soap-builder</module>
         <module>soap-client</module>
         <module>soap-server</module>

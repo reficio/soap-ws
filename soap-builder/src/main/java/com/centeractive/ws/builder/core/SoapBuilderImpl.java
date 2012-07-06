@@ -1,11 +1,13 @@
 package com.centeractive.ws.builder.core;
 
 import com.centeractive.ws.builder.SoapBuilderException;
-import com.centeractive.ws.builder.soap.SoapBuilderLegacy;
+import com.centeractive.ws.builder.soap.SoapContext;
+import com.centeractive.ws.builder.soap.SoapMessageBuilder;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,23 +16,34 @@ import java.util.List;
  */
 class SoapBuilderImpl implements SoapBuilder {
 
-    private final SoapBuilderLegacy builder;
+    private final SoapMessageBuilder builder;
     private final Binding binding;
     private final SoapContext context;
 
-    SoapBuilderImpl(SoapBuilderLegacy builder, Binding binding, SoapContext context) {
+    SoapBuilderImpl(SoapMessageBuilder builder, Binding binding, SoapContext context) {
         this.builder = builder;
         this.binding = binding;
         this.context = context;
     }
 
-    private BindingOperation getBindingOperation(SoapOperation operation) {
-        return builder.getBindingOperation(binding, operation);
+    public BindingOperation getBindingOperation(SoapOperation op) {
+        BindingOperation operation = binding.getBindingOperation(op.getOperationName(),
+                op.getOperationInputName(), op.getOperationOutputName());
+        if (operation == null) {
+            throw new SoapBuilderException("Operation not found");
+        }
+        return operation;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<SoapOperation> getOperations() {
-        return builder.getOperationNames(binding);
+        List<SoapOperation> operationNames = new ArrayList<SoapOperation>();
+        for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {
+            operationNames.add(SoapUtils.getOperation(binding, operation));
+        }
+        return operationNames;
+
     }
 
     @Override

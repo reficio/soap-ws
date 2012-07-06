@@ -19,9 +19,9 @@
 package com.centeractive.ws.examples;
 
 import com.centeractive.ws.builder.core.SoapBuilder;
-import com.centeractive.ws.builder.core.SoapContext;
 import com.centeractive.ws.builder.core.SoapOperation;
 import com.centeractive.ws.builder.core.SoapParser;
+import com.centeractive.ws.builder.soap.SoapContext;
 import com.centeractive.ws.builder.utils.ResourceUtils;
 import com.centeractive.ws.client.core.SoapClient;
 import com.centeractive.ws.server.core.SoapServer;

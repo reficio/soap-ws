@@ -19,8 +19,6 @@
 package com.centeractive.ws.builder.soap;
 
 import com.centeractive.ws.builder.SoapBuilderException;
-import com.centeractive.ws.builder.core.SoapContext;
-import com.centeractive.ws.builder.core.SoapOperation;
 import com.centeractive.ws.builder.soap.WsdlUtils.SoapHeader;
 import com.centeractive.ws.builder.soap.protocol.SoapVersion;
 import com.centeractive.ws.builder.utils.Wsdl11Writer;
@@ -45,7 +43,9 @@ import java.io.File;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class was extracted from the soapUI code base by centeractive ag in October 2011.
@@ -77,9 +77,9 @@ import java.util.*;
  *
  * @author Ole.Matzura
  */
-public class SoapBuilderLegacy {
+public class SoapMessageBuilder {
 
-    private final static Logger log = Logger.getLogger(SoapBuilderLegacy.class);
+    private final static Logger log = Logger.getLogger(SoapMessageBuilder.class);
 
     private Definition definition;
     private SchemaDefinitionWrapper definitionWrapper;
@@ -95,7 +95,7 @@ public class SoapBuilderLegacy {
      * @param wsdlUrl url of the wsdl to import
      * @throws WSDLException thrown in case of import errors
      */
-    public SoapBuilderLegacy(URL wsdlUrl) throws WSDLException {
+    public SoapMessageBuilder(URL wsdlUrl) throws WSDLException {
         this(SoapContext.builder().build(), wsdlUrl);
     }
 
@@ -104,7 +104,7 @@ public class SoapBuilderLegacy {
      * @param wsdlUrl url of the wsdl to import
      * @throws WSDLException thrown in case of import errors
      */
-    public SoapBuilderLegacy(SoapContext context, URL wsdlUrl) throws WSDLException {
+    public SoapMessageBuilder(SoapContext context, URL wsdlUrl) throws WSDLException {
         WSDLReader reader = new WSDLReaderImpl();
         reader.setFeature("javax.wsdl.verbose", false);
         this.definition = reader.readWSDL(wsdlUrl.toString());
@@ -126,8 +126,8 @@ public class SoapBuilderLegacy {
      * @return instance of the soap-builder which documentBaseUri is set to the url of the locally saved wsdl
      * @throws WSDLException thrown in case of import errors
      */
-    public static SoapBuilderLegacy createAndSave(URL wsdlUrl, File targetFolder, String fileBaseName) throws WSDLException {
-        SoapBuilderLegacy soapBuilder = new SoapBuilderLegacy(wsdlUrl);
+    public static SoapMessageBuilder createAndSave(URL wsdlUrl, File targetFolder, String fileBaseName) throws WSDLException {
+        SoapMessageBuilder soapBuilder = new SoapMessageBuilder(wsdlUrl);
         URL url = soapBuilder.saveWsdl(fileBaseName, targetFolder);
         soapBuilder.getDefinition().setDocumentBaseURI(url.toString());
         return soapBuilder;
@@ -174,6 +174,7 @@ public class SoapBuilderLegacy {
      */
     public static URL saveWsdl(String fileBaseName, URL wsdlUrl, File targetFolder) throws WSDLException {
         WSDLReader reader = new WSDLReaderImpl();
+        reader.setFeature("javax.wsdl.verbose", false);
         Definition definition = reader.readWSDL(wsdlUrl.toString());
         saveDefinition(fileBaseName, definition, targetFolder);
         return getSavedWsdlUrl(fileBaseName, targetFolder);
@@ -242,16 +243,16 @@ public class SoapBuilderLegacy {
     // ----------------------------------------------------------
     // INPUT MESSAGE GENERATORS
     // ----------------------------------------------------------
-    public String buildSoapMessageFromInput(SoapOperation operation) throws Exception {
-        return buildSoapMessageFromInput(operation, context);
-    }
-
-    public String buildSoapMessageFromInput(SoapOperation operation, SoapContext context) throws Exception {
-        Binding binding = getBindingByName(operation.getBindingName());
-        BindingOperation bindingOperation = getBindingOperation(binding, operation);
-        return buildSoapMessageFromInput(binding, bindingOperation, context);
-
-    }
+//    public String buildSoapMessageFromInput(SoapOperation operation) throws Exception {
+//        return buildSoapMessageFromInput(operation, context);
+//    }
+//
+//    public String buildSoapMessageFromInput(SoapOperation operation, SoapContext context) throws Exception {
+//        Binding binding = getBindingByName(operation.getBindingName());
+//        BindingOperation bindingOperation = getBindingOperation(binding, operation);
+//        return buildSoapMessageFromInput(binding, bindingOperation, context);
+//
+//    }
 
     public String buildSoapMessageFromInput(Binding binding, BindingOperation bindingOperation, SoapContext context) throws Exception {
         SoapVersion soapVersion = getSoapVersion(binding);
@@ -303,16 +304,16 @@ public class SoapBuilderLegacy {
     // ----------------------------------------------------------
     // OUTPUT MESSAGE GENERATORS
     // ----------------------------------------------------------
-    public String buildSoapMessageFromOutput(SoapOperation operation)
-            throws Exception {
-        return buildSoapMessageFromOutput(operation, context);
-    }
-
-    public String buildSoapMessageFromOutput(SoapOperation operation, SoapContext context) throws Exception {
-        Binding binding = getBindingByName(operation.getBindingName());
-        BindingOperation bindingOperation = getBindingOperation(binding, operation);
-        return buildSoapMessageFromOutput(binding, bindingOperation, context);
-    }
+//    public String buildSoapMessageFromOutput(SoapOperation operation)
+//            throws Exception {
+//        return buildSoapMessageFromOutput(operation, context);
+//    }
+//
+//    public String buildSoapMessageFromOutput(SoapOperation operation, SoapContext context) throws Exception {
+//        Binding binding = getBindingByName(operation.getBindingName());
+//        BindingOperation bindingOperation = getBindingOperation(binding, operation);
+//        return buildSoapMessageFromOutput(binding, bindingOperation, context);
+//    }
 
     public String buildSoapMessageFromOutput(Binding binding, BindingOperation bindingOperation, SoapContext context) throws Exception {
         boolean inputSoapEncoded = WsdlUtils.isInputSoapEncoded(bindingOperation);
@@ -384,14 +385,14 @@ public class SoapBuilderLegacy {
         return definitionWrapper;
     }
 
-    public BindingOperation getBindingOperation(Binding binding, SoapOperation op) {
-        BindingOperation operation = binding.getBindingOperation(op.getOperationName(),
-                op.getOperationInputName(), op.getOperationOutputName());
-        if (operation == null) {
-            throw new SoapBuilderException("Operation not found");
-        }
-        return operation;
-    }
+//    public BindingOperation getBindingOperation(Binding binding, SoapOperation op) {
+//        BindingOperation operation = binding.getBindingOperation(op.getOperationName(),
+//                op.getOperationInputName(), op.getOperationOutputName());
+//        if (operation == null) {
+//            throw new SoapBuilderException("Operation not found");
+//        }
+//        return operation;
+//    }
 
     public static String getSOAPActionUri(BindingOperation operation) {
         List extensions = operation.getExtensibilityElements();
@@ -422,26 +423,26 @@ public class SoapBuilderLegacy {
         return normalizedSoapAction;
     }
 
-    public static SoapOperation getOperation(Binding binding, BindingOperation operation) {
-        String soapAction = getSOAPActionUri(operation);
-        if (operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
-            return new SoapOperation(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-                    operation.getBindingOutput().getName(), soapAction);
-        } else {
-            return new SoapOperation(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-                    null, soapAction);
-        }
-    }
-
-    public static SoapOperation getOperation(Binding binding, BindingOperation operation, String soapAction) {
-        if (operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
-            return new SoapOperation(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-                    operation.getBindingOutput().getName(), normalizeSoapAction(soapAction));
-        } else {
-            return new SoapOperation(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-                    null, normalizeSoapAction(soapAction));
-        }
-    }
+//    public static SoapOperation getOperation(Binding binding, BindingOperation operation) {
+//        String soapAction = getSOAPActionUri(operation);
+//        if (operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
+//            return new SoapOperation(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
+//                    operation.getBindingOutput().getName(), soapAction);
+//        } else {
+//            return new SoapOperation(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
+//                    null, soapAction);
+//        }
+//    }
+//
+//    public static SoapOperation getOperation(Binding binding, BindingOperation operation, String soapAction) {
+//        if (operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
+//            return new SoapOperation(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
+//                    operation.getBindingOutput().getName(), normalizeSoapAction(soapAction));
+//        } else {
+//            return new SoapOperation(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
+//                    null, normalizeSoapAction(soapAction));
+//        }
+//    }
 
     public BindingOperation getOperationByName(QName bindingName, String operationName, String operationInputName, String operationOutputName) {
         Binding binding = getBindingByName(bindingName);
@@ -467,18 +468,18 @@ public class SoapBuilderLegacy {
         return new ArrayList<QName>(definition.getAllBindings().keySet());
     }
 
-    public List<SoapOperation> getOperationNames(QName bindingName) {
-        Binding binding = getBindingByName(bindingName);
-        return getOperationNames(binding);
-    }
-
-    public List<SoapOperation> getOperationNames(Binding binding) {
-        Set<SoapOperation> operationNames = new HashSet<SoapOperation>();
-        for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {
-            operationNames.add(getOperation(binding, operation));
-        }
-        return new ArrayList<SoapOperation>(operationNames);
-    }
+//    public List<SoapOperation> getOperationNames(QName bindingName) {
+//        Binding binding = getBindingByName(bindingName);
+//        return getOperationNames(binding);
+//    }
+//
+//    public List<SoapOperation> getOperationNames(Binding binding) {
+//        Set<SoapOperation> operationNames = new HashSet<SoapOperation>();
+//        for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {
+//            operationNames.add(getOperation(binding, operation));
+//        }
+//        return new ArrayList<SoapOperation>(operationNames);
+//    }
 
     // --------------------------------------------------------------------------
     // Internal methods - END OF PUBLIC API

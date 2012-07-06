@@ -20,7 +20,8 @@ package com.centeractive.ws.server.responder;
 
 import com.centeractive.ws.builder.core.SoapBuilder;
 import com.centeractive.ws.builder.core.SoapOperation;
-import com.centeractive.ws.builder.soap.SoapBuilderLegacy;
+import com.centeractive.ws.builder.core.SoapUtils;
+import com.centeractive.ws.builder.soap.SoapMessageBuilder;
 import com.centeractive.ws.server.OperationNotFoundException;
 import com.centeractive.ws.server.SoapServerException;
 import com.centeractive.ws.server.matcher.SoapOperationMatcher;
@@ -28,7 +29,6 @@ import org.springframework.ws.soap.SoapMessage;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
-import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 
 /**
@@ -74,7 +74,7 @@ public abstract class AbstractResponder implements RequestResponder {
         try {
             BindingOperation invokedOperation = soapOperationMatcher.getInvokedOperation(message);
             if (soapOperationMatcher.isRequestResponseOperation(invokedOperation)) {
-                SoapOperation operation = SoapBuilderLegacy.getOperation(binding, invokedOperation, message.getSoapAction());
+                SoapOperation operation = SoapUtils.getOperation(binding, invokedOperation, message.getSoapAction());
                 return respond(operation, message);
             }
             return null;

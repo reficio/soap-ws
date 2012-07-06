@@ -21,7 +21,7 @@ package com.centeractive.ws.server;
 import com.centeractive.ws.builder.core.SoapBuilder;
 import com.centeractive.ws.builder.core.SoapOperation;
 import com.centeractive.ws.builder.core.SoapParser;
-import com.centeractive.ws.builder.soap.SoapBuilderLegacy;
+import com.centeractive.ws.builder.soap.SoapMessageBuilder;
 import com.centeractive.ws.builder.utils.XmlTestUtils;
 import com.centeractive.ws.server.core.SoapServer;
 import com.centeractive.ws.server.util.TestUtils;
@@ -33,8 +33,6 @@ import javax.wsdl.BindingOperation;
 import javax.wsdl.OperationType;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
-import java.util.Collection;
-import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -100,7 +98,7 @@ public abstract class AbstractCooperationTest {
 
         String response = null;
         if (postSoapAction.booleanValue()) {
-            String soapAction = SoapBuilderLegacy.getSOAPActionUri(op);
+            String soapAction = SoapMessageBuilder.getSOAPActionUri(op);
             response = postRequest(endpointUrl, request, soapAction);
         } else {
             response = postRequest(endpointUrl, request);

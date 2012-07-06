@@ -20,19 +20,16 @@ package com.centeractive.ws.server.util;
 
 import com.centeractive.ws.builder.core.SoapBuilder;
 import com.centeractive.ws.builder.core.SoapParser;
-import com.centeractive.ws.builder.soap.SoapBuilderLegacy;
-import com.centeractive.ws.builder.core.SoapContext;
+import com.centeractive.ws.builder.soap.SoapContext;
 import com.centeractive.ws.builder.utils.ResourceUtils;
 import com.centeractive.ws.server.core.SoapServer;
 import com.centeractive.ws.server.responder.AutoResponder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.wsdl.Binding;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import java.net.URL;
-import java.util.Collection;
 
 /**
  * Utils used in SoapClient<->Soap Server integration testing
