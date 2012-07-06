@@ -38,7 +38,7 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
     private final static Log log = LogFactory.getLog(HttpsCooperationTest.class);
 
     protected URL getTestKeyStoreUrl() {
-        return ResourceUtils.getResourceWithAbsolutePackagePath("/keystores/multi-cert-keystore", ".keystore");
+        return ResourceUtils.getResourceWithAbsolutePackagePath("/keystores/single-cert-keystore", ".keystore");
     }
 
     protected String getTestKeyStorePassword() {
@@ -53,10 +53,6 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
                 .httpsPort(HOST_PORT)
                 .build();
         server.start();
-        try {
-            Thread.sleep(1000); // timing issues occured
-        } catch (InterruptedException e) {
-        }
     }
 
     @After
