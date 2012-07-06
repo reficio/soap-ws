@@ -204,7 +204,7 @@
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
-                        <phase>compile</phase>
+                        <!--<phase>compile</phase>-->
                     </execution>
                 </executions>
             </plugin>
