@@ -18,7 +18,6 @@
  */
 package com.centeractive.ws.builder.soap;
 
-import com.centeractive.ws.builder.core.SoapContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xmlbeans.*;
 import org.apache.xmlbeans.impl.util.Base64;
