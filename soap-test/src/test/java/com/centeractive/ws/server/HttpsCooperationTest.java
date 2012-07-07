@@ -80,6 +80,7 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
     }
 
     @Test
+    @Ignore
     public void testService2() throws Exception {
         verifyServiceBehavior(2);
     }
