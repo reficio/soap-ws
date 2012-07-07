@@ -75,6 +75,7 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
     }
 
     @Test
+    @Ignore
     public void testService1() throws Exception {
         verifyServiceBehavior(1);
     }
