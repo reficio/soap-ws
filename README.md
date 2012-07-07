@@ -88,42 +88,54 @@ soap-ws is not yet located in the central maven repo, thus you also have to add 
     <repositories>
         <repository>
             <id>reficio</id>
-            <url>TODO</url>
+            <url>http://repo.reficio.org/maven/</url>
         </repository>
     </repositories>
 ```
 
 #### soap-builder
-The usage of SoapBuilder is a bit complex. It is a consequence of two facts: its code, that was inherited from a 3rd party project (see Note), is relatively complex. The second fact is just the complexity of a WSDL itself. There is a significant amount of work already planned to reimplement SoapBuilder, but for now, it's not that bad either.
+SoapBuilder interface describes the functionality of generation of the XML SOAP messages. An instance of SoapBuilder is always bound to one wsdl and one of its bindings. As you probably know there can be more bindings in one WSDL file. In order to handle all of theme you will need an instance of SoapBuilder per binding. How to construct an instance of SoapBuilder you may ask?
+First, we have to construct a SoapParser - the simplest way is to invoke the constructor specifying the URL of the WSDL file (1). 
+```java
+    SoapParser parser = new SoapParser(wsdlUrl);  // (1)
+        
+    List<QName> bindings = parser.getBindings(); // (2)        
+    QName bindingName = bindings.iterator.next(); // take the first binding
+    
+    SoapBuilder builder = parser.getBinding(bindingName); // (3)    
+    
+    List<SoapOperation> operations = builder.getOperations(); // (4)
+    SoapOperation op = operations.iterator.next(); // take the first operation
+```
+SoapParser reads the specified WSDL file recursively, fetching all included WSDL and XSD files, and constructs an underlying javax.wsdl.Definition object that is the Java-based representation of the WSDL (see WSDL4j to read more about the Definitoin object). 
 
-SoapBuilder object is responsible for the generation of the XML SOAP messages. The simplest way of initializing the SoapBuilder object is to invoke the constructor specifying the URL of the WSDL file. 
+In order to generate a SOAP message you have to specify the QName of the Binding.
+To check what binding are defined in the WSDL invoke the getBindings() method (2).
+
+When you decide which binding you want to use you can easily create a SoapBuilder instance just by invoking the getBuilder() method on the SoapParser object (3).
+
+The last step is to generate a SOAP message using the SoapBuilder. In order to do it though you have to specify the SOAP operation. In order to get the list of operations specified in that binding just invoke the getOperations() method on the SoapBuilder object (4).
+
+Now you are all set. To generate a SOAP message in the XML format just invoke one of the methods defined in the SoapBuilder interface specifiying the SoapOperation. You can also build generic empty messages invoking buildEmptyMessage or buildFault:
 ```java
-    SoapBuilder builder = new SoapBuilder(wsdlUrl);
-```
-Soap builder reads the specified WSDL file recursively,) fetching all included WSDL and XSD files, and constructs an underlying Definition object that is the Java-based representation of the WSDL (see WSDL4j to read more about the Definitoin). You can get the underlying definition object by invoking the build.getDefinition() method.
-```java
-    builder.getDefinition()
-```
-In order to generate a SOAP message you have to specify the Binding and the BindingOperation (coming directly from the Definition object). 
-To check what binding and operation are defined in the WSDL invoke the following methods (see WSDL4J doc for more details on Definition, Binding and BindingOperation):
-```java
-    builder.getDefinition().getAllBindings();
-    binding.getBindingOperations();
+	public interface SoapBuilder {
+
+	    String buildInputMessage(SoapOperation operation);
+    	String buildInputMessage(SoapOperation operation, SoapContext context);
+	    String buildOutputMessage(SoapOperation operation);
+    	String buildOutputMessage(SoapOperation operation, SoapContext context);
+    
+    	String buildFault(String code, String message);
+    	String buildEmptyFault();
+    	String buildEmptyMessage();
+
+		List<SoapOperation> getOperations();
+		QName getBindingName();
+    	Binding getBinding(); 	
+	}
 ```
 
-When you decide which binding and BindingOperation you want to use just invoke the static SoapBuilder.getOperation() to build the wrapper object that can be easily consumed by the generation engine:
-```java
-    OperationWrapper operationWrapper = builder.getOperation(binding, bindingOperation);
-```
-Now you are good to go. To generate SOAP message in the XML format just invoke one of the methods whose names begins with build* prefix (they are often overloaded) passing the OperationWrapper object that specifies the target operation.
-```java
-    String envelopeInput = builder.buildSoapMessageFromInput(operationWrapper);
-    String envelopeOutput = builder.buildSoapMessageFromOutput(operationWrapper);
-```
-
-You can also build generic empty messages invoking buildEmptyMessage or buildFault.
-
-Last, but not least. In most of the cases, you can relay on the default settings of the context the specifies how messages are generate, but if you would like to change it you have to populate the SoapContext object and pass it either to the constructor (from that moment on, SoapBuilder will use this context as the default one), or to single methods, changing the context of the generation for time span of single method invocation. You can also overwrite the default context by invoking the setContext() method. In order to populate a SoapContext object use the fluent builder. 
+Last, but not least. In most of the cases, you can relay on the default settings of the SoapContext the specifies how messages are generate, but if you would like to change it you have to populate the SoapContext object and pass it either to the SoapParser (from that moment on, SoapBuilder will use this context as the default one), or to single methods, changing the context of the generation for time span of single method invocation. In order to populate a SoapContext object use the fluent builder. 
 ```java
     SoapContext context = SoapContext.builder()
         .alwaysBuildHeaders(true)
