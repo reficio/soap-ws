@@ -181,10 +181,10 @@ You can start and stop the server using start/stop methods
 
 Now we would like to turn our server into a mock server that responds to request generating a sample content that is complaint with the schema of the operation that is being invoked.
 To do that we have to create an AutoResponder and register it under the given context path.
-Autoresponder requires a SoapBuilder (that contains the WSDL) and the binding name which it should use. Keep in mind the there can be only one binding under one context path;
+Autoresponder requires a populated SoapBuilder instance (that contains the WSDL and the binding name which it should use). Keep in mind the there can be only one binding under one context path;
 ```java
-    String contextPath = "exampleEndpoint";
-    AutoResponder responder = new AutoResponder(soapBuilder, bindingName);
+    String contextPath = "/exampleEndpoint";
+    AutoResponder responder = new AutoResponder(soapBuilder);
     server.registerResponder(contextPath, responder);
 ```
 From that moment our server will respond to request send to the "exampleEndpoint" context path.
@@ -199,17 +199,19 @@ If you would like to handle the request yourself you just have to implement the 
 It may be a bit cumbersome, as it is not that easy to match an XML request to the binding and operation, that is the reason why we provided an AbstractResponder that does all of that backstage.
 ```java
     public abstract class AbstractResponder implements RequestResponder {
-        /**
-         * Abstract method that should be implemented by overriding classes.
-         * This method is invoked whenever a request is send by the client.
-         * InvokedOperation may be passed to a SoapBuilder to construct the
-         * response to the request that was sent by the client.
-         *
-         * @param invokedOperation operation from the binding that is matched to the SOAP message
-         * @param message          SOAP message passed by the client
-         * @return response in the XML source format containing the whole SOAP envelope
-         */
-        public abstract Source respond(OperationWrapper invokedOperation, SoapMessage message);
+     	// (…)
+     	
+     	/**
+     	* Abstract method that should be implemented by overriding classes.
+     	* This method is invoked whenever a request is send by the client.
+     	* InvokedOperation may be passed to a SoapBuilder to construct the
+     	* response to the request that was sent by the client.
+     	*
+     	* @param invokedOperation operation from the binding that is matched to the SOAP message
+     	* @param message          SOAP message passed by the client
+     	* @return response in the XML source format containing the whole SOAP envelope
+     	*/
+    	public abstract Source respond(SoapOperation invokedOperation, SoapMessage message);
     }
 ```
 
@@ -220,9 +222,9 @@ AbstractResponder uses our implementation of the SoapOperationMatcher that match
 * RCP bindings are matched using single top-level tag with the name of the invoked operation
 * Document bindings are matched by input types and then by input names
  
-Having the OperationWrapper object provided by the AbstractResponder you can easily generate and modify the response that you generate using SoapBuilder that available in the responder as a builder class field.
+Having the SoapOperation object provided by the AbstractResponder you can easily generate and modify the response that you create using SoapBuilder that available in the responder as a instance field called builder.
 
-That's a lot of stuff! Try it out now and leave send us some feedback!
+That's a lot of stuff. I hope you enjoyed it! Have a look at the examples located in the soap-examples project. Try it out now and leave send us some feedback!
 
 ### Project modules
 * soap-builder - responsible for the generation of SOAP XML messages.
