@@ -340,8 +340,14 @@ You can find all these working examples in the soap-examples project. Enjoy!
 
 ## Last but not least
 
+### How can I hack around?
+* GitHub -> https://github.com/centeractive/soap-ws
+* Jenkins -> https://reficio.ci.cloudbees.com/job/soap-ws/
+* Sonar -> http://nemo.sonarsource.org/dashboard/index/com.centeractive:soap-ws
+* Site -> http://projects.reficio.org/soap-ws/1.0.0-SNAPSHOT/manual.html
+
 ### Who's behind it?
-Tom Bujok [tom.bujok@centeractive.com, tom.bujok@gmail.com]
+Tom Bujok [tom.bujok@reficio.org]
 
 centeractive ag
 www.centeractive.com
