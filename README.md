@@ -243,7 +243,9 @@ That's a lot of stuff. I hope you enjoyed it! Have a look at the examples locate
             .build();
 
     String request =
-            "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:stoc=\"http://centeractive.com/stockquote.wsdl\" xmlns:stoc1=\"http://centeractive.com/stockquote.xsd\">\n" +
+            "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"" +
+                    "xmlns:stoc=\"http://centeractive.com/stockquote.wsdl\""+
+                    "xmlns:stoc1=\"http://centeractive.com/stockquote.xsd\">\n" +
                     "   <soapenv:Header/>\n" +
                     "   <soapenv:Body>\n" +
                     "      <stoc:GetLastTradePrice>\n" +
