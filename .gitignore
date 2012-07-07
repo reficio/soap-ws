@@ -45,3 +45,5 @@ classes
 .classpath
 .project
 .idea
+
+src/site/markdown/*.*
