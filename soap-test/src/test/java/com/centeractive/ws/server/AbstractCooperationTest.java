@@ -96,7 +96,7 @@ public abstract class AbstractCooperationTest {
         BindingOperation op = binding.getBindingOperation(wrapper.getOperationName(), wrapper.getOperationInputName(),
                 wrapper.getOperationOutputName());
 
-        String response = null;
+        String response;
         if (postSoapAction.booleanValue()) {
             String soapAction = SoapUtils.getSOAPActionUri(op);
             response = postRequest(endpointUrl, request, soapAction);

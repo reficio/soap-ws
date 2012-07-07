@@ -132,15 +132,18 @@ public class SoapClientExamplesTest {
                 .endpointUrl(url)
                 .build();
 
+        SoapParser parser = new SoapParser(wsdlUrl);
+        SoapBuilder soapBuilder = parser.getBuilder(bindingName);
+
         // get the operation to invoked -> assumption our operation is the first operation in the WSDL's
-        SoapOperation op = builder.getOperations().iterator().next();
+        SoapOperation operation = soapBuilder.getOperations().iterator().next();
 
         // construct the request
-        String request = builder.buildInputMessage(op);
+        String request = soapBuilder.buildInputMessage(operation);
         // post the request to the server
         String response = client.post(request);
         // get the response
-        String expectedResponse = builder.buildOutputMessage(op);
+        String expectedResponse = soapBuilder.buildOutputMessage(operation);
 
         assertTrue(XMLUnit.compareXML(expectedResponse, response).identical());
 
