@@ -234,6 +234,109 @@ That's a lot of stuff. I hope you enjoyed it! Have a look at the examples locate
 * soap-examples - contains a few example how to use soap-ws.
 * soap-legacy - legacy code extracted from 3rd party projects
 
+### Example usage
+#### Post a SOAP message with SoapClient
+```java
+	String url = String.format("http://localhost:%d%s", port, contextPath);
+    SoapClient client = SoapClient.builder()
+            .endpointUrl(url)
+            .build();
+
+    String request =
+            "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" 				xmlns:stoc=\"http://centeractive.com/stockquote.wsdl\" xmlns:stoc1=\"http://				centeractive.com/stockquote.xsd\">\n" +
+                    "   <soapenv:Header/>\n" +
+                    "   <soapenv:Body>\n" +
+                    "      <stoc:GetLastTradePrice>\n" +
+                    "         <stoc1:TradePriceRequest>\n" +
+                    "            <tickerSymbol>?</tickerSymbol>\n" +
+                    "         </stoc1:TradePriceRequest>\n" +
+                    "      </stoc:GetLastTradePrice>\n" +
+                    "   </soapenv:Body>\n" +
+                    "</soapenv:Envelope>";
+
+    String response = client.post(request);
+```    
+
+#### Generate and post a SOAP message
+```java
+	// construct the client
+    String url = String.format("http://localhost:%d%s", port, contextPath);
+    SoapClient client = SoapClient.builder()
+            .endpointUrl(url)
+            .build();
+
+    SoapParser parser = new SoapParser(wsdlUrl);
+    SoapBuilder soapBuilder = parser.getBuilder(bindingName);
+
+    // get the operation to invoked -> assumption our operation is the first operation in the WSDL's
+    SoapOperation operation = soapBuilder.getOperations().iterator().next();
+
+    // construct the request
+    String request = soapBuilder.buildInputMessage(operation);
+    // post the request to the server
+    String response = client.post(request);
+    // get the response
+    String expectedResponse = soapBuilder.buildOutputMessage(operation);
+
+    assertTrue(XMLUnit.compareXML(expectedResponse, response).identical());
+```
+
+#### Create a SoapServer
+```java
+	SoapServer server = SoapServer.builder()
+            .httpPort(9090)
+            .build();
+    server.start();
+```
+
+#### Create a SoapServer with AutoResponder (great to unit test web-services)
+```java
+	SoapServer server = SoapServer.builder()
+            .httpPort(9090)
+            .build();
+    server.start();
+
+    QName bindingName = new QName("http://centeractive.com/stockquote.wsdl", "StockQuoteSoapBinding");
+    URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "stockquote-service.wsdl");
+
+    SoapParser parser = new SoapParser(wsdlUrl);
+    AutoResponder responder = new AutoResponder(parser.getBuilder(bindingName));
+
+    server.registerRequestResponder("/service", responder);
+```
+
+#### Create a SoapServer with a custom responder
+```java
+	SoapServer server = SoapServer.builder()
+            .httpPort(9090)
+            .build();
+    server.start();
+
+    URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "stockquote-service.wsdl");
+    SoapParser parser = new SoapParser(wsdlUrl);
+    // assumption -> we take the first binding
+    final SoapBuilder builder = parser.getBuilder(parser.getBindings().get(0));
+    AbstractResponder customResponder = new AbstractResponder(builder) {
+        @Override
+        public Source respond(SoapOperation invokedOperation, SoapMessage message) {
+            try {
+                // build the response using builder
+                String response = builder.buildOutputMessage(invokedOperation);
+                // here you can tweak the response -> for example with XSLT
+                //...
+                return XmlUtils.xmlStringToSource(response);
+            } catch (Exception e) {
+                // will automatically generate SOAP-FAULT
+                throw new RuntimeException("my custom error", e);
+            }
+        }
+    };
+
+    server.registerRequestResponder("/service", customResponder);
+```
+
+You can find all these working examples in the soap-examples project. Enjoy!
+
 
 ## Last but not least
 
@@ -241,7 +344,6 @@ That's a lot of stuff. I hope you enjoyed it! Have a look at the examples locate
 Tom Bujok [tom.bujok@centeractive.com, tom.bujok@gmail.com]
 
 centeractive ag
-
 www.centeractive.com
 
 ### Note
