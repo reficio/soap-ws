@@ -65,18 +65,20 @@
             </answer>
         </faq>
 
-        <faq id="whats-is-its-licence">
+        <faq id="how-can-i-hack-around">
             <question>
-                Under which license is it released?
+                How can I hack around?
             </question>
             <answer>
-                <p>
-                Apache License, Version 2.0
-                http://www.apache.org/licenses/LICENSE-2.0
-                </p>
+                Try here:
+                <ul>
+                    <li>GitHub -> https://github.com/centeractive/soap-ws</li>
+                    <li>Jenkins -> https://reficio.ci.cloudbees.com/job/soap-ws</li>
+                    <li>Sonar -> http://nemo.sonarsource.org/dashboard/index/com.centeractive:soap-ws</li>
+                    <li>Site -> http://projects.reficio.org/soap-ws/1.0.0-SNAPSHOT</li>
+                </ul>
             </answer>
         </faq>
-
     </part>
 
 </faqs>
