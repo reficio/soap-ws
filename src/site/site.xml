@@ -48,20 +48,20 @@
                     src="http://google-code-prettify.googlecode.com/svn/trunk/src/lang-css.js"></script>
             <script type="text/javascript">
                 function addLoadEvent(func) {
-                    var oldonload = window.onload;
-                    if (typeof window.onload != 'function') {
-                        window.onload = func;
-                    } else {
-                        window.onload = function() {
-                            if (oldonload) {
-                                oldonload();
-                            }
-                            func();
-                        }
-                    }
+                var oldonload = window.onload;
+                if (typeof window.onload != 'function') {
+                window.onload = func;
+                } else {
+                window.onload = function() {
+                if (oldonload) {
+                oldonload();
+                }
+                func();
+                }
+                }
                 }
                 $(function() {
-                  $('pre').addClass('prettyprint');
+                $('pre').addClass('prettyprint');
                 });
                 addLoadEvent(prettyPrint);
 
@@ -96,6 +96,20 @@
                 .atv { color: #060; }
                 }
             </style>
+            <script type="text/javascript">
+
+                var _gaq = _gaq || [];
+                _gaq.push(['_setAccount', 'UA-33336911-1']);
+                _gaq.push(['_setDomainName', '.reficio.org']);
+                _gaq.push(['_trackPageview']);
+
+                (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                })();
+
+            </script>
         </head>
 
         <menu name="Overview">

@@ -14,8 +14,7 @@
         endpoint. Finally, you can run SoapServer to receive SOAP messages and and respond to them. And all of that requires no classes
         or stubs generation - everything happens directly in an XML format.
     </description>
-    <url>http://github.com/centeractive/soap-ws</url>
-
+    <url>http://projects.reficio.org/soap-ws/${project.version}</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -50,7 +49,7 @@
         <developer>
             <id>tom.bujok</id>
             <name>Tom Bujok</name>
-            <email>tom.bujok@reficio.org</email>
+            <email>tom.bujok@gmail.com</email>
             <organization>centeractive ag</organization>
             <organizationUrl>http://www.centeractive.com</organizationUrl>
             <roles>
