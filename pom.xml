@@ -300,6 +300,7 @@
                 <version>1.7</version>
                 <executions>
                     <execution>
+                        <id>modify-markdown</id>
                         <phase>pre-site</phase>
                         <configuration>
                             <failOnError>false</failOnError>
@@ -322,6 +323,31 @@
                             <goal>run</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>manually-deploy-site</id>
+                        <phase>deploy</phase>
+                        <configuration>
+                            <tasks>
+                                <echo message="Running ANT for deploying the site..."/>
+                                <property name="project_folder"   value="/var/www/projects/${project.artifactId}"/>
+                                <property name="version_folder"   value="${project_folder}/${project.version}"/>
+                                <property name="site_tgz"   value="${project.artifactId}-${project.version}-site.tgz"/>
+                                <tar destfile="target/${site_tgz}" basedir="target/site" compression="gzip"/>
+                                <scp file="target/${site_tgz}" todir="${reficio.usr}@${reficio.server}:${project_folder}" password="${reficio.pwd}" verbose="true"/>
+                                <sshexec host="${reficio.server}"
+                                         username="${reficio.usr}"
+                                         password="${reficio.pwd}"
+                                         verbose="true"
+                                         command="mkdir -p ${version_folder} || exit;
+                                                  rm -rf ${version_folder}/* || exit;
+                                                  tar -C ${version_folder} -xf ${project_folder}/${site_tgz} || exit;
+                                                  rm ${project_folder}/${project.artifactId}-${project.version}-site.tgz || exit;"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
 
@@ -331,6 +357,11 @@
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ftp</artifactId>
+                <version>2.2</version>
+            </extension>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh</artifactId>
                 <version>2.2</version>
             </extension>
         </extensions>
@@ -381,14 +412,10 @@
     </profiles>
 
     <distributionManagement>
-        <site>
-            <id>reficio</id>
-            <url>${reficio.server}/projects/${project.artifactId}/${project.version}/</url>
-        </site>
         <repository>
             <id>reficio</id>
             <name>Reficio Maven Repository</name>
-            <url>${reficio.server}/repo/maven</url>
+            <url>scp://${reficio.server}/var/www/repo/maven</url>
         </repository>
     </distributionManagement>
 
