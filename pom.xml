@@ -367,7 +367,7 @@
                             </execution>
                             <execution>
                                 <id>manually-deploy-site</id>
-                                <phase>site</phase>
+                                <phase>deploy</phase>
                                 <configuration>
                                     <tasks>
                                         <echo message="Running ANT for deploying the site..."/>
@@ -440,7 +440,6 @@
                 </plugins>
             </build>
         </profile>
-
     </profiles>
 
     <distributionManagement>
