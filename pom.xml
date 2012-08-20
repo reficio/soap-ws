@@ -294,75 +294,6 @@
                     </reportPlugins>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>modify-markdown</id>
-                        <phase>pre-site</phase>
-                        <configuration>
-                            <failOnError>false</failOnError>
-                            <target>
-
-                                <copy todir="${basedir}/src/site/markdown">
-                                    <fileset dir="${basedir}" includes="README.md"/>
-                                </copy>
-
-                                <move file="${basedir}/src/site/markdown/README.md" tofile="${basedir}/src/site/markdown/manual.md"/>
-
-                                <replaceregexp file="${basedir}/src/site/markdown/manual.md"
-                                               match="```.*"
-                                               replace=""
-                                               byline="true"/>
-
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>manually-deploy-site</id>
-                        <phase>deploy</phase>
-                        <configuration>
-                            <tasks>
-                                <echo message="Running ANT for deploying the site..."/>
-                                <property name="project_folder"   value="/var/www/projects/${project.artifactId}"/>
-                                <property name="version_folder"   value="${project_folder}/${project.version}"/>
-                                <property name="site_tgz"   value="${project.artifactId}-${project.version}-site.tgz"/>
-                                <tar destfile="target/${site_tgz}" basedir="target/site" compression="gzip"/>
-                                <scp file="target/${site_tgz}" todir="${reficio.usr}@${reficio.server}:${project_folder}" password="${reficio.pwd}" verbose="true"/>
-                                <sshexec host="${reficio.server}"
-                                         username="${reficio.usr}"
-                                         password="${reficio.pwd}"
-                                         verbose="true"
-                                         command="mkdir -p ${version_folder} || exit;
-                                                  rm -rf ${version_folder}/* || exit;
-                                                  tar -C ${version_folder} -xf ${project_folder}/${site_tgz} || exit;
-                                                  rm ${project_folder}/${project.artifactId}-${project.version}-site.tgz || exit;"/>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>ant</groupId>
-                        <artifactId>ant-jsch</artifactId>
-                        <version>1.6.5</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.jcraft</groupId>
-                        <artifactId>jsch</artifactId>
-                        <version>0.1.25</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
         </plugins>
 
         <extensions>
@@ -395,6 +326,92 @@
     </repositories>
 
     <profiles>
+        <profile>
+            <id>site</id>
+            <activation>
+                <!-- invoke only on top-level project -->
+                <file><exists>README.md</exists></file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <id>modify-markdown</id>
+                                <phase>pre-site</phase>
+                                <configuration>
+                                    <failOnError>false</failOnError>
+                                    <target>
+
+                                        <copy todir="${basedir}/src/site/markdown">
+                                            <fileset dir="${basedir}" includes="README.md"/>
+                                        </copy>
+
+                                        <move file="${basedir}/src/site/markdown/README.md"
+                                              tofile="${basedir}/src/site/markdown/manual.md"/>
+
+                                        <replaceregexp file="${basedir}/src/site/markdown/manual.md"
+                                                       match="```.*"
+                                                       replace=""
+                                                       byline="true"/>
+
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>manually-deploy-site</id>
+                                <phase>deploy</phase>
+                                <configuration>
+                                    <tasks>
+                                        <echo message="Running ANT for deploying the site..."/>
+                                        <property name="project_folder" value="/var/www/projects/${project.artifactId}"/>
+                                        <property name="version_folder" value="${project_folder}/${project.version}"/>
+                                        <property name="site_tgz" value="${project.artifactId}-${project.version}-site.tgz"/>
+                                        <tar destfile="target/${site_tgz}" basedir="target/site" compression="gzip"/>
+                                        <sshexec host="${reficio.server}"
+                                                 username="${reficio.usr}"
+                                                 password="${reficio.pwd}"
+                                                 verbose="true"
+                                                 command="mkdir -p ${version_folder} || exit"/>
+                                        <scp file="target/${site_tgz}" todir="${reficio.usr}@${reficio.server}:${project_folder}/"
+                                             password="${reficio.pwd}" verbose="true"/>
+                                        <sshexec host="${reficio.server}"
+                                                 username="${reficio.usr}"
+                                                 password="${reficio.pwd}"
+                                                 verbose="true"
+                                                 command="rm -rf ${version_folder}/* || exit;
+                                                  tar -C ${version_folder} -xf ${project_folder}/${site_tgz} || exit;
+                                                  rm ${project_folder}/${project.artifactId}-${project.version}-site.tgz || exit"/>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>ant</groupId>
+                                <artifactId>ant-jsch</artifactId>
+                                <version>1.6.5</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>com.jcraft</groupId>
+                                <artifactId>jsch</artifactId>
+                                <version>0.1.25</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
         <profile>
             <id>findbugs</id>
             <build>
