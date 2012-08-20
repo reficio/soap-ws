@@ -349,7 +349,7 @@ You can find all these working examples in the soap-examples project. Enjoy!
 * Site -> http://projects.reficio.org/soap-ws/1.0.0-SNAPSHOT/manual.html
 
 ### Who's behind it?
-Tom Bujok [tom.bujok@reficio.org]
+Tom Bujok [tom.bujok@gmail.com]
 
 centeractive ag
 www.centeractive.com
