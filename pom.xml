@@ -330,7 +330,9 @@
             <id>site</id>
             <activation>
                 <!-- invoke only on top-level project -->
-                <file><exists>README.md</exists></file>
+                <file>
+                    <exists>README.md</exists>
+                </file>
             </activation>
             <build>
                 <plugins>
@@ -365,7 +367,7 @@
                             </execution>
                             <execution>
                                 <id>manually-deploy-site</id>
-                                <phase>deploy</phase>
+                                <phase>site</phase>
                                 <configuration>
                                     <tasks>
                                         <echo message="Running ANT for deploying the site..."/>
@@ -373,20 +375,21 @@
                                         <property name="version_folder" value="${project_folder}/${project.version}"/>
                                         <property name="site_tgz" value="${project.artifactId}-${project.version}-site.tgz"/>
                                         <tar destfile="target/${site_tgz}" basedir="target/site" compression="gzip"/>
+                                        <echo message="Creating folder for the site ${version_folder}"/>
                                         <sshexec host="${reficio.server}"
                                                  username="${reficio.usr}"
                                                  password="${reficio.pwd}"
-                                                 verbose="true"
-                                                 command="mkdir -p ${version_folder} || exit"/>
+                                                 verbose="false"
+                                                 command="mkdir -p ${version_folder}"/>
+                                        <echo message="Uploading compressed site ${site_tgz}"/>
                                         <scp file="target/${site_tgz}" todir="${reficio.usr}@${reficio.server}:${project_folder}/"
-                                             password="${reficio.pwd}" verbose="true"/>
+                                             password="${reficio.pwd}" verbose="false"/>
+                                        <echo message="Extracting compressed site and cleaning up"/>
                                         <sshexec host="${reficio.server}"
                                                  username="${reficio.usr}"
                                                  password="${reficio.pwd}"
-                                                 verbose="true"
-                                                 command="rm -rf ${version_folder}/* || exit;
-                                                  tar -C ${version_folder} -xf ${project_folder}/${site_tgz} || exit;
-                                                  rm ${project_folder}/${project.artifactId}-${project.version}-site.tgz || exit"/>
+                                                 verbose="false"
+                                                 command="rm -rf ${version_folder}/*; tar -C ${version_folder} -xf ${project_folder}/${site_tgz}; rm ${project_folder}/${project.artifactId}-${project.version}-site.tgz"/>
                                     </tasks>
                                 </configuration>
                                 <goals>
@@ -396,14 +399,14 @@
                         </executions>
                         <dependencies>
                             <dependency>
-                                <groupId>ant</groupId>
+                                <groupId>org.apache.ant</groupId>
                                 <artifactId>ant-jsch</artifactId>
-                                <version>1.6.5</version>
+                                <version>1.8.4</version>
                             </dependency>
                             <dependency>
                                 <groupId>com.jcraft</groupId>
                                 <artifactId>jsch</artifactId>
-                                <version>0.1.25</version>
+                                <version>0.1.48</version>
                             </dependency>
                         </dependencies>
                     </plugin>
