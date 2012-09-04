@@ -46,4 +46,5 @@ classes
 .project
 .idea
 
-src/site/markdown/*.*.DS_Store
+src/site/markdown/*.*
+.DS_Store
