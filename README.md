@@ -1,4 +1,4 @@
-# soap-ws
+# soap-ws {<img src="https://secure.travis-ci.org/centeractive/soap-ws.png" />}[http://travis-ci.org/centeractive/soap-ws]
 
 ## A lightweight and easy-to-use Java library to handle SOAP on a purely XML level.
 
