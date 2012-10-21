@@ -239,20 +239,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>maven-clover2-plugin</artifactId>
-                <version>3.1.7</version>
-                <executions>
-                    <execution>
-                        <id>default-cli</id>
-                    </execution>
-                </executions>
-                <configuration>
-                    <generateHtml>true</generateHtml>
-                    <generateXml>true</generateXml>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.1</version>
@@ -345,6 +331,27 @@
 
     <profiles>
         <profile>
+            <id>clover</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.atlassian.maven.plugins</groupId>
+                        <artifactId>maven-clover2-plugin</artifactId>
+                        <version>3.1.7</version>
+                        <executions>
+                            <execution>
+                                <id>default-cli</id>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <generateHtml>true</generateHtml>
+                            <generateXml>true</generateXml>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>site</id>
             <activation>
                 <!-- invoke only on top-level project -->
@@ -385,7 +392,7 @@
                             </execution>
                             <execution>
                                 <id>manually-deploy-site</id>
-                                <phase>deploy</phase>
+                                <phase>post-site</phase>
                                 <configuration>
                                     <tasks>
                                         <echo message="Running ANT for deploying the site..."/>
