@@ -340,7 +340,7 @@
                         <version>3.1.7</version>
                         <executions>
                             <execution>
-                                <id>default-cli</id>
+                                <id>clover</id>
                             </execution>
                         </executions>
                         <configuration>
@@ -391,8 +391,7 @@
                                 </goals>
                             </execution>
                             <execution>
-                                <id>manually-deploy-site</id>
-                                <phase>post-site</phase>
+                                <id>default-cli</id>
                                 <configuration>
                                     <tasks>
                                         <echo message="Running ANT for deploying the site..."/>
@@ -417,9 +416,6 @@
                                                  command="rm -rf ${version_folder}/*; tar -C ${version_folder} -xf ${project_folder}/${site_tgz}; rm ${project_folder}/${project.artifactId}-${project.version}-site.tgz"/>
                                     </tasks>
                                 </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
                             </execution>
                         </executions>
                         <dependencies>
