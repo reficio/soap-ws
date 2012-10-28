@@ -295,6 +295,7 @@
                             <!-- marker to add clover report -->
                             <groupId>com.atlassian.maven.plugins</groupId>
                             <artifactId>maven-clover2-plugin</artifactId>
+                            <version>3.1.7</version>
                             <configuration>
                                 <cloverMergeDatabase>${user.home}/clover/soap-ws/cloverMerged.db</cloverMergeDatabase>
                             </configuration>
@@ -449,7 +450,7 @@
                         <executions>
                             <execution>
                                 <id>findbugs</id>
-                                <phase>package</phase>
+                                <phase>compile</phase>
                                 <goals>
                                     <goal>findbugs</goal>
                                 </goals>
