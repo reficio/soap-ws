@@ -292,8 +292,12 @@
                             </reportSets>
                         </plugin>
                         <plugin>
+                            <!-- marker to add clover report -->
                             <groupId>com.atlassian.maven.plugins</groupId>
                             <artifactId>maven-clover2-plugin</artifactId>
+                            <configuration>
+                                <cloverMergeDatabase>${user.home}/clover/soap-ws/cloverMerged.db</cloverMergeDatabase>
+                            </configuration>
                         </plugin>
                     </reportPlugins>
                 </configuration>
@@ -338,14 +342,12 @@
                         <groupId>com.atlassian.maven.plugins</groupId>
                         <artifactId>maven-clover2-plugin</artifactId>
                         <version>3.1.7</version>
-                        <executions>
-                            <execution>
-                                <id>clover</id>
-                            </execution>
-                        </executions>
                         <configuration>
+                            <cloverMergeDatabase>${user.home}/clover/soap-ws/cloverMerged.db</cloverMergeDatabase>
                             <generateHtml>true</generateHtml>
                             <generateXml>true</generateXml>
+                            <includesAllSourceRoots>true</includesAllSourceRoots>
+                            <includesTestSourceRoots>true</includesTestSourceRoots>
                         </configuration>
                     </plugin>
                 </plugins>
