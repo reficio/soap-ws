@@ -18,10 +18,8 @@
  */
 package com.centeractive.ws.builder;
 
-import com.centeractive.ws.builder.core.SoapBuilder;
-import com.centeractive.ws.builder.core.SoapOperation;
-import com.centeractive.ws.builder.core.SoapParser;
-import com.centeractive.ws.builder.utils.ResourceUtils;
+import com.centeractive.ws.builder.core.WsdlParser;
+import com.centeractive.ws.common.ResourceUtils;
 import com.centeractive.ws.builder.utils.XmlTestUtils;
 import com.ibm.wsdl.xml.WSDLReaderImpl;
 import org.apache.commons.io.FileUtils;
@@ -98,7 +96,7 @@ public class ServiceComplianceTest {
     @SuppressWarnings("unchecked")
     private static void testService(int testServiceId) throws Exception {
         URL wsdlUrl = getDefinitionUrl(testServiceId);
-        SoapParser parser = new SoapParser(wsdlUrl);
+        WsdlParser parser = WsdlParser.parse(wsdlUrl);
         // SoapBuilderLegacy builder = new SoapBuilderLegacy(wsdlUrl);
 
 

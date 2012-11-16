@@ -18,7 +18,7 @@
  */
 package com.centeractive.ws.server.endpoint;
 
-import com.centeractive.ws.builder.soap.XmlUtils;
+import com.centeractive.ws.common.XmlUtils;
 import com.centeractive.ws.server.SoapServerException;
 import org.springframework.ws.WebServiceMessage;
 

@@ -18,10 +18,10 @@
  */
 package com.centeractive.ws.server.responder;
 
-import com.centeractive.ws.builder.core.SoapBuilder;
-import com.centeractive.ws.builder.core.SoapOperation;
-import com.centeractive.ws.builder.soap.SoapContext;
-import com.centeractive.ws.builder.soap.XmlUtils;
+import com.centeractive.ws.SoapContext;
+import com.centeractive.ws.builder.SoapBuilder;
+import com.centeractive.ws.builder.SoapOperation;
+import com.centeractive.ws.common.XmlUtils;
 import com.centeractive.ws.server.SoapServerException;
 import org.springframework.ws.soap.SoapMessage;
 

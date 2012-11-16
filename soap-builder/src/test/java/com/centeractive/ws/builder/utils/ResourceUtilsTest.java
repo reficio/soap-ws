@@ -18,6 +18,7 @@
  */
 package com.centeractive.ws.builder.utils;
 
+import com.centeractive.ws.common.ResourceUtils;
 import org.junit.Test;
 
 import java.io.InputStream;

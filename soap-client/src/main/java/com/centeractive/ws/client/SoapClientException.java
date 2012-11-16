@@ -18,13 +18,15 @@
  */
 package com.centeractive.ws.client;
 
+import com.centeractive.ws.SoapException;
+
 /**
  * Top-level exception type thrown by SoapClient
  *
  * @author Tom Bujok
  * @since 1.0.0
  */
-public class SoapClientException extends RuntimeException {
+public class SoapClientException extends SoapException {
     public SoapClientException(String message) {
         super(message);
     }
@@ -34,6 +36,6 @@ public class SoapClientException extends RuntimeException {
     }
 
     public SoapClientException(Throwable cause) {
-        super(cause.getMessage(), cause);
+        super(cause);
     }
 }

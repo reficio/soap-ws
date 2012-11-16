@@ -18,7 +18,7 @@
  */
 package com.centeractive.ws.builder;
 
-import com.centeractive.ws.builder.core.SoapParser;
+import com.centeractive.ws.builder.core.WsdlParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
@@ -73,7 +73,7 @@ public class DefinitionSaveTest {
             throw new RuntimeException("cannot create tmp folder");
         }
         String fileName = FilenameUtils.getBaseName(wsdlUrl.toString());
-        SoapParser.saveWsdl(wsdlUrl, fileName, tempFolder);
+        WsdlParser.saveWsdl(wsdlUrl, fileName, tempFolder);
         // builder.saveWsdl(fileName, tempFolder);
         tempFolder.deleteOnExit();
         return tempFolder;

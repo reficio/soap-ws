@@ -18,14 +18,12 @@
  */
 package com.centeractive.ws.builder.core;
 
-import com.centeractive.ws.builder.soap.SoapMessageBuilder;
-import com.centeractive.ws.builder.soap.protocol.SoapVersion;
-
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
-import javax.wsdl.OperationType;
 import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.extensions.soap12.SOAP12Binding;
 import javax.wsdl.extensions.soap12.SOAP12Operation;
 import java.util.List;
 
@@ -35,21 +33,22 @@ import java.util.List;
  */
 public class SoapUtils {
 
-    public static enum Soap { SOAP_1_1, SOAP_1_2 }
+    public static enum Soap {SOAP_1_1, SOAP_1_2}
 
-    public static SoapOperation getOperation(Binding binding, BindingOperation operation) {
-        String soapAction = getSOAPActionUri(operation);
-        return getOperation(binding, operation, soapAction);
-    }
+    public static boolean isRpc(Binding binding) {
+        SOAPBinding soapBinding = WsdlUtils
+                .getExtensiblityElement(binding.getExtensibilityElements(), SOAPBinding.class);
 
-    public static SoapOperation getOperation(Binding binding, BindingOperation operation, String soapAction) {
-        if (operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
-            return new SoapOperation(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-                    operation.getBindingOutput().getName(), normalizeSoapAction(soapAction));
-        } else {
-            return new SoapOperation(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-                    null, normalizeSoapAction(soapAction));
-        }
+        if (soapBinding != null)
+            return "rpc".equalsIgnoreCase(soapBinding.getStyle());
+
+        SOAP12Binding soap12Binding = WsdlUtils.getExtensiblityElement(binding.getExtensibilityElements(),
+                SOAP12Binding.class);
+
+        if (soap12Binding != null)
+            return "rpc".equalsIgnoreCase(soap12Binding.getStyle());
+
+        return false;
     }
 
     // removes "" from soap action
@@ -82,7 +81,7 @@ public class SoapUtils {
     }
 
     private static SoapVersion transformSoapVersion(Soap soapVersion) {
-        if(soapVersion.equals(Soap.SOAP_1_1)) {
+        if (soapVersion.equals(Soap.SOAP_1_1)) {
             return SoapVersion.Soap11;
         } else {
             return SoapVersion.Soap12;

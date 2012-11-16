@@ -21,20 +21,14 @@
     </properties>
 
     <modules>
+        <module>soap-common</module>
         <module>soap-legacy</module>
         <module>soap-builder</module>
         <module>soap-client</module>
         <module>soap-server</module>
-        <module>soap-test</module>
+        <module>soap-it</module>
         <module>soap-examples</module>
     </modules>
-
-    <!--
-    <organization>
-        <name>centeractive ag</name>
-        <url>http://www.centeractive.com</url>
-    </organization>
-    -->
 
     <licenses>
         <license>
@@ -186,7 +180,9 @@
                         <Implementation-Version>${project.version}</Implementation-Version>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <!--
                         <Export-Package>{local-packages};version=${project.version};-noimport:=true</Export-Package>
+                        -->
                         <Import-Package>*</Import-Package>
                         <Private-Package>!*</Private-Package>
                         <_versionpolicy-impl>[$(version;==;$(@)),$(version;=+;$(@)))</_versionpolicy-impl>
@@ -419,6 +415,9 @@
                                                  command="rm -rf ${version_folder}/*; tar -C ${version_folder} -xf ${project_folder}/${site_tgz}; rm ${project_folder}/${project.artifactId}-${project.version}-site.tgz"/>
                                     </tasks>
                                 </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
                             </execution>
                         </executions>
                         <dependencies>
@@ -437,8 +436,6 @@
                 </plugins>
             </build>
         </profile>
-
-
         <profile>
             <id>findbugs</id>
             <build>

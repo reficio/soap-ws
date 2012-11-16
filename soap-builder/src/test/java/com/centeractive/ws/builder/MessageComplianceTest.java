@@ -19,7 +19,7 @@
 package com.centeractive.ws.builder;
 
 import com.centeractive.ws.builder.core.SoapUtils;
-import com.centeractive.ws.builder.utils.ResourceUtils;
+import com.centeractive.ws.common.ResourceUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.junit.Test;

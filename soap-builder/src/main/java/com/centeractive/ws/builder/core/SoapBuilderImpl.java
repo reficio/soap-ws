@@ -18,9 +18,12 @@
  */
 package com.centeractive.ws.builder.core;
 
-import com.centeractive.ws.builder.SoapBuilderException;
-import com.centeractive.ws.builder.soap.SoapContext;
-import com.centeractive.ws.builder.soap.SoapMessageBuilder;
+
+import com.centeractive.ws.MessageBuilderException;
+import com.centeractive.ws.SoapContext;
+import com.centeractive.ws.builder.SoapBuilder;
+import com.centeractive.ws.builder.SoapOperation;
+import com.centeractive.ws.builder.SoapOperationFinder;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -48,7 +51,7 @@ class SoapBuilderImpl implements SoapBuilder {
         BindingOperation operation = binding.getBindingOperation(op.getOperationName(),
                 op.getOperationInputName(), op.getOperationOutputName());
         if (operation == null) {
-            throw new SoapBuilderException("Operation not found");
+            throw new MessageBuilderException("Operation not found");
         }
         return operation;
     }
@@ -58,10 +61,19 @@ class SoapBuilderImpl implements SoapBuilder {
     public List<SoapOperation> getOperations() {
         List<SoapOperation> operationNames = new ArrayList<SoapOperation>();
         for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {
-            operationNames.add(SoapUtils.getOperation(binding, operation));
+            operationNames.add(SoapOperation.create(binding, operation));
         }
         return operationNames;
+    }
 
+    @Override
+    public SoapContext getContext() {
+        return context;
+    }
+
+    @Override
+    public SoapOperationFinder operation() {
+        return new SoapOperationFinderImpl(binding);
     }
 
     @Override
@@ -74,7 +86,7 @@ class SoapBuilderImpl implements SoapBuilder {
         try {
             return builder.buildSoapMessageFromInput(binding, getBindingOperation(operation), context);
         } catch (Exception e) {
-            throw new SoapBuilderException(e);
+            throw new MessageBuilderException(e);
         }
     }
 
@@ -88,7 +100,7 @@ class SoapBuilderImpl implements SoapBuilder {
         try {
             return builder.buildSoapMessageFromOutput(binding, getBindingOperation(operation), context);
         } catch (Exception e) {
-            throw new SoapBuilderException(e);
+            throw new MessageBuilderException(e);
         }
     }
 

@@ -24,7 +24,7 @@ package com.centeractive.ws.builder.utils;
  * Time: 10:31 AM
  */
 
-import com.centeractive.ws.builder.soap.XmlUtils;
+import com.centeractive.ws.common.XmlUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;

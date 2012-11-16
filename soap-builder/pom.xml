@@ -24,6 +24,11 @@
     </licenses>
 
     <dependencies>
+        <dependency>
+            <groupId>com.centeractive</groupId>
+            <artifactId>soap-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
          <dependency>
             <groupId>com.centeractive</groupId>
             <artifactId>soap-legacy</artifactId>
