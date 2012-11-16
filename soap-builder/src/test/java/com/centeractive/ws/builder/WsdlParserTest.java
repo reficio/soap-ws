@@ -19,7 +19,7 @@
 package com.centeractive.ws.builder;
 
 
-import com.centeractive.ws.MessageBuilderException;
+import com.centeractive.ws.SoapBuilderException;
 import com.centeractive.ws.SoapContext;
 import com.centeractive.ws.builder.core.WsdlParser;
 import com.centeractive.ws.common.ResourceUtils;
@@ -40,7 +40,7 @@ public class WsdlParserTest {
         WsdlParser.parse(null);
     }
 
-    @Test(expected = MessageBuilderException.class)
+    @Test(expected = SoapBuilderException.class)
     public void testParseWrongUrl() throws MalformedURLException {
         URL wsdlUrl = new URL("http://asd.com/asd.wsdl");
         WsdlParser parser = WsdlParser.parse(wsdlUrl);

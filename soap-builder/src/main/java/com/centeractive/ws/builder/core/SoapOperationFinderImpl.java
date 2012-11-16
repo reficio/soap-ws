@@ -18,7 +18,7 @@
  */
 package com.centeractive.ws.builder.core;
 
-import com.centeractive.ws.builder.SoapBuilderException;
+import com.centeractive.ws.SoapBuilderException;
 import com.centeractive.ws.builder.SoapOperation;
 import com.centeractive.ws.builder.SoapOperationFinder;
 import com.google.common.base.Preconditions;

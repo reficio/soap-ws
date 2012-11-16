@@ -18,7 +18,7 @@
  */
 package com.centeractive.ws.builder.core;
 
-import com.centeractive.ws.MessageBuilderException;
+import com.centeractive.ws.SoapBuilderException;
 import com.centeractive.ws.common.ResourceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xmlbeans.*;
@@ -80,7 +80,7 @@ class SoapVersion12 extends AbstractSoapVersion {
                     "/xsds/", "soapEncoding12.xsd");
             soapEncodingXml = XmlUtils.createXmlObject(soapEncodingXmlResource);
         } catch (XmlException e) {
-            throw new MessageBuilderException(e);
+            throw new SoapBuilderException(e);
         }
     }
 

@@ -18,7 +18,7 @@
  */
 package com.centeractive.ws.builder.core;
 
-import com.centeractive.ws.MessageBuilderException;
+import com.centeractive.ws.SoapBuilderException;
 import net.sf.saxon.expr.Token;
 import net.sf.saxon.expr.Tokenizer;
 import org.apache.commons.lang3.StringUtils;
@@ -788,7 +788,7 @@ final class XmlUtils {
             child = child.getNextSibling();
         }
 
-        throw new MessageBuilderException("Child node not found in parent!?");
+        throw new SoapBuilderException("Child node not found in parent!?");
     }
 
     public static boolean setNodeValue(Node domNode, String string) {
@@ -1393,7 +1393,7 @@ final class XmlUtils {
             serializer.asDOMSerializer();
             serializer.serialize(xmlDocumentResult);
         } catch (IOException e) {
-            throw new MessageBuilderException(e);
+            throw new SoapBuilderException(e);
         }
 
         return out.toString();

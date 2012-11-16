@@ -18,6 +18,7 @@
  */
 package com.centeractive.ws.builder;
 
+import com.centeractive.ws.SoapBuilderException;
 import com.centeractive.ws.builder.core.WsdlParser;
 import com.centeractive.ws.common.ResourceUtils;
 import org.junit.Test;

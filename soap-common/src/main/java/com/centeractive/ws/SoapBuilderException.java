@@ -16,8 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centeractive.ws.builder;
+package com.centeractive.ws;
 
+/**
+ * Default exception thrown by the SoapBuilder.
+ *
+ * @author Tom Bujok
+ * @since 1.0.0
+ */
 public class SoapBuilderException extends RuntimeException {
     public SoapBuilderException(String message) {
         super(message);

@@ -18,7 +18,7 @@
  */
 package com.centeractive.ws.builder.core;
 
-import com.centeractive.ws.MessageBuilderException;
+import com.centeractive.ws.SoapBuilderException;
 import com.centeractive.ws.common.ResourceUtils;
 import org.apache.xmlbeans.*;
 import org.xmlsoap.schemas.soap.envelope.EnvelopeDocument;
@@ -90,7 +90,7 @@ class SoapVersion11 extends AbstractSoapVersion {
             soapEncodingXml = XmlUtils.createXmlObject(soapEncodingXmlResource, options);
 
         } catch (XmlException ex) {
-            throw new MessageBuilderException(ex);
+            throw new SoapBuilderException(ex);
         }
     }
 

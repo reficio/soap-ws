@@ -18,7 +18,7 @@
  */
 package com.centeractive.ws.builder.core;
 
-import com.centeractive.ws.MessageBuilderException;
+import com.centeractive.ws.SoapBuilderException;
 import com.centeractive.ws.SoapContext;
 import com.centeractive.ws.builder.SoapBuilder;
 import com.google.common.base.Preconditions;
@@ -44,7 +44,7 @@ public final class WsdlParser {
             this.wsdlUrl = wsdlUrl;
             messageBuilder = new SoapMessageBuilder(wsdlUrl);
         } catch (WSDLException e) {
-            throw new MessageBuilderException(e);
+            throw new SoapBuilderException(e);
         }
     }
 
@@ -90,7 +90,7 @@ public final class WsdlParser {
         try {
             return SoapMessageBuilder.saveWsdl(rootFileName, wsdlUrl, folder);
         } catch (WSDLException e) {
-            throw new MessageBuilderException(e);
+            throw new SoapBuilderException(e);
         }
     }
 

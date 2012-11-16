@@ -18,7 +18,7 @@
  */
 package com.centeractive.ws.builder.core;
 
-import com.centeractive.ws.MessageBuilderException;
+import com.centeractive.ws.SoapBuilderException;
 import com.centeractive.ws.common.ResourceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -131,7 +131,7 @@ class SchemaUtils {
 //				loadSchemaDirectory( schemaDirectory );
 
         } catch (Exception e) {
-            throw new MessageBuilderException(e);
+            throw new SoapBuilderException(e);
         }
 //		finally
 //		{
@@ -155,7 +155,7 @@ class SchemaUtils {
                             cnt++;
                         }
                     } catch (Throwable e) {
-                        throw new MessageBuilderException(e);
+                        throw new SoapBuilderException(e);
                     }
                 }
             }
@@ -188,7 +188,7 @@ class SchemaUtils {
             ArrayList<XmlObject> schemas = new ArrayList<XmlObject>(getSchemas(wsdlUrl, loader).values());
             return buildSchemaTypes(schemas);
         } catch (Exception e) {
-            throw new MessageBuilderException(e);
+            throw new SoapBuilderException(e);
         }
     }
 
@@ -267,7 +267,7 @@ class SchemaUtils {
             // return XmlBeans.typeLoaderUnion(new SchemaTypeLoader[] { sts,
             // XmlBeans.getBuiltinTypeSystem() });
         } catch (Exception e) {
-            throw new MessageBuilderException(e);
+            throw new SoapBuilderException(e);
         } finally {
             for (int c = 0; c < errorList.size(); c++) {
                 log.warn("Error: " + errorList.get(c));
@@ -450,7 +450,7 @@ class SchemaUtils {
                 }
             }
         } catch (Exception e) {
-            throw new MessageBuilderException(e);
+            throw new SoapBuilderException(e);
         }
     }
 

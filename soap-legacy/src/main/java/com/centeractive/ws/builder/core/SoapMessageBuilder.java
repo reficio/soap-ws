@@ -18,7 +18,7 @@
  */
 package com.centeractive.ws.builder.core;
 
-import com.centeractive.ws.MessageBuilderException;
+import com.centeractive.ws.SoapBuilderException;
 import com.centeractive.ws.SoapContext;
 import com.centeractive.ws.builder.core.WsdlUtils.SoapHeader;
 import com.centeractive.ws.common.Wsdl11Writer;
@@ -146,7 +146,7 @@ class SoapMessageBuilder {
         try {
             return file.toURI().toURL();
         } catch (MalformedURLException e) {
-            throw new MessageBuilderException("Error saving url", e);
+            throw new SoapBuilderException("Error saving url", e);
         }
     }
 
@@ -367,7 +367,7 @@ class SoapMessageBuilder {
         }
         BindingOperation operation = binding.getBindingOperation(operationName, operationInputName, operationOutputName);
         if (operation == null) {
-            throw new MessageBuilderException("Operation not found");
+            throw new SoapBuilderException("Operation not found");
         }
         return operation;
     }
@@ -375,7 +375,7 @@ class SoapMessageBuilder {
     public Binding getBindingByName(QName bindingName) {
         Binding binding = this.definition.getBinding(bindingName);
         if (binding == null) {
-            throw new MessageBuilderException("Binding not found");
+            throw new SoapBuilderException("Binding not found");
         }
         return binding;
     }
@@ -407,7 +407,7 @@ class SoapMessageBuilder {
                 return SoapVersion.Soap12;
             }
         }
-        throw new MessageBuilderException("SOAP binding not recognized");
+        throw new SoapBuilderException("SOAP binding not recognized");
     }
 
 
@@ -651,7 +651,7 @@ class SoapMessageBuilder {
             cursor.dispose();
             emptyResponse = xmlObject.toString();
         } catch (Exception e) {
-            throw new MessageBuilderException(e);
+            throw new SoapBuilderException(e);
         }
         return emptyResponse;
     }

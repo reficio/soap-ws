@@ -19,7 +19,7 @@
 package com.centeractive.ws.builder.core;
 
 
-import com.centeractive.ws.MessageBuilderException;
+import com.centeractive.ws.SoapBuilderException;
 import com.centeractive.ws.SoapContext;
 import com.centeractive.ws.builder.SoapBuilder;
 import com.centeractive.ws.builder.SoapOperation;
@@ -51,7 +51,7 @@ class SoapBuilderImpl implements SoapBuilder {
         BindingOperation operation = binding.getBindingOperation(op.getOperationName(),
                 op.getOperationInputName(), op.getOperationOutputName());
         if (operation == null) {
-            throw new MessageBuilderException("Operation not found");
+            throw new SoapBuilderException("Operation not found");
         }
         return operation;
     }
@@ -86,7 +86,7 @@ class SoapBuilderImpl implements SoapBuilder {
         try {
             return builder.buildSoapMessageFromInput(binding, getBindingOperation(operation), context);
         } catch (Exception e) {
-            throw new MessageBuilderException(e);
+            throw new SoapBuilderException(e);
         }
     }
 
@@ -100,7 +100,7 @@ class SoapBuilderImpl implements SoapBuilder {
         try {
             return builder.buildSoapMessageFromOutput(binding, getBindingOperation(operation), context);
         } catch (Exception e) {
-            throw new MessageBuilderException(e);
+            throw new SoapBuilderException(e);
         }
     }
 
