@@ -69,26 +69,6 @@ class SchemaUtils {
 
     static {
         initDefaultSchemas();
-
-//		SoapUI.getSettings().addSettingsListener( new SettingsListener()
-//		{
-//
-//			public void settingChanged( String name, String newValue, String oldValue )
-//			{
-//				if( name.equals( WsdlSettings.SCHEMA_DIRECTORY ) )
-//				{
-//					log.info( "Reloading default schemas.." );
-//					initDefaultSchemas();
-//				}
-//			}
-//
-//			@Override
-//			public void settingsReloaded()
-//			{
-//				// TODO Auto-generated method stub
-//
-//			}
-//		} );
     }
 
     public static URL loadResoruce(String resourceName) {
@@ -97,23 +77,8 @@ class SchemaUtils {
     }
 
     public static void initDefaultSchemas() {
-        // SoapUIClassLoaderState state = SoapUIExtensionClassLoader.ensure();
-
         try {
             defaultSchemas.clear();
-
-            // String root = "file:///e:/workspaces/centeractive/test-builder/src/main/java/com/centeractive/builder/xsds";
-//			loadDefaultSchema( SchemaUtils.class.getResource( root + "/xop.xsd" ) );
-//			loadDefaultSchema( SchemaUtils.class.getResource( root + "/XMLSchema.xsd" ) );
-//			loadDefaultSchema( SchemaUtils.class.getResource( root + "/xml.xsd" ) );
-//			loadDefaultSchema( SchemaUtils.class.getResource( root + "/swaref.xsd" ) );
-//			loadDefaultSchema( SchemaUtils.class.getResource( root + "/xmime200505.xsd" ) );
-//			loadDefaultSchema( SchemaUtils.class.getResource( root + "/xmime200411.xsd" ) );
-//			loadDefaultSchema( SchemaUtils.class.getResource( root + "/soapEnvelope.xsd" ) );
-//			loadDefaultSchema( SchemaUtils.class.getResource( root + "/soapEncoding.xsd" ) );
-//			loadDefaultSchema( SchemaUtils.class.getResource( root + "/soapEnvelope12.xsd" ) );
-//			loadDefaultSchema( SchemaUtils.class.getResource( root + "/soapEncoding12.xsd" ) );
-
             loadDefaultSchema(loadResoruce("xop.xsd"));
             loadDefaultSchema(loadResoruce("XMLSchema.xsd"));
             loadDefaultSchema(loadResoruce("xml.xsd"));
@@ -124,50 +89,13 @@ class SchemaUtils {
             loadDefaultSchema(loadResoruce("soapEncoding.xsd"));
             loadDefaultSchema(loadResoruce("soapEnvelope12.xsd"));
             loadDefaultSchema(loadResoruce("soapEncoding12.xsd"));
-
-            // TODO !!!
-//			String schemaDirectory = SoapUI.getSettings().getString( WsdlSettings.SCHEMA_DIRECTORY, null );
-//			if( StringUtils.isNotBlank(schemaDirectory) )
-//				loadSchemaDirectory( schemaDirectory );
-
         } catch (Exception e) {
             throw new SoapBuilderException(e);
         }
-//		finally
-//		{
-//			state.restore();
-//		}
     }
 
-    private static void loadSchemaDirectory(String schemaDirectory) throws IOException, MalformedURLException {
-        File dir = new File(schemaDirectory);
-        if (dir.exists() && dir.isDirectory()) {
-            String[] xsdFiles = dir.list();
-            int cnt = 0;
-
-            if (xsdFiles != null && xsdFiles.length > 0) {
-                for (int c = 0; c < xsdFiles.length; c++) {
-                    try {
-                        String xsdFile = xsdFiles[c];
-                        if (xsdFile.endsWith(".xsd")) {
-                            String filename = schemaDirectory + File.separator + xsdFile;
-                            loadDefaultSchema(new URL("file:" + filename));
-                            cnt++;
-                        }
-                    } catch (Throwable e) {
-                        throw new SoapBuilderException(e);
-                    }
-                }
-            }
-
-            if (cnt == 0)
-                log.warn("Missing schema files in  schemaDirectory [" + schemaDirectory + "]");
-        } else
-            log.warn("Failed to open schemaDirectory [" + schemaDirectory + "]");
-    }
 
     private static void loadDefaultSchema(URL url) throws Exception {
-        // XmlObject xmlObject = XmlObject.Factory.parse( url );
         XmlObject xmlObject = XmlUtils.createXmlObject(url);
         if (!((Document) xmlObject.getDomNode()).getDocumentElement().getNamespaceURI().equals(Constants.XSD_NS))
             return;
@@ -299,14 +227,10 @@ class SchemaUtils {
      * Returns a map mapping urls to corresponding XmlSchema XmlObjects for the
      * specified wsdlUrl
      */
-
     public static void getSchemas(String wsdlUrl, Map<String, XmlObject> existing, SchemaLoader loader, String tns) {
         if (existing.containsKey(wsdlUrl)) {
             return;
         }
-
-        // if( add )
-        // existing.put( wsdlUrl, null );
 
         log.info("Getting schema " + wsdlUrl);
 
@@ -454,17 +378,6 @@ class SchemaUtils {
         }
     }
 
-    /**
-     * Returns a map mapping urls to corresponding XmlObjects for the specified
-     * wsdlUrl
-     */
-
-    public static Map<String, XmlObject> getDefinitionParts(SchemaLoader loader) throws Exception {
-        Map<String, XmlObject> result = new LinkedHashMap<String, XmlObject>();
-        getDefinitionParts(loader.getBaseURI(), result, loader);
-        return result;
-    }
-
     public static void getDefinitionParts(String origWsdlUrl, Map<String, XmlObject> existing, SchemaLoader loader)
             throws Exception {
         String wsdlUrl = origWsdlUrl;
@@ -585,7 +498,6 @@ class SchemaUtils {
     /**
      * Extracts namespaces - used in tool integrations for mapping..
      */
-
     public static Collection<String> extractNamespaces(SchemaTypeSystem schemaTypes, boolean removeDefault) {
         Set<String> namespaces = new HashSet<String>();
         SchemaType[] globalTypes = schemaTypes.globalTypes();
@@ -606,7 +518,6 @@ class SchemaUtils {
      * Used when creating a TypeSystem from a complete collection of
      * SchemaDocuments so that referenced types are not downloaded (again)
      */
-
     public static void removeImports(XmlObject xmlObject) throws XmlException {
         XmlObject[] imports = xmlObject.selectPath("declare namespace s='" + Constants.XSD_NS + "' .//s:import");
 
@@ -625,147 +536,6 @@ class SchemaUtils {
         }
     }
 
-    public static boolean isInstanceOf(SchemaType schemaType, SchemaType baseType) {
-        if (schemaType == null)
-            return false;
-        return schemaType.equals(baseType) ? true : isInstanceOf(schemaType.getBaseType(), baseType);
-    }
-
-    public static boolean isBinaryType(SchemaType schemaType) {
-        return isInstanceOf(schemaType, XmlHexBinary.type) || isInstanceOf(schemaType, XmlBase64Binary.type);
-    }
-
-    public static String getDocumentation(SchemaType schemaType) {
-        String result = null;
-        String xsPrefix = null;
-
-        SchemaField containerField = schemaType.getContainerField();
-
-        if (containerField instanceof SchemaLocalElement) {
-            SchemaAnnotation annotation = ((SchemaLocalElement) containerField).getAnnotation();
-            if (annotation != null) {
-                XmlObject[] userInformation = annotation.getUserInformation();
-                if (userInformation != null && userInformation.length > 0) {
-                    XmlObject xmlObject = userInformation[0];
-                    XmlCursor cursor = xmlObject.newCursor();
-                    xsPrefix = cursor.prefixForNamespace("http://www.w3.org/2001/XMLSchema");
-                    cursor.dispose();
-
-                    result = xmlObject.xmlText(); // XmlUtils.getElementText( (
-                    // Element )
-                    // userInformation[0].getDomNode());
-                }
-            }
-        }
-
-        if (result == null && schemaType != null && schemaType.getAnnotation() != null) {
-            XmlObject[] userInformation = schemaType.getAnnotation().getUserInformation();
-            if (userInformation != null && userInformation.length > 0 && userInformation[0] != null) {
-                XmlObject xmlObject = userInformation[0];
-                XmlCursor cursor = xmlObject.newCursor();
-                xsPrefix = cursor.prefixForNamespace("http://www.w3.org/2001/XMLSchema");
-                cursor.dispose();
-                result = xmlObject.xmlText(); // = XmlUtils.getElementText( (
-                // Element )
-                // userInformation[0].getDomNode());
-            }
-        }
-
-        if (result != null) {
-            result = result.trim();
-            if (result.startsWith("<") && result.endsWith(">")) {
-                int ix = result.indexOf('>');
-                if (ix > 0) {
-                    result = result.substring(ix + 1);
-                }
-
-                ix = result.lastIndexOf('<');
-                if (ix >= 0) {
-                    result = result.substring(0, ix);
-                }
-            }
-
-            if (xsPrefix == null || xsPrefix.length() == 0)
-                xsPrefix = "xs:";
-            else
-                xsPrefix += ":";
-
-            // result = result.trim().replaceAll( "<" + xsPrefix + "br/>", "\n"
-            // ).trim();
-            result = result.trim().replaceAll(xsPrefix, "").trim();
-
-            result = toHtml(result);
-        }
-
-        return result;
-    }
-
-    public static String toHtml(String string) {
-        return toHtml(string, 0);
-    }
-
-    public static String toHtml(String string, int maxSize) {
-        if (StringUtils.isBlank(string))
-            return "<html><body></body></html>";
-
-        BufferedReader st = new BufferedReader(new StringReader(string));
-        StringBuffer buf = new StringBuffer("<html><body>");
-
-        String str = null;
-
-        try {
-            str = st.readLine();
-
-            while (str != null && (maxSize == 0 || (buf.length() + str.length()) < maxSize)) {
-                if (str.equalsIgnoreCase("<br/>")) {
-                    str = "<br>";
-                }
-
-                buf.append(str);
-
-                if (!str.equalsIgnoreCase("<br>")) {
-                    buf.append("<br>");
-                }
-
-                str = st.readLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (str != null)
-            buf.append("...");
-
-        buf.append("</body></html>");
-        string = buf.toString();
-        return string;
-    }
-
-    public static String[] getEnumerationValues(SchemaType schemaType, boolean addNull) {
-        if (schemaType != null) {
-            XmlAnySimpleType[] enumerationValues = schemaType.getEnumerationValues();
-            if (enumerationValues != null && enumerationValues.length > 0) {
-                if (addNull) {
-                    String[] values = new String[enumerationValues.length + 1];
-                    values[0] = null;
-
-                    for (int c = 1; c < values.length; c++)
-                        values[c] = enumerationValues[c - 1].getStringValue();
-
-                    return values;
-                } else {
-                    String[] values = new String[enumerationValues.length];
-
-                    for (int c = 0; c < values.length; c++)
-                        values[c] = enumerationValues[c].getStringValue();
-
-                    return values;
-                }
-            }
-        }
-
-        return new String[0];
-    }
 
     public static Collection<? extends QName> getExcludedTypes() {
         // TODO
@@ -774,9 +544,4 @@ class SchemaUtils {
         return new ArrayList<QName>();
     }
 
-    public static boolean isAnyType(SchemaType schemaType) {
-        return schemaType != null
-                && (schemaType.getBuiltinTypeCode() == SchemaType.BTC_ANY_TYPE || (schemaType.getBaseType() != null && schemaType
-                .getBaseType().getBuiltinTypeCode() == SchemaType.BTC_ANY_TYPE));
-    }
 }
