@@ -5,38 +5,31 @@
     <groupId>com.centeractive</groupId>
     <artifactId>quickstart</artifactId>
     <packaging>jar</packaging>
-    <name>soap-examples - examples how to use soap-ws</name>
+    <name>soap-examples - quickstart</name>
 
     <parent>
         <groupId>com.centeractive</groupId>
         <artifactId>soap-examples</artifactId>
-        <version>${project.version}</version>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>com.centeractive</groupId>
             <artifactId>soap-builder</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.centeractive</groupId>
             <artifactId>soap-client</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.centeractive</groupId>
             <artifactId>soap-server</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.centeractive</groupId>
-            <artifactId>soap-it</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.googlecode.guava-osgi</groupId>
             <artifactId>guava-osgi</artifactId>

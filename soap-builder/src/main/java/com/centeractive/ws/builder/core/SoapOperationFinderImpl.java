@@ -70,6 +70,7 @@ class SoapOperationFinderImpl implements SoapOperationFinder {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public SoapOperation find() {
         validateInput();
         List<SoapOperation> found = new ArrayList<SoapOperation>();

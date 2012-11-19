@@ -19,8 +19,8 @@
 package com.centeractive.ws.builder;
 
 import com.centeractive.ws.builder.core.WsdlParser;
-import com.centeractive.ws.builder.utils.XmlTestUtils;
 import com.centeractive.ws.common.ResourceUtils;
+import com.centeractive.ws.common.XmlUtils;
 import com.ibm.wsdl.xml.WSDLReaderImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -110,8 +110,8 @@ public class ServiceComplianceTest {
                 log.info("REQUEST:\n" + request);
                 log.info("EXPECTED_REQUEST:\n" + expectedRequest);
 
-                request = XmlTestUtils.normalizeAndRemoveValues(request);
-                expectedRequest = XmlTestUtils.normalizeAndRemoveValues(expectedRequest);
+                request = XmlUtils.normalizeAndRemoveValues(request);
+                expectedRequest = XmlUtils.normalizeAndRemoveValues(expectedRequest);
                 log.info("REQUEST_NO_VALUES:\n" + request);
                 log.info("EXPECTED_REQUEST_NO_VALUES:\n" + expectedRequest);
                 assertTrue(XMLUnit.compareXML(expectedRequest, request).identical());
@@ -121,8 +121,8 @@ public class ServiceComplianceTest {
                 log.info("RESPONSE:\n" + response);
                 log.info("EXPECTED_RESPONSE:\n" + expectedResponse);
 
-                response = XmlTestUtils.normalizeAndRemoveValues(response);
-                expectedResponse = XmlTestUtils.normalizeAndRemoveValues(expectedResponse);
+                response = XmlUtils.normalizeAndRemoveValues(response);
+                expectedResponse = XmlUtils.normalizeAndRemoveValues(expectedResponse);
 
                 log.info("RESPONSE_NO_VALUES:\n" + response);
                 log.info("EXPECTED_RESPONSE_NO_VALUES:\n" + expectedResponse);

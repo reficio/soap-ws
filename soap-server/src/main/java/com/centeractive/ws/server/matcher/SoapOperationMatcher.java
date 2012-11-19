@@ -179,6 +179,7 @@ public class SoapOperationMatcher {
      * @param rootNodes root nodes of the request
      * @return operation matched
      */
+    @SuppressWarnings("unchecked")
     private BindingOperation getOperationByInputTypes(final Set<Node> rootNodes) {
         AggregatingVisitor<BindingOperation> visitor = new AggregatingVisitor<BindingOperation>() {
             @Override
@@ -213,6 +214,7 @@ public class SoapOperationMatcher {
      * @param rootNodes root nodes of the request
      * @return operation matched
      */
+    @SuppressWarnings("unchecked")
     private BindingOperation getOperationByInputNames(final Set<Node> rootNodes) {
         AggregatingVisitor<BindingOperation> visitor = new AggregatingVisitor<BindingOperation>() {
             @Override

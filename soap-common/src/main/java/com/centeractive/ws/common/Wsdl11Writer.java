@@ -62,7 +62,7 @@ public class Wsdl11Writer {
 
     public void writeWSDL(String name, Definition definition) {
         try {
-            Map baseURIwsdlNameMap = new HashMap();
+            Map<String, String> baseURIwsdlNameMap = new HashMap<String, String>();
             // add the initial definition to the map
             baseURIwsdlNameMap.put(definition.getDocumentBaseURI(), name + ".wsdl");
             writeWSDL(definition, name + ".wsdl", new HashMap<String, String>(), baseURIwsdlNameMap);
@@ -71,6 +71,7 @@ public class Wsdl11Writer {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void writeWSDL(Definition definition,
                            String fileName,
                            Map<String, String> changedMap,

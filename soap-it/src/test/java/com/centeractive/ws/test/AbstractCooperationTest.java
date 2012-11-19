@@ -22,7 +22,7 @@ import com.centeractive.ws.builder.SoapBuilder;
 import com.centeractive.ws.builder.SoapOperation;
 import com.centeractive.ws.builder.core.SoapUtils;
 import com.centeractive.ws.builder.core.WsdlParser;
-import com.centeractive.ws.builder.utils.XmlTestUtils;
+import com.centeractive.ws.common.XmlUtils;
 import com.centeractive.ws.server.core.SoapServer;
 import com.centeractive.ws.test.util.TestUtils;
 import org.apache.commons.logging.Log;
@@ -108,7 +108,7 @@ public abstract class AbstractCooperationTest {
         if (op.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
             String expectedResponse = builder.buildOutputMessage(wrapper);
             assertTrue("Generated expectedResponse is empty!", expectedResponse.length() > 0);
-            boolean identical = XmlTestUtils.isIdenticalNormalizedWithoutValues(expectedResponse, response);
+            boolean identical = XmlUtils.isIdenticalNormalizedWithoutValues(expectedResponse, response);
             assertTrue("Error during validation of service " + testServiceId, identical);
         }
     }

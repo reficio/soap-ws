@@ -23,13 +23,6 @@
         </dependency>
         <dependency>
             <groupId>com.centeractive</groupId>
-            <artifactId>soap-builder</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.centeractive</groupId>
             <artifactId>soap-client</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

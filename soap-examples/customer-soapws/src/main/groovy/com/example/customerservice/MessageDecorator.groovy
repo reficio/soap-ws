@@ -49,9 +49,6 @@ class MessageDecorator {
         customer.customerId = "007"
         customer.type = "ORDINARY"
 
-
-
-
         println toPrettyXml(request)
     }
 

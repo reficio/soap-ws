@@ -5,12 +5,13 @@
     <groupId>com.centeractive</groupId>
     <artifactId>customer-soapws</artifactId>
     <packaging>jar</packaging>
-    <name>customer-soapws</name>
+    <name>soap-examples - customer-soapws</name>
+    <version>1.0.0-SNAPSHOT</version>
 
     <parent>
         <groupId>com.centeractive</groupId>
         <artifactId>soap-examples</artifactId>
-        <version>${project.version}</version>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -18,12 +19,12 @@
         <dependency>
             <groupId>com.centeractive</groupId>
             <artifactId>soap-client</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.centeractive</groupId>
             <artifactId>soap-server</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.gmaven.runtime</groupId>
@@ -37,6 +38,7 @@
             <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
+                <version>1.4</version>
                 <executions>
                     <execution>
                         <goals>
