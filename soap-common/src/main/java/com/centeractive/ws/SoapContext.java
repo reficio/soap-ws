@@ -26,6 +26,8 @@ package com.centeractive.ws;
  */
 public class SoapContext {
 
+    public final static SoapContext DEFAULT = SoapContext.builder().build();
+
     private final boolean exampleContent;
     private final boolean typeComment;
     private final boolean skipComments;

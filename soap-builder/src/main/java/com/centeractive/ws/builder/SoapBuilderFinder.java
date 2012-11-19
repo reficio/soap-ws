@@ -18,44 +18,12 @@
  */
 package com.centeractive.ws.builder;
 
-import com.centeractive.ws.SoapContext;
+public interface SoapBuilderFinder extends SoapBuilderFinderResult {
 
-import javax.wsdl.Binding;
-import javax.wsdl.Service;
-import javax.xml.namespace.QName;
-import java.net.URL;
-import java.util.List;
+    SoapBuilderFinder namespaceURI(String namespaceURI);
 
-/**
- * @author Tom Bujok
- * @since 1.0.0
- */
-public interface SoapBuilder {
+    SoapBuilderFinder localPart(String localPart);
 
-    List<SoapOperation> getOperations();
-
-    SoapOperationFinder operation();
-
-    SoapContext getContext();
-
-    String buildInputMessage(SoapOperation operation);
-
-    String buildInputMessage(SoapOperation operation, SoapContext context);
-
-    String buildOutputMessage(SoapOperation operation);
-
-    String buildOutputMessage(SoapOperation operation, SoapContext context);
-
-    String buildFault(String code, String message);
-
-    String buildEmptyFault();
-
-    String buildEmptyMessage();
-
-    QName getBindingName();
-
-    Binding getBinding();
-
-    List<String> getServiceUrls();
+    SoapBuilderFinder prefix(String prefix);
 
 }

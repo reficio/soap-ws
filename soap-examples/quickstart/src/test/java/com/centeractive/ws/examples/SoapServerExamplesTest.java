@@ -60,7 +60,7 @@ public class SoapServerExamplesTest {
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "stockquote-service.wsdl");
 
         WsdlParser parser = WsdlParser.parse(wsdlUrl);
-        AutoResponder responder = new AutoResponder(parser.getBuilder(bindingName));
+        AutoResponder responder = new AutoResponder(parser.binding(bindingName).builder());
 
         server.registerRequestResponder("/service", responder);
         server.stop();
@@ -76,7 +76,7 @@ public class SoapServerExamplesTest {
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "stockquote-service.wsdl");
         WsdlParser parser = WsdlParser.parse(wsdlUrl);
         // assumption -> we take the first binding
-        final SoapBuilder builder = parser.getBuilder(parser.getBindings().get(0));
+        final SoapBuilder builder = parser.binding(parser.getBindings().get(0)).builder();
         AbstractResponder customResponder = new AbstractResponder(builder) {
             @Override
             public Source respond(SoapOperation invokedOperation, SoapMessage message) {
@@ -92,7 +92,6 @@ public class SoapServerExamplesTest {
                 }
             }
         };
-
 
         server.registerRequestResponder("/service", customResponder);
         server.stop();

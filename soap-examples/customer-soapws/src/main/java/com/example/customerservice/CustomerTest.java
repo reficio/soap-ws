@@ -46,7 +46,7 @@ public class CustomerTest {
 
         WsdlParser parser = WsdlParser.parse(WSDL_URL);
         parser.printBindings();
-        SoapBuilder builder = parser.getBuilder("{http://customerservice.example.com/}CustomerServiceServiceSoapBinding");
+        SoapBuilder builder = parser.binding("{http://customerservice.example.com/}CustomerServiceServiceSoapBinding").builder();
         AutoResponder responder = new AutoResponder(builder);
 
         SoapServer server = SoapServer.builder().httpPort(PORT).build();
@@ -60,7 +60,7 @@ public class CustomerTest {
         SoapServer server = SoapServer.builder().httpPort(PORT).build();
         WsdlParser parser = WsdlParser.parse(WSDL_URL);
         parser.printBindings();
-        SoapBuilder builder = parser.getBuilder("{http://customerservice.example.com/}CustomerServiceServiceSoapBinding");
+        SoapBuilder builder = parser.binding("{http://customerservice.example.com/}CustomerServiceServiceSoapBinding").builder();
         Iterator<SoapOperation> it = builder.getOperations().iterator();
         it.next();
         String msg = builder.buildInputMessage(it.next());

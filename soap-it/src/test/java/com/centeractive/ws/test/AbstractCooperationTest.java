@@ -69,7 +69,7 @@ public abstract class AbstractCooperationTest {
         registerHandler(testServiceId, parser);
         assertNotNull(parser);
         for (QName bindingName : parser.getBindings()) {
-            SoapBuilder builder = parser.getBuilder(bindingName);
+            SoapBuilder builder = parser.binding(bindingName).builder();
             for (SoapOperation operation : builder.getOperations()) {
                 if(postSoapAction == null) {
                     // test both with and without soap action

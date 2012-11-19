@@ -28,8 +28,11 @@ import com.centeractive.ws.legacy.SoapLegacyFacade;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -41,11 +44,26 @@ class SoapBuilderImpl implements SoapBuilder {
     private final SoapLegacyFacade soapFacade;
     private final Binding binding;
     private final SoapContext context;
+    private final List<String> serviceUrls;
 
     SoapBuilderImpl(SoapLegacyFacade soapFacade, Binding binding, SoapContext context) {
         this.soapFacade = soapFacade;
         this.binding = binding;
         this.context = context;
+        this.serviceUrls = new ArrayList<String>();
+        initializeServiceUrls();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void initializeServiceUrls() {
+        for (Service service : soapFacade.getServices()) {
+            for (Port port : (Collection<Port>) service.getPorts().values()) {
+                String address = SoapLegacyFacade.getSoapEndpoint(port);
+                if (address != null) {
+                    serviceUrls.add(address);
+                }
+            }
+        }
     }
 
     public BindingOperation getBindingOperation(SoapOperation op) {
@@ -129,4 +147,10 @@ class SoapBuilderImpl implements SoapBuilder {
     public Binding getBinding() {
         return binding;
     }
+
+    @Override
+    public List<String> getServiceUrls() {
+        return new ArrayList<String>(serviceUrls);
+    }
+
 }

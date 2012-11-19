@@ -50,7 +50,7 @@ class SoapOperationFinderImpl implements SoapOperationFinder {
 
     @Override
     public SoapOperationFinder soapAction(String soapAction) {
-        Preconditions.checkNotNull(operationName);
+        Preconditions.checkNotNull(soapAction);
         this.soapAction = soapAction;
         return this;
     }

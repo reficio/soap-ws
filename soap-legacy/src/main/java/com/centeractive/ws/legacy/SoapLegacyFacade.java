@@ -21,14 +21,13 @@ package com.centeractive.ws.legacy;
 import com.centeractive.ws.SoapBuilderException;
 import com.centeractive.ws.SoapContext;
 
-import javax.wsdl.Binding;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.WSDLException;
+import javax.wsdl.*;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap12.SOAP12Binding;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 
 public class SoapLegacyFacade {
@@ -140,5 +139,15 @@ public class SoapLegacyFacade {
 
         return false;
     }
+
+    public static String getSoapEndpoint(Port port) {
+        return WsdlUtils.getSoapEndpoint(port);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Collection<Service> getServices() {
+        return (Collection<Service>) messageBuilder.getDefinition().getServices().values();
+    }
+
 
 }

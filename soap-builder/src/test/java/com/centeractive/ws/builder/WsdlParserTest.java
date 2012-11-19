@@ -37,7 +37,7 @@ public class WsdlParserTest {
 
     @Test(expected = NullPointerException.class)
     public void testParseNullUrl() {
-        WsdlParser.parse(null);
+        WsdlParser.parse((String) null);
     }
 
     @Test(expected = SoapBuilderException.class)
@@ -60,8 +60,8 @@ public class WsdlParserTest {
         assertEquals(1, bindings.size());
         assertEquals(expectedBinding, bindings.iterator().next());
 
-        assertNotNull(parser.getBuilder(expectedBindingString));
-        assertNotNull(parser.getBuilder(expectedBinding));
+        assertNotNull(parser.binding(expectedBindingString).builder());
+        assertNotNull(parser.binding(expectedBinding).builder());
     }
 
     @Test(expected = NullPointerException.class)
@@ -69,7 +69,7 @@ public class WsdlParserTest {
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("wsdl", "TestService.wsdl");
         WsdlParser parser = WsdlParser.parse(wsdlUrl);
         String expectedBindingString = "{http://schemas.eviware.com/TestService/v1/}TestServiceSoap";
-        parser.getBuilder(expectedBindingString, null);
+        parser.binding(expectedBindingString).builder(null);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class WsdlParserTest {
         WsdlParser parser = WsdlParser.parse(wsdlUrl);
         String expectedBindingString = "{http://schemas.eviware.com/TestService/v1/}TestServiceSoap";
         SoapContext context = SoapContext.builder().typeComment(true).build();
-        SoapBuilder builder = parser.getBuilder(expectedBindingString, context);
+        SoapBuilder builder = parser.binding(expectedBindingString).builder(context);
 
         assertEquals(context, builder.getContext());
     }

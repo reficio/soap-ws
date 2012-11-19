@@ -95,22 +95,20 @@ soap-ws is not yet located in the central maven repo, thus you also have to add 
 
 #### soap-builder
 SoapBuilder interface describes the functionality of generation of the XML SOAP messages. An instance of SoapBuilder is always bound to one wsdl and one of its bindings. As you probably know there can be more bindings in one WSDL file. In order to handle all of theme you will need an instance of SoapBuilder per binding. How to construct an instance of SoapBuilder you may ask?
-First, we have to construct a SoapParser - the simplest way is to invoke the constructor specifying the URL of the WSDL file (1). 
+First, we have to construct a WsdlParser - the simplest way is to invoke the static factory method "parse" passing the URL of the WSDL file (1). 
 ```java
-    SoapParser parser = new SoapParser(wsdlUrl);  // (1)
+    WsdlParser parser = WsdpParser.parse(wsdlUrl);  // (1)
         
     List<QName> bindings = parser.getBindings(); // (2)        
-    QName bindingName = bindings.iterator.next(); // take the first binding
-    
     SoapBuilder builder = parser.getBinding(bindingName); // (3)    
     
     List<SoapOperation> operations = builder.getOperations(); // (4)
+    
     SoapOperation op = operations.iterator.next(); // take the first operation
 ```
 SoapParser reads the specified WSDL file recursively, fetching all included WSDL and XSD files, and constructs an underlying javax.wsdl.Definition object that is the Java-based representation of the WSDL (see WSDL4j to read more about the Definitoin object). 
 
-In order to generate a SOAP message you have to specify the QName of the Binding.
-To check what binding are defined in the WSDL invoke the getBindings() method (2).
+In order to generate a SOAP message you have to specify the QName of the Binding. To check what binding are defined in the WSDL invoke the getBindings() method (2). You can also invoke the printBindings() method that will print all the binding to the stdout (just for quick hacking around).
 
 When you decide which binding you want to use you can easily create a SoapBuilder instance just by invoking the getBuilder() method on the SoapParser object (3).
 
@@ -230,7 +228,7 @@ That's a lot of stuff. I hope you enjoyed it! Have a look at the examples locate
 * soap-builder - responsible for the generation of SOAP XML messages.
 * soap-client - responsible for the communication with a SOAP endpoint.
 * soap-server - responsible for exposing SOAP endpoints and handling the requests.
-* soap-test - contains integration tests - tests soap-client and soap-server in many tricky ways.
+* soap-it - contains integration tests - tests soap-client and soap-server in many tricky ways.
 * soap-examples - contains a few example how to use soap-ws.
 * soap-legacy - legacy code extracted from 3rd party projects
 
@@ -345,7 +343,6 @@ You can find all these working examples in the soap-examples project. Enjoy!
 ### How can I hack around?
 * GitHub -> https://github.com/centeractive/soap-ws
 * Jenkins -> https://reficio.ci.cloudbees.com/job/soap-ws/
-* Sonar -> http://nemo.sonarsource.org/dashboard/index/com.centeractive:soap-ws
 * Site -> http://projects.reficio.org/soap-ws/1.0.0-SNAPSHOT/manual.html
 
 ### Who's behind it?

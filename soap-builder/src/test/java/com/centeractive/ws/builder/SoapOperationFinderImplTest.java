@@ -33,7 +33,7 @@ public class SoapOperationFinderImplTest {
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("wsdl", "TestService.wsdl");
         WsdlParser parser = WsdlParser.parse(wsdlUrl);
         String binding = "{http://schemas.eviware.com/TestService/v1/}TestServiceSoap";
-        return parser.getBuilder(binding).operation();
+        return parser.binding(binding).builder().operation();
     }
 
     @Test(expected = IllegalArgumentException.class)

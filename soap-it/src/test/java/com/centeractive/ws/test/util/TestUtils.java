@@ -75,9 +75,9 @@ public class TestUtils {
             String contextPath = TestUtils.formatContextPath(testServiceId, bindingName);
             log.info(String.format("Registering auto responder for service [%d] undex context path [%s]", testServiceId, contextPath));
             SoapContext context = SoapContext.builder().exampleContent(false).build();
-            SoapBuilder builder = parser.getBuilder(bindingName);
+            SoapBuilder builder = parser.binding(bindingName).builder();
             server.registerRequestResponder(contextPath, new AutoResponder(builder, context));
         }
     }
 
-    }
+}

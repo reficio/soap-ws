@@ -15,7 +15,7 @@
     <message name="GetLastTradePriceInput">
         <part name="body" element="types:TradePriceRequest"/>
     </message>
-        <message name="GetLastTradePriceOutput">
+    <message name="GetLastTradePriceOutput">
         <part name="body" element="types:TradePrice"/>
     </message>
 

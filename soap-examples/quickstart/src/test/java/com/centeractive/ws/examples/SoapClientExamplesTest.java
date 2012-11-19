@@ -53,7 +53,6 @@ public class SoapClientExamplesTest {
     private static final QName bindingName = new QName("http://centeractive.com/stockquote.wsdl", "StockQuoteSoapBinding");
     private static SoapBuilder builder;
 
-
     @BeforeClass
     public static void startServer() throws WSDLException {
         server = SoapServer.builder()
@@ -73,7 +72,7 @@ public class SoapClientExamplesTest {
     public static AutoResponder getAutoResponderForTestService() throws WSDLException {
         SoapContext context = SoapContext.builder().exampleContent(false).build();
         WsdlParser parser = WsdlParser.parse(wsdlUrl);
-        builder = parser.getBuilder(bindingName);
+        builder = parser.binding(bindingName).builder();
 
         AutoResponder responder = new AutoResponder(builder, context);
         return responder;
@@ -84,7 +83,6 @@ public class SoapClientExamplesTest {
      */
     @Test
     public void invoke_tradePriceRequest_hardcodedMessages() throws IOException, SAXException {
-
         String url = String.format("http://localhost:%d%s", port, contextPath);
         SoapClient client = SoapClient.builder()
                 .endpointUrl(url)
@@ -125,7 +123,6 @@ public class SoapClientExamplesTest {
      */
     @Test
     public void invoke_tradePriceRequest_generatedMessages() throws Exception, SAXException, WSDLException {
-
         // construct the client
         String url = String.format("http://localhost:%d%s", port, contextPath);
         SoapClient client = SoapClient.builder()
@@ -133,7 +130,7 @@ public class SoapClientExamplesTest {
                 .build();
 
         WsdlParser parser = WsdlParser.parse(wsdlUrl);
-        SoapBuilder soapBuilder = parser.getBuilder(bindingName);
+        SoapBuilder soapBuilder = parser.binding(bindingName).builder();
 
         // get the operation to invoked -> assumption our operation is the first operation in the WSDL's
         SoapOperation operation = soapBuilder.operation().name("GetLastTradePrice").find();
@@ -146,7 +143,6 @@ public class SoapClientExamplesTest {
         String expectedResponse = soapBuilder.buildOutputMessage(operation);
 
         assertTrue(XMLUnit.compareXML(expectedResponse, response).identical());
-
     }
 
 

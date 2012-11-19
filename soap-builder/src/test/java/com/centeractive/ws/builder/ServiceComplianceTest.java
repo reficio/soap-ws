@@ -102,7 +102,7 @@ public class ServiceComplianceTest {
 
         for (QName bindingQName : parser.getBindings()) {
             String bindingName = bindingQName.getLocalPart();
-            SoapBuilder builder = parser.getBuilder(bindingQName);
+            SoapBuilder builder = parser.binding(bindingQName).builder();
             for (SoapOperation operation : builder.getOperations()) {
                 String request = builder.buildInputMessage(operation);
                 String expectedRequest = getExpectedRequest(testServiceId, bindingName, operation.getOperationName());

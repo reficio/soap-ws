@@ -20,42 +20,17 @@ package com.centeractive.ws.builder;
 
 import com.centeractive.ws.SoapContext;
 
-import javax.wsdl.Binding;
-import javax.wsdl.Service;
-import javax.xml.namespace.QName;
-import java.net.URL;
-import java.util.List;
-
 /**
- * @author Tom Bujok
- * @since 1.0.0
+ * Created by IntelliJ IDEA.
+ * User: tom
+ * Date: 11/19/12
+ * Time: 6:53 PM
+ * To change this template use File | Settings | File Templates.
  */
-public interface SoapBuilder {
+public interface SoapBuilderFinderResult {
 
-    List<SoapOperation> getOperations();
+    SoapBuilder builder();
 
-    SoapOperationFinder operation();
-
-    SoapContext getContext();
-
-    String buildInputMessage(SoapOperation operation);
-
-    String buildInputMessage(SoapOperation operation, SoapContext context);
-
-    String buildOutputMessage(SoapOperation operation);
-
-    String buildOutputMessage(SoapOperation operation, SoapContext context);
-
-    String buildFault(String code, String message);
-
-    String buildEmptyFault();
-
-    String buildEmptyMessage();
-
-    QName getBindingName();
-
-    Binding getBinding();
-
-    List<String> getServiceUrls();
+    SoapBuilder builder(SoapContext context);
 
 }
