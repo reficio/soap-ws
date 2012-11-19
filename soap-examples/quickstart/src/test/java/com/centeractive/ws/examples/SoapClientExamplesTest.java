@@ -136,7 +136,7 @@ public class SoapClientExamplesTest {
         SoapBuilder soapBuilder = parser.getBuilder(bindingName);
 
         // get the operation to invoked -> assumption our operation is the first operation in the WSDL's
-        SoapOperation operation = soapBuilder.getOperations().iterator().next();
+        SoapOperation operation = soapBuilder.operation().name("GetLastTradePrice").find();
 
         // construct the request
         String request = soapBuilder.buildInputMessage(operation);
