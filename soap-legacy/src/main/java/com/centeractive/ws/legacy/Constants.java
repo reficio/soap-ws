@@ -16,10 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.centeractive.ws.builder.core;
-
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
+package com.centeractive.ws.legacy;
 
 /**
  * This class was extracted from the soapUI code base by centeractive ag in October 2011.
@@ -35,15 +32,32 @@ import org.apache.xmlbeans.XmlOptions;
  * modifies some parts of the soapUI's code in good faith, making every effort not
  * to impair any existing functionality and to supplement it according to our
  * requirements, applying best practices of software design.
- * <p/>
+ *
  * Changes done:
  * - changing location in the package structure
  * - removal of dependencies and code parts that are out of scope of SOAP message generation
  * - minor fixes to make the class compile out of soapUI's code base
  */
 
-interface SchemaLoader {
-    XmlObject loadXmlObject(String wsdlUrl, XmlOptions options) throws Exception;
+/**
+ * Namespace Constants
+ *
+ * @author ole.matzura
+ */
 
-    String getBaseURI();
+interface Constants {
+    public static final String XSD_NS = "http://www.w3.org/2001/XMLSchema";
+    public static final String XML_NS = "http://www.w3.org/2000/xmlns/";
+    public static final String WSDL11_NS = "http://schemas.xmlsoap.org/wsdl/";
+    public static final String SOAP_ENCODING_NS = "http://schemas.xmlsoap.org/soap/encoding/";
+    public static final String SOAP11_ENVELOPE_NS = "http://schemas.xmlsoap.org/soap/envelope/";
+    public static final String SOAP_HTTP_TRANSPORT = "http://schemas.xmlsoap.org/soap/http";
+    public static final String SOAP_HTTP_BINDING_NS = "http://schemas.xmlsoap.org/wsdl/soap/";
+    public static final String SOAP12_HTTP_BINDING_NS = "http://www.w3.org/2003/05/soap/bindings/HTTP/";
+    public static final String XSI_NS = "http://www.w3.org/2001/XMLSchema-instance";
+    public static final String XSI_NS_2000 = "http://www.w3.org/2000/XMLSchema-instance";
+    public static final String SOAP12_ENVELOPE_NS = "http://www.w3.org/2003/05/soap-envelope";
+    public static final String WADL10_NS = "http://research.sun.com/wadl/2006/10";
+    public static final String WADL11_NS = "http://wadl.dev.java.net/2009/02";
+    public static final String SOAP_MICROSOFT_TCP = "http://schemas.microsoft.com/wse/2003/06/tcp";
 }

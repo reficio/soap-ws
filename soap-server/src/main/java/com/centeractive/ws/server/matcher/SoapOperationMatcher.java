@@ -20,6 +20,7 @@ package com.centeractive.ws.server.matcher;
 
 import com.centeractive.ws.builder.core.SoapUtils;
 import com.centeractive.ws.common.XmlUtils;
+import com.centeractive.ws.legacy.SoapLegacyFacade;
 import com.centeractive.ws.server.OperationNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ws.soap.SoapMessage;
@@ -61,7 +62,7 @@ public class SoapOperationMatcher {
 
     public SoapOperationMatcher(Binding binding) {
         this.binding = binding;
-        this.rpc = SoapUtils.isRpc(binding);
+        this.rpc = SoapLegacyFacade.isRpc(binding);
     }
 
     /**

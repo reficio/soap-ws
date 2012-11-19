@@ -24,15 +24,13 @@ import org.junit.Test;
 import org.springframework.ws.soap.SoapMessage;
 
 import javax.xml.transform.Source;
-import java.io.File;
 import java.io.IOException;
-import java.net.*;
+import java.net.DatagramSocket;
+import java.net.ServerSocket;
 import java.util.List;
 
 import static junit.framework.Assert.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Tom Bujok

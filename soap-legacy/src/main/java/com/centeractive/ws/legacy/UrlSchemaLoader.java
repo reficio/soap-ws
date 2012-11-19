@@ -16,11 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.centeractive.ws.builder.core;
+package com.centeractive.ws.legacy;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import com.centeractive.ws.SoapBuilderException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+
+import java.net.URL;
 
 /**
  * This class was extracted from the soapUI code base by centeractive ag in October 2011.
@@ -43,69 +45,38 @@ import java.util.Collection;
  * - minor fixes to make the class compile out of soapUI's code base
  */
 
-class StringList extends ArrayList<String> {
-    public StringList() {
-        super();
+class UrlSchemaLoader implements SchemaLoader, DefinitionLoader {
+    private String baseURI;
+
+    public UrlSchemaLoader(String baseURI) {
+        this.baseURI = baseURI;
     }
 
-    public StringList(int initialCapacity) {
-        super(initialCapacity);
+    public XmlObject loadXmlObject(String wsdlUrl, XmlOptions options) throws Exception {
+        return XmlUtils.createXmlObject(new URL(wsdlUrl), options);
     }
 
-    public StringList(String[] strings) {
-        super(strings == null ? new StringList() : Arrays.asList(strings));
+    public String getBaseURI() {
+        return baseURI;
     }
 
-    public StringList(Object[] objects) {
-        super();
-
-        if (objects != null)
-            for (Object object : objects)
-                add(object == null ? null : object.toString());
+    public void setProgressInfo(String info) {
+        throw new SoapBuilderException("Not Implemented");
     }
 
-    public StringList(Collection<?> objects) {
-        super();
-
-        if (objects != null)
-            for (Object object : objects)
-                add(object == null ? null : object.toString());
+    public boolean isAborted() {
+        throw new SoapBuilderException("Not Implemented");
     }
 
-    public StringList(String paramStr) {
-        this();
-        add(paramStr);
+    public boolean abort() {
+        throw new SoapBuilderException("Not Implemented");
     }
 
-    public void addAll(String[] strings) {
-        if (strings != null && strings.length > 0)
-            addAll(Arrays.asList(strings));
+    public void setNewBaseURI(String uri) {
+        throw new SoapBuilderException("Not Implemented");
     }
 
-    public String[] toStringArray() {
-        return toArray(new String[size()]);
+    public String getFirstNewURI() {
+        throw new SoapBuilderException("Not Implemented");
     }
-
-//	public static StringList fromXml( String value ) throws XmlException
-//	{
-//		return StringUtils.isNullOrEmpty( value ) || value.equals( "<xml-fragment/>" ) ? new StringList()
-//				: new StringList( StringListConfig.Factory.parse( value ).getEntryList() );
-//	}
-//
-//	public String toXml()
-//	{
-//		StringListConfig config = StringListConfig.Factory.newInstance();
-//		config.setEntryArray( toStringArray() );
-//		return config.xmlText();
-//	}
-
-    public boolean containsValue(String value) {
-        for (String stringElement : this) {
-            if (stringElement.contains(value)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }

@@ -18,12 +18,9 @@
  */
 package com.centeractive.ws.builder.core;
 
-import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.extensions.ExtensibilityElement;
-import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPOperation;
-import javax.wsdl.extensions.soap12.SOAP12Binding;
 import javax.wsdl.extensions.soap12.SOAP12Operation;
 import java.util.List;
 
@@ -33,23 +30,23 @@ import java.util.List;
  */
 public class SoapUtils {
 
-    public static enum Soap {SOAP_1_1, SOAP_1_2}
-
-    public static boolean isRpc(Binding binding) {
-        SOAPBinding soapBinding = WsdlUtils
-                .getExtensiblityElement(binding.getExtensibilityElements(), SOAPBinding.class);
-
-        if (soapBinding != null)
-            return "rpc".equalsIgnoreCase(soapBinding.getStyle());
-
-        SOAP12Binding soap12Binding = WsdlUtils.getExtensiblityElement(binding.getExtensibilityElements(),
-                SOAP12Binding.class);
-
-        if (soap12Binding != null)
-            return "rpc".equalsIgnoreCase(soap12Binding.getStyle());
-
-        return false;
-    }
+//    public static enum Soap {SOAP_1_1, SOAP_1_2}
+//
+//    public static boolean isRpc(Binding binding) {
+//        SOAPBinding soapBinding = WsdlUtils
+//                .getExtensiblityElement(binding.getExtensibilityElements(), SOAPBinding.class);
+//
+//        if (soapBinding != null)
+//            return "rpc".equalsIgnoreCase(soapBinding.getStyle());
+//
+//        SOAP12Binding soap12Binding = WsdlUtils.getExtensiblityElement(binding.getExtensibilityElements(),
+//                SOAP12Binding.class);
+//
+//        if (soap12Binding != null)
+//            return "rpc".equalsIgnoreCase(soap12Binding.getStyle());
+//
+//        return false;
+//    }
 
     // removes "" from soap action
     public static String normalizeSoapAction(String soapAction) {
@@ -80,24 +77,5 @@ public class SoapUtils {
         return null;
     }
 
-    private static SoapVersion transformSoapVersion(Soap soapVersion) {
-        if (soapVersion.equals(Soap.SOAP_1_1)) {
-            return SoapVersion.Soap11;
-        } else {
-            return SoapVersion.Soap12;
-        }
-    }
-
-    public static String buildEmptyMessage(Soap version) {
-        return SoapMessageBuilder.buildEmptyMessage(transformSoapVersion(version));
-    }
-
-    public static String buildEmptyFault(Soap version) {
-        return SoapMessageBuilder.buildEmptyFault(transformSoapVersion(version));
-    }
-
-    public static String buildFault(Soap version, String code, String message) {
-        return SoapMessageBuilder.buildFault(code, message, transformSoapVersion(version));
-    }
 
 }

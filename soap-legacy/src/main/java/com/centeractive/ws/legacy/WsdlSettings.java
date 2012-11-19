@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.centeractive.ws.builder.core;
+package com.centeractive.ws.legacy;
 
 /**
  * This class was extracted from the soapUI code base by centeractive ag in October 2011.

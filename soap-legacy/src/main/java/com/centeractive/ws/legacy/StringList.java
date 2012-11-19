@@ -16,7 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.centeractive.ws.builder.core;
+package com.centeractive.ws.legacy;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * This class was extracted from the soapUI code base by centeractive ag in October 2011.
@@ -32,32 +36,76 @@ package com.centeractive.ws.builder.core;
  * modifies some parts of the soapUI's code in good faith, making every effort not
  * to impair any existing functionality and to supplement it according to our
  * requirements, applying best practices of software design.
- *
+ * <p/>
  * Changes done:
  * - changing location in the package structure
  * - removal of dependencies and code parts that are out of scope of SOAP message generation
  * - minor fixes to make the class compile out of soapUI's code base
  */
 
-/**
- * Namespace Constants
- *
- * @author ole.matzura
- */
+class StringList extends ArrayList<String> {
+    public StringList() {
+        super();
+    }
 
-interface Constants {
-    public static final String XSD_NS = "http://www.w3.org/2001/XMLSchema";
-    public static final String XML_NS = "http://www.w3.org/2000/xmlns/";
-    public static final String WSDL11_NS = "http://schemas.xmlsoap.org/wsdl/";
-    public static final String SOAP_ENCODING_NS = "http://schemas.xmlsoap.org/soap/encoding/";
-    public static final String SOAP11_ENVELOPE_NS = "http://schemas.xmlsoap.org/soap/envelope/";
-    public static final String SOAP_HTTP_TRANSPORT = "http://schemas.xmlsoap.org/soap/http";
-    public static final String SOAP_HTTP_BINDING_NS = "http://schemas.xmlsoap.org/wsdl/soap/";
-    public static final String SOAP12_HTTP_BINDING_NS = "http://www.w3.org/2003/05/soap/bindings/HTTP/";
-    public static final String XSI_NS = "http://www.w3.org/2001/XMLSchema-instance";
-    public static final String XSI_NS_2000 = "http://www.w3.org/2000/XMLSchema-instance";
-    public static final String SOAP12_ENVELOPE_NS = "http://www.w3.org/2003/05/soap-envelope";
-    public static final String WADL10_NS = "http://research.sun.com/wadl/2006/10";
-    public static final String WADL11_NS = "http://wadl.dev.java.net/2009/02";
-    public static final String SOAP_MICROSOFT_TCP = "http://schemas.microsoft.com/wse/2003/06/tcp";
+    public StringList(int initialCapacity) {
+        super(initialCapacity);
+    }
+
+    public StringList(String[] strings) {
+        super(strings == null ? new StringList() : Arrays.asList(strings));
+    }
+
+    public StringList(Object[] objects) {
+        super();
+
+        if (objects != null)
+            for (Object object : objects)
+                add(object == null ? null : object.toString());
+    }
+
+    public StringList(Collection<?> objects) {
+        super();
+
+        if (objects != null)
+            for (Object object : objects)
+                add(object == null ? null : object.toString());
+    }
+
+    public StringList(String paramStr) {
+        this();
+        add(paramStr);
+    }
+
+    public void addAll(String[] strings) {
+        if (strings != null && strings.length > 0)
+            addAll(Arrays.asList(strings));
+    }
+
+    public String[] toStringArray() {
+        return toArray(new String[size()]);
+    }
+
+//	public static StringList fromXml( String value ) throws XmlException
+//	{
+//		return StringUtils.isNullOrEmpty( value ) || value.equals( "<xml-fragment/>" ) ? new StringList()
+//				: new StringList( StringListConfig.Factory.parse( value ).getEntryList() );
+//	}
+//
+//	public String toXml()
+//	{
+//		StringListConfig config = StringListConfig.Factory.newInstance();
+//		config.setEntryArray( toStringArray() );
+//		return config.xmlText();
+//	}
+
+    public boolean containsValue(String value) {
+        for (String stringElement : this) {
+            if (stringElement.contains(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

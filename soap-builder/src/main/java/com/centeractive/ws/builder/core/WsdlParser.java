@@ -21,6 +21,7 @@ package com.centeractive.ws.builder.core;
 import com.centeractive.ws.SoapBuilderException;
 import com.centeractive.ws.SoapContext;
 import com.centeractive.ws.builder.SoapBuilder;
+import com.centeractive.ws.legacy.SoapLegacyFacade;
 import com.google.common.base.Preconditions;
 
 import javax.wsdl.Binding;
@@ -37,12 +38,12 @@ import java.util.List;
 public final class WsdlParser {
 
     private final URL wsdlUrl;
-    private final SoapMessageBuilder messageBuilder;
+    private final SoapLegacyFacade soapFacade;
 
     private WsdlParser(URL wsdlUrl) {
         try {
             this.wsdlUrl = wsdlUrl;
-            messageBuilder = new SoapMessageBuilder(wsdlUrl);
+            this.soapFacade = new SoapLegacyFacade(wsdlUrl);
         } catch (WSDLException e) {
             throw new SoapBuilderException(e);
         }
@@ -54,12 +55,12 @@ public final class WsdlParser {
     }
 
     public List<QName> getBindings() {
-        return messageBuilder.getBindingNames();
+        return soapFacade.getBindingNames();
     }
 
     public void printBindings() {
         System.out.println(wsdlUrl);
-        for (QName bindingName : messageBuilder.getBindingNames()) {
+        for (QName bindingName : soapFacade.getBindingNames()) {
             System.out.println("\t" + bindingName.toString());
         }
     }
@@ -78,20 +79,16 @@ public final class WsdlParser {
 
     public SoapBuilder getBuilder(QName bindingName, SoapContext context) {
         Preconditions.checkNotNull(context, "SoapContext cannot be null");
-        Binding binding = messageBuilder.getBindingByName(bindingName);
-        return new SoapBuilderImpl(messageBuilder, binding, context);
+        Binding binding = soapFacade.getBindingByName(bindingName);
+        return new SoapBuilderImpl(soapFacade, binding, context);
     }
 
     public URL saveWsdl(String rootFileName, File folder) {
-        return messageBuilder.saveWsdl(rootFileName, folder);
+        return soapFacade.saveWsdl(rootFileName, folder);
     }
 
     public static URL saveWsdl(URL wsdlUrl, String rootFileName, File folder) {
-        try {
-            return SoapMessageBuilder.saveWsdl(rootFileName, wsdlUrl, folder);
-        } catch (WSDLException e) {
-            throw new SoapBuilderException(e);
-        }
+        return SoapLegacyFacade.saveWsdl(rootFileName, wsdlUrl, folder);
     }
 
 }

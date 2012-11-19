@@ -18,13 +18,12 @@
  */
 package com.example.customerservice.server;
 
-import javax.xml.ws.Endpoint;
-
 import com.example.customerservice.CustomerService;
-
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.EndpointImpl;
+
+import javax.xml.ws.Endpoint;
 
 public class CustomerServiceServer {
 

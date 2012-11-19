@@ -18,20 +18,15 @@
  */
 package com.example.customerservice.server;
 
+import com.example.customerservice.*;
+
+import javax.annotation.Resource;
+import javax.xml.ws.WebServiceContext;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-
-import javax.annotation.Resource;
-import javax.xml.ws.WebServiceContext;
-
-import com.example.customerservice.Customer;
-import com.example.customerservice.CustomerService;
-import com.example.customerservice.CustomerType;
-import com.example.customerservice.NoSuchCustomer;
-import com.example.customerservice.NoSuchCustomerException;
 
 public class CustomerServiceImpl implements CustomerService {
     

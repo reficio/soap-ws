@@ -16,12 +16,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.centeractive.ws.builder.core;
+package com.centeractive.ws.legacy;
 
 import com.centeractive.ws.SoapBuilderException;
 import com.centeractive.ws.common.ResourceUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xmlbeans.*;
-import org.xmlsoap.schemas.soap.envelope.EnvelopeDocument;
+import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
+import org.w3.x2003.x05.soapEnvelope.FaultDocument;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -50,60 +52,40 @@ import java.net.URL;
  */
 
 /**
- * SoapVersion for SOAP 1.1
+ * SoapVersion for SOAP 1.2
  *
  * @author ole.matzura
  */
-class SoapVersion11 extends AbstractSoapVersion {
-    private final static QName envelopeQName = new QName(Constants.SOAP11_ENVELOPE_NS, "Envelope");
-    private final static QName bodyQName = new QName(Constants.SOAP11_ENVELOPE_NS, "Body");
-    private final static QName faultQName = new QName(Constants.SOAP11_ENVELOPE_NS, "Fault");
-    private final static QName headerQName = new QName(Constants.SOAP11_ENVELOPE_NS, "Header");
+class SoapVersion12 extends AbstractSoapVersion {
 
-    SchemaTypeLoader soapSchema;
-    SchemaType soapEnvelopeType;
+    private final static QName envelopeQName = new QName(Constants.SOAP12_ENVELOPE_NS, "Envelope");
+    private final static QName bodyQName = new QName(Constants.SOAP12_ENVELOPE_NS, "Body");
+    private final static QName faultQName = new QName(Constants.SOAP11_ENVELOPE_NS, "Fault");
+    private final static QName headerQName = new QName(Constants.SOAP12_ENVELOPE_NS, "Header");
+    public final static SoapVersion12 instance = new SoapVersion12();
+
+    private SchemaTypeLoader soapSchema;
     private XmlObject soapSchemaXml;
     private XmlObject soapEncodingXml;
-    private SchemaType soapFaultType;
 
-    public final static SoapVersion11 instance = new SoapVersion11();
+    private SoapVersion12() {
 
-    private SoapVersion11() {
         try {
-            XmlOptions options = new XmlOptions();
-            options.setCompileNoValidation();
-            options.setCompileNoPvrRule();
-            options.setCompileDownloadUrls();
-            options.setCompileNoUpaRule();
-            options.setValidateTreatLaxAsSkip();
-
             URL soapSchemaXmlResource = ResourceUtils.getResourceWithAbsolutePackagePath(getClass(),
-                    "/xsds/", "soapEnvelope.xsd");
-            soapSchemaXml = XmlUtils.createXmlObject(soapSchemaXmlResource, options);
+                    "/xsds/", "soapEnvelope12.xsd");
+            soapSchemaXml = XmlUtils.createXmlObject(soapSchemaXmlResource);
             soapSchema = XmlBeans.loadXsd(new XmlObject[]{soapSchemaXml});
 
-            soapEnvelopeType = soapSchema.findDocumentType(envelopeQName);
-            soapFaultType = soapSchema.findDocumentType(faultQName);
-
             URL soapEncodingXmlResource = ResourceUtils.getResourceWithAbsolutePackagePath(getClass(),
-                    "/xsds/", "soapEncoding.xsd");
-            soapEncodingXml = XmlUtils.createXmlObject(soapEncodingXmlResource, options);
-
-        } catch (XmlException ex) {
-            throw new SoapBuilderException(ex);
+                    "/xsds/", "soapEncoding12.xsd");
+            soapEncodingXml = XmlUtils.createXmlObject(soapEncodingXmlResource);
+        } catch (XmlException e) {
+            throw new SoapBuilderException(e);
         }
     }
 
-    public SchemaType getEnvelopeType() {
-        return EnvelopeDocument.type;
-    }
-
-    public String getEnvelopeNamespace() {
-        return Constants.SOAP11_ENVELOPE_NS;
-    }
-
     public String getEncodingNamespace() {
-        return Constants.SOAP_ENCODING_NS;
+        return "http://www.w3.org/2003/05/test-encoding";
     }
 
     public XmlObject getSoapEncodingSchema() throws XmlException, IOException {
@@ -114,29 +96,47 @@ class SoapVersion11 extends AbstractSoapVersion {
         return soapSchemaXml;
     }
 
+    public String getEnvelopeNamespace() {
+        return Constants.SOAP12_ENVELOPE_NS;
+    }
+
+    public SchemaType getEnvelopeType() {
+        return EnvelopeDocument.type;
+    }
+
     public String toString() {
-        return "SOAP 1.1";
+        return "SOAP 1.2";
+    }
+
+    public static String quote(String str) {
+        if (str == null)
+            return str;
+
+        if (str.length() < 2 || !str.startsWith("\"") || !str.endsWith("\""))
+            str = "\"" + str + "\"";
+
+        return str;
     }
 
     public String getContentTypeHttpHeader(String encoding, String soapAction) {
-        if (encoding == null || encoding.trim().length() == 0)
-            return getContentType();
-        else
-            return getContentType() + ";charset=" + encoding;
+        String result = getContentType();
+
+        if (encoding != null && encoding.trim().length() > 0)
+            result += ";charset=" + encoding;
+
+        if (StringUtils.isNotBlank(soapAction))
+            result += ";action=" + quote(soapAction);
+
+        return result;
     }
 
     public String getSoapActionHeader(String soapAction) {
-        if (soapAction == null || soapAction.length() == 0) {
-            soapAction = "\"\"";
-        } else {
-            soapAction = "\"" + soapAction + "\"";
-        }
-
-        return soapAction;
+        // SOAP 1.2 has this in the contenttype
+        return null;
     }
 
     public String getContentType() {
-        return "text/xml";
+        return "application/soap+xml";
     }
 
     public QName getBodyQName() {
@@ -155,15 +155,19 @@ class SoapVersion11 extends AbstractSoapVersion {
         return soapSchema;
     }
 
+    public static QName getFaultQName() {
+        return faultQName;
+    }
+
     public SchemaType getFaultType() {
-        return soapFaultType;
+        return FaultDocument.type;
     }
 
     public String getName() {
-        return "SOAP 1.1";
+        return "SOAP 1.2";
     }
 
     public String getFaultDetailNamespace() {
-        return "";
+        return getEnvelopeNamespace();
     }
 }

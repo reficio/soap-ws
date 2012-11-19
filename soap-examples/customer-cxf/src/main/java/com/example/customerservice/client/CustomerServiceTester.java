@@ -18,13 +18,12 @@
  */
 package com.example.customerservice.client;
 
-import java.util.List;
-
-import junit.framework.Assert;
-
 import com.example.customerservice.Customer;
 import com.example.customerservice.CustomerService;
 import com.example.customerservice.NoSuchCustomerException;
+import junit.framework.Assert;
+
+import java.util.List;
 
 public final class CustomerServiceTester {
     

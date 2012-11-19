@@ -18,8 +18,8 @@
  */
 package com.centeractive.ws.test;
 
-import com.centeractive.ws.client.core.SoapClient;
 import com.centeractive.ws.client.TransmissionException;
+import com.centeractive.ws.client.core.SoapClient;
 import com.centeractive.ws.server.core.SoapServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

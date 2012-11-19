@@ -24,6 +24,7 @@ import com.centeractive.ws.SoapContext;
 import com.centeractive.ws.builder.SoapBuilder;
 import com.centeractive.ws.builder.SoapOperation;
 import com.centeractive.ws.builder.SoapOperationFinder;
+import com.centeractive.ws.legacy.SoapLegacyFacade;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -37,12 +38,12 @@ import java.util.List;
  */
 class SoapBuilderImpl implements SoapBuilder {
 
-    private final SoapMessageBuilder builder;
+    private final SoapLegacyFacade soapFacade;
     private final Binding binding;
     private final SoapContext context;
 
-    SoapBuilderImpl(SoapMessageBuilder builder, Binding binding, SoapContext context) {
-        this.builder = builder;
+    SoapBuilderImpl(SoapLegacyFacade soapFacade, Binding binding, SoapContext context) {
+        this.soapFacade = soapFacade;
         this.binding = binding;
         this.context = context;
     }
@@ -84,7 +85,7 @@ class SoapBuilderImpl implements SoapBuilder {
     @Override
     public String buildInputMessage(SoapOperation operation, SoapContext context) {
         try {
-            return builder.buildSoapMessageFromInput(binding, getBindingOperation(operation), context);
+            return soapFacade.buildSoapMessageFromInput(binding, getBindingOperation(operation), context);
         } catch (Exception e) {
             throw new SoapBuilderException(e);
         }
@@ -98,7 +99,7 @@ class SoapBuilderImpl implements SoapBuilder {
     @Override
     public String buildOutputMessage(SoapOperation operation, SoapContext context) {
         try {
-            return builder.buildSoapMessageFromOutput(binding, getBindingOperation(operation), context);
+            return soapFacade.buildSoapMessageFromOutput(binding, getBindingOperation(operation), context);
         } catch (Exception e) {
             throw new SoapBuilderException(e);
         }
@@ -106,17 +107,17 @@ class SoapBuilderImpl implements SoapBuilder {
 
     @Override
     public String buildFault(String code, String message) {
-        return builder.buildFault(code, message, binding);
+        return soapFacade.buildFault(code, message, binding);
     }
 
     @Override
     public String buildEmptyFault() {
-        return builder.buildEmptyFault(binding);
+        return soapFacade.buildEmptyFault(binding);
     }
 
     @Override
     public String buildEmptyMessage() {
-        return builder.buildEmptyMessage(binding);
+        return soapFacade.buildEmptyMessage(binding);
     }
 
     @Override

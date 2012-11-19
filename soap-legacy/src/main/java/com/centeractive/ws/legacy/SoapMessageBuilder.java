@@ -16,11 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.centeractive.ws.builder.core;
+package com.centeractive.ws.legacy;
 
 import com.centeractive.ws.SoapBuilderException;
 import com.centeractive.ws.SoapContext;
-import com.centeractive.ws.builder.core.WsdlUtils.SoapHeader;
 import com.centeractive.ws.common.Wsdl11Writer;
 import com.ibm.wsdl.xml.WSDLReaderImpl;
 import org.apache.log4j.Logger;
@@ -271,7 +270,7 @@ class SoapMessageBuilder {
             BindingInput bindingInput = bindingOperation.getBindingInput();
             if (bindingInput != null) {
                 List<?> extensibilityElements = bindingInput.getExtensibilityElements();
-                List<SoapHeader> soapHeaders = WsdlUtils.getSoapHeaders(extensibilityElements);
+                List<WsdlUtils.SoapHeader> soapHeaders = WsdlUtils.getSoapHeaders(extensibilityElements);
                 addHeaders(soapHeaders, soapVersion, cursor, xmlGenerator);
             }
         }
@@ -325,7 +324,7 @@ class SoapMessageBuilder {
             BindingOutput bindingOutput = bindingOperation.getBindingOutput();
             if (bindingOutput != null) {
                 List<?> extensibilityElements = bindingOutput.getExtensibilityElements();
-                List<SoapHeader> soapHeaders = WsdlUtils.getSoapHeaders(extensibilityElements);
+                List<WsdlUtils.SoapHeader> soapHeaders = WsdlUtils.getSoapHeaders(extensibilityElements);
                 addHeaders(soapHeaders, soapVersion, cursor, xmlGenerator);
             }
         }
@@ -411,7 +410,7 @@ class SoapMessageBuilder {
     }
 
 
-    private void addHeaders(List<SoapHeader> headers, SoapVersion soapVersion, XmlCursor cursor, SampleXmlUtil xmlGenerator) throws Exception {
+    private void addHeaders(List<WsdlUtils.SoapHeader> headers, SoapVersion soapVersion, XmlCursor cursor, SampleXmlUtil xmlGenerator) throws Exception {
         // reposition
         cursor.toStartDoc();
         cursor.toChild(soapVersion.getEnvelopeQName());
@@ -421,7 +420,7 @@ class SoapMessageBuilder {
         cursor.toFirstChild();
 
         for (int i = 0; i < headers.size(); i++) {
-            SoapHeader header = headers.get(i);
+            WsdlUtils.SoapHeader header = headers.get(i);
 
             Message message = definition.getMessage(header.getMessage());
             if (message == null) {

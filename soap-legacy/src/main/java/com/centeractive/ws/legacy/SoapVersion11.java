@@ -16,14 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.centeractive.ws.builder.core;
+package com.centeractive.ws.legacy;
 
 import com.centeractive.ws.SoapBuilderException;
 import com.centeractive.ws.common.ResourceUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.xmlbeans.*;
-import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
-import org.w3.x2003.x05.soapEnvelope.FaultDocument;
+import org.xmlsoap.schemas.soap.envelope.EnvelopeDocument;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -52,40 +50,60 @@ import java.net.URL;
  */
 
 /**
- * SoapVersion for SOAP 1.2
+ * SoapVersion for SOAP 1.1
  *
  * @author ole.matzura
  */
-class SoapVersion12 extends AbstractSoapVersion {
-
-    private final static QName envelopeQName = new QName(Constants.SOAP12_ENVELOPE_NS, "Envelope");
-    private final static QName bodyQName = new QName(Constants.SOAP12_ENVELOPE_NS, "Body");
+class SoapVersion11 extends AbstractSoapVersion {
+    private final static QName envelopeQName = new QName(Constants.SOAP11_ENVELOPE_NS, "Envelope");
+    private final static QName bodyQName = new QName(Constants.SOAP11_ENVELOPE_NS, "Body");
     private final static QName faultQName = new QName(Constants.SOAP11_ENVELOPE_NS, "Fault");
-    private final static QName headerQName = new QName(Constants.SOAP12_ENVELOPE_NS, "Header");
-    public final static SoapVersion12 instance = new SoapVersion12();
+    private final static QName headerQName = new QName(Constants.SOAP11_ENVELOPE_NS, "Header");
 
-    private SchemaTypeLoader soapSchema;
+    SchemaTypeLoader soapSchema;
+    SchemaType soapEnvelopeType;
     private XmlObject soapSchemaXml;
     private XmlObject soapEncodingXml;
+    private SchemaType soapFaultType;
 
-    private SoapVersion12() {
+    public final static SoapVersion11 instance = new SoapVersion11();
 
+    private SoapVersion11() {
         try {
+            XmlOptions options = new XmlOptions();
+            options.setCompileNoValidation();
+            options.setCompileNoPvrRule();
+            options.setCompileDownloadUrls();
+            options.setCompileNoUpaRule();
+            options.setValidateTreatLaxAsSkip();
+
             URL soapSchemaXmlResource = ResourceUtils.getResourceWithAbsolutePackagePath(getClass(),
-                    "/xsds/", "soapEnvelope12.xsd");
-            soapSchemaXml = XmlUtils.createXmlObject(soapSchemaXmlResource);
+                    "/xsds/", "soapEnvelope.xsd");
+            soapSchemaXml = XmlUtils.createXmlObject(soapSchemaXmlResource, options);
             soapSchema = XmlBeans.loadXsd(new XmlObject[]{soapSchemaXml});
 
+            soapEnvelopeType = soapSchema.findDocumentType(envelopeQName);
+            soapFaultType = soapSchema.findDocumentType(faultQName);
+
             URL soapEncodingXmlResource = ResourceUtils.getResourceWithAbsolutePackagePath(getClass(),
-                    "/xsds/", "soapEncoding12.xsd");
-            soapEncodingXml = XmlUtils.createXmlObject(soapEncodingXmlResource);
-        } catch (XmlException e) {
-            throw new SoapBuilderException(e);
+                    "/xsds/", "soapEncoding.xsd");
+            soapEncodingXml = XmlUtils.createXmlObject(soapEncodingXmlResource, options);
+
+        } catch (XmlException ex) {
+            throw new SoapBuilderException(ex);
         }
     }
 
+    public SchemaType getEnvelopeType() {
+        return EnvelopeDocument.type;
+    }
+
+    public String getEnvelopeNamespace() {
+        return Constants.SOAP11_ENVELOPE_NS;
+    }
+
     public String getEncodingNamespace() {
-        return "http://www.w3.org/2003/05/test-encoding";
+        return Constants.SOAP_ENCODING_NS;
     }
 
     public XmlObject getSoapEncodingSchema() throws XmlException, IOException {
@@ -96,47 +114,29 @@ class SoapVersion12 extends AbstractSoapVersion {
         return soapSchemaXml;
     }
 
-    public String getEnvelopeNamespace() {
-        return Constants.SOAP12_ENVELOPE_NS;
-    }
-
-    public SchemaType getEnvelopeType() {
-        return EnvelopeDocument.type;
-    }
-
     public String toString() {
-        return "SOAP 1.2";
-    }
-
-    public static String quote(String str) {
-        if (str == null)
-            return str;
-
-        if (str.length() < 2 || !str.startsWith("\"") || !str.endsWith("\""))
-            str = "\"" + str + "\"";
-
-        return str;
+        return "SOAP 1.1";
     }
 
     public String getContentTypeHttpHeader(String encoding, String soapAction) {
-        String result = getContentType();
-
-        if (encoding != null && encoding.trim().length() > 0)
-            result += ";charset=" + encoding;
-
-        if (StringUtils.isNotBlank(soapAction))
-            result += ";action=" + quote(soapAction);
-
-        return result;
+        if (encoding == null || encoding.trim().length() == 0)
+            return getContentType();
+        else
+            return getContentType() + ";charset=" + encoding;
     }
 
     public String getSoapActionHeader(String soapAction) {
-        // SOAP 1.2 has this in the contenttype
-        return null;
+        if (soapAction == null || soapAction.length() == 0) {
+            soapAction = "\"\"";
+        } else {
+            soapAction = "\"" + soapAction + "\"";
+        }
+
+        return soapAction;
     }
 
     public String getContentType() {
-        return "application/soap+xml";
+        return "text/xml";
     }
 
     public QName getBodyQName() {
@@ -155,19 +155,15 @@ class SoapVersion12 extends AbstractSoapVersion {
         return soapSchema;
     }
 
-    public static QName getFaultQName() {
-        return faultQName;
-    }
-
     public SchemaType getFaultType() {
-        return FaultDocument.type;
+        return soapFaultType;
     }
 
     public String getName() {
-        return "SOAP 1.2";
+        return "SOAP 1.1";
     }
 
     public String getFaultDetailNamespace() {
-        return getEnvelopeNamespace();
+        return "";
     }
 }

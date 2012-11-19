@@ -16,8 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.centeractive.ws.builder.core;
+package com.centeractive.ws.legacy;
 
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 
 /**
  * This class was extracted from the soapUI code base by centeractive ag in October 2011.
@@ -40,15 +42,8 @@ package com.centeractive.ws.builder.core;
  * - minor fixes to make the class compile out of soapUI's code base
  */
 
-interface DefinitionLoader extends SchemaLoader {
+interface SchemaLoader {
+    XmlObject loadXmlObject(String wsdlUrl, XmlOptions options) throws Exception;
 
-    void setProgressInfo(String info);
-
-    boolean isAborted();
-
-    boolean abort();
-
-    void setNewBaseURI(String uri);
-
-    String getFirstNewURI();
+    String getBaseURI();
 }

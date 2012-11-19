@@ -16,13 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.centeractive.ws.builder.core;
+package com.centeractive.ws.legacy;
 
-import com.centeractive.ws.SoapBuilderException;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-
-import java.net.URL;
 
 /**
  * This class was extracted from the soapUI code base by centeractive ag in October 2011.
@@ -45,38 +40,15 @@ import java.net.URL;
  * - minor fixes to make the class compile out of soapUI's code base
  */
 
-class UrlSchemaLoader implements SchemaLoader, DefinitionLoader {
-    private String baseURI;
+interface DefinitionLoader extends SchemaLoader {
 
-    public UrlSchemaLoader(String baseURI) {
-        this.baseURI = baseURI;
-    }
+    void setProgressInfo(String info);
 
-    public XmlObject loadXmlObject(String wsdlUrl, XmlOptions options) throws Exception {
-        return XmlUtils.createXmlObject(new URL(wsdlUrl), options);
-    }
+    boolean isAborted();
 
-    public String getBaseURI() {
-        return baseURI;
-    }
+    boolean abort();
 
-    public void setProgressInfo(String info) {
-        throw new SoapBuilderException("Not Implemented");
-    }
+    void setNewBaseURI(String uri);
 
-    public boolean isAborted() {
-        throw new SoapBuilderException("Not Implemented");
-    }
-
-    public boolean abort() {
-        throw new SoapBuilderException("Not Implemented");
-    }
-
-    public void setNewBaseURI(String uri) {
-        throw new SoapBuilderException("Not Implemented");
-    }
-
-    public String getFirstNewURI() {
-        throw new SoapBuilderException("Not Implemented");
-    }
+    String getFirstNewURI();
 }
