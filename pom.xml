@@ -27,7 +27,7 @@
         <module>soap-client</module>
         <module>soap-server</module>
         <module>soap-it</module>
-        <module>soap-examples</module>
+        <!--<module>soap-examples</module>-->
         <!--<module>soap-test</module>-->
     </modules>
 
