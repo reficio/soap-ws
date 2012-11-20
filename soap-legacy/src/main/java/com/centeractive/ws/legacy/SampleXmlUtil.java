@@ -60,15 +60,19 @@ class SampleXmlUtil {
     private boolean _soapEnc;
     private boolean _exampleContent = false;
     private boolean _typeComment = false;
+
+    private boolean _skipComments = false;
+    private boolean _ignoreOptional = false;
+
     private Set<QName> excludedTypes = new HashSet<QName>();
     private Map<QName, String[]> multiValues = null;
-    private boolean _skipComments;
 
     public SampleXmlUtil(boolean soapEnc, SoapContext context) {
         this(soapEnc);
         this._exampleContent = context.isExampleContent();
-        this._typeComment = context.isTypeComment();
-        this._skipComments = context.isSkipComments();
+        this._typeComment = context.isTypeComments();
+        this._skipComments = !context.isValueComments();
+        this._ignoreOptional = !context.isBuildOptional();
     }
 
     public SampleXmlUtil(boolean soapEnc) {
@@ -172,7 +176,7 @@ class SampleXmlUtil {
 
     Random _picker = new Random(1);
 
-    private boolean ignoreOptional;
+
 
     /**
      * Cursor position Before: <theElement>^</theElement> After:
@@ -994,7 +998,7 @@ class SampleXmlUtil {
         if (minOccurs == maxOccurs)
             return minOccurs;
 
-        if (minOccurs == 0 && ignoreOptional)
+        if (minOccurs == 0 && _ignoreOptional)
             return 0;
 
         int result = minOccurs;
@@ -1119,7 +1123,7 @@ class SampleXmlUtil {
         SchemaProperty[] attrProps = stype.getAttributeProperties();
         for (int i = 0; i < attrProps.length; i++) {
             SchemaProperty attr = attrProps[i];
-            if (attr.getMinOccurs().intValue() == 0 && ignoreOptional)
+            if (attr.getMinOccurs().intValue() == 0 && _ignoreOptional)
                 continue;
 
             if (attr.getName().equals(new QName("http://www.w3.org/2005/05/xmlmime", "contentType"))) {
@@ -1237,11 +1241,11 @@ class SampleXmlUtil {
     private ArrayList<SchemaType> _typeStack = new ArrayList<SchemaType>();
 
     public boolean isIgnoreOptional() {
-        return ignoreOptional;
+        return _ignoreOptional;
     }
 
     public void setIgnoreOptional(boolean ignoreOptional) {
-        this.ignoreOptional = ignoreOptional;
+        this._ignoreOptional = ignoreOptional;
     }
 
     private void addElementTypeAndRestricionsComment(SchemaLocalElement element, XmlCursor xmlc) {

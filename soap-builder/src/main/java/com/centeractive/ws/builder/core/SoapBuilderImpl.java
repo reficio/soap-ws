@@ -125,17 +125,32 @@ class SoapBuilderImpl implements SoapBuilder {
 
     @Override
     public String buildFault(String code, String message) {
-        return soapFacade.buildFault(code, message, binding);
+        return soapFacade.buildFault(code, message, binding, context);
+    }
+
+    @Override
+    public String buildFault(String code, String message, SoapContext context) {
+        return soapFacade.buildFault(code, message, binding, context);
     }
 
     @Override
     public String buildEmptyFault() {
-        return soapFacade.buildEmptyFault(binding);
+        return soapFacade.buildEmptyFault(binding, context);
+    }
+
+    @Override
+    public String buildEmptyFault(SoapContext context) {
+        return soapFacade.buildEmptyFault(binding, context);
     }
 
     @Override
     public String buildEmptyMessage() {
-        return soapFacade.buildEmptyMessage(binding);
+        return soapFacade.buildEmptyMessage(binding, context);
+    }
+
+    @Override
+    public String buildEmptyMessage(SoapContext context) {
+        return soapFacade.buildEmptyMessage(binding, context);
     }
 
     @Override

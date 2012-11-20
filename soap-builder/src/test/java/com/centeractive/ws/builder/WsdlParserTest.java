@@ -77,7 +77,7 @@ public class WsdlParserTest {
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("wsdl", "TestService.wsdl");
         WsdlParser parser = WsdlParser.parse(wsdlUrl);
         String expectedBindingString = "{http://schemas.eviware.com/TestService/v1/}TestServiceSoap";
-        SoapContext context = SoapContext.builder().typeComment(true).build();
+        SoapContext context = SoapContext.builder().typeComments(true).build();
         SoapBuilder builder = parser.binding(expectedBindingString).builder(context);
 
         assertEquals(context, builder.getContext());

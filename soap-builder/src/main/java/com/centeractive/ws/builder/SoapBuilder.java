@@ -21,9 +21,7 @@ package com.centeractive.ws.builder;
 import com.centeractive.ws.SoapContext;
 
 import javax.wsdl.Binding;
-import javax.wsdl.Service;
 import javax.xml.namespace.QName;
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -48,9 +46,15 @@ public interface SoapBuilder {
 
     String buildFault(String code, String message);
 
+    String buildFault(String code, String message, SoapContext context);
+
     String buildEmptyFault();
 
+    String buildEmptyFault(SoapContext context);
+
     String buildEmptyMessage();
+
+    String buildEmptyMessage(SoapContext context);
 
     QName getBindingName();
 

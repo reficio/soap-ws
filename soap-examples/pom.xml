@@ -18,6 +18,7 @@
         <module>quickstart</module>
         <module>customer-cxf</module>
         <module>customer-soapws</module>
+        <module>spring</module>
     </modules>
 
     <properties>

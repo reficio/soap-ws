@@ -60,16 +60,16 @@ public class SoapLegacyFacade {
         }
     }
 
-    public String buildFault(String code, String message, Binding binding) {
-        return messageBuilder.buildFault(code, message, binding);
+    public String buildFault(String code, String message, Binding binding, SoapContext context) {
+        return messageBuilder.buildFault(code, message, binding, context);
     }
 
-    public String buildEmptyFault(Binding binding) {
-        return messageBuilder.buildEmptyFault(binding);
+    public String buildEmptyFault(Binding binding, SoapContext context) {
+        return messageBuilder.buildEmptyFault(binding, context);
     }
 
-    public String buildEmptyMessage(Binding binding) {
-        return messageBuilder.buildEmptyMessage(binding);
+    public String buildEmptyMessage(Binding binding, SoapContext context) {
+        return messageBuilder.buildEmptyMessage(binding, context);
     }
 
     public URL saveWsdl(String rootFileName, File folder) {
@@ -92,16 +92,16 @@ public class SoapLegacyFacade {
         return messageBuilder.getBindingNames();
     }
 
-    public static String buildEmptyMessage(SoapVersion soapVersion) {
-        return SoapMessageBuilder.buildEmptyMessage(soapVersion);
+    public static String buildEmptyMessage(SoapVersion soapVersion, SoapContext context) {
+        return SoapMessageBuilder.buildEmptyMessage(soapVersion, context);
     }
 
-    public static String buildEmptyFault(SoapVersion soapVersion) {
-        return SoapMessageBuilder.buildEmptyFault(soapVersion);
+    public static String buildEmptyFault(SoapVersion soapVersion, SoapContext context) {
+        return SoapMessageBuilder.buildEmptyFault(soapVersion, context);
     }
 
-    public static String buildFault(String code, String message, SoapVersion soapVersion) {
-        return SoapMessageBuilder.buildFault(code, message, soapVersion);
+    public static String buildFault(String code, String message, SoapVersion soapVersion, SoapContext context) {
+        return SoapMessageBuilder.buildFault(code, message, soapVersion, context);
     }
 
     private static SoapVersion transformSoapVersion(Soap soapVersion) {
@@ -112,16 +112,16 @@ public class SoapLegacyFacade {
         }
     }
 
-    public static String buildEmptyMessage(Soap version) {
-        return SoapLegacyFacade.buildEmptyMessage(transformSoapVersion(version));
+    public static String buildEmptyMessage(Soap version, SoapContext context) {
+        return SoapLegacyFacade.buildEmptyMessage(transformSoapVersion(version), context);
     }
 
-    public static String buildEmptyFault(Soap version) {
-        return SoapLegacyFacade.buildEmptyFault(transformSoapVersion(version));
+    public static String buildEmptyFault(Soap version, SoapContext context) {
+        return SoapLegacyFacade.buildEmptyFault(transformSoapVersion(version), context);
     }
 
-    public static String buildFault(Soap version, String code, String message) {
-        return SoapLegacyFacade.buildFault(code, message, transformSoapVersion(version));
+    public static String buildFault(Soap version, String code, String message, SoapContext context) {
+        return SoapLegacyFacade.buildFault(code, message, transformSoapVersion(version), context);
     }
 
     public static boolean isRpc(Binding binding) {

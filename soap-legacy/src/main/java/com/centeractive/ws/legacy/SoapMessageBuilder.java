@@ -179,16 +179,16 @@ class SoapMessageBuilder {
     // ----------------------------------------------------------
     // EMPTY MESSAGE GENERATORS
     // ----------------------------------------------------------
-    public String buildEmptyMessage(QName bindingQName) {
-        return buildEmptyMessage(getSoapVersion(getBindingByName(bindingQName)));
+    public String buildEmptyMessage(QName bindingQName, SoapContext context) {
+        return buildEmptyMessage(getSoapVersion(getBindingByName(bindingQName)), context);
     }
 
-    public String buildEmptyMessage(Binding binding) {
-        return buildEmptyMessage(getSoapVersion(binding));
+    public String buildEmptyMessage(Binding binding, SoapContext context) {
+        return buildEmptyMessage(getSoapVersion(binding), context);
     }
 
-    public static String buildEmptyMessage(SoapVersion soapVersion) {
-        SampleXmlUtil generator = new SampleXmlUtil(false);
+    public static String buildEmptyMessage(SoapVersion soapVersion, SoapContext context) {
+        SampleXmlUtil generator = new SampleXmlUtil(false, context);
         generator.setTypeComment(false);
         generator.setIgnoreOptional(true);
         return generator.createSample(soapVersion.getEnvelopeType());
@@ -197,11 +197,11 @@ class SoapMessageBuilder {
     // ----------------------------------------------------------
     // FAULT MESSAGE GENERATORS
     // ----------------------------------------------------------
-    public static String buildFault(String faultcode, String faultstring, SoapVersion soapVersion) {
-        SampleXmlUtil generator = new SampleXmlUtil(false);
+    public static String buildFault(String faultcode, String faultstring, SoapVersion soapVersion, SoapContext context) {
+        SampleXmlUtil generator = new SampleXmlUtil(false, context);
         generator.setTypeComment(false);
         generator.setIgnoreOptional(true);
-        String emptyResponse = buildEmptyFault(generator, soapVersion);
+        String emptyResponse = buildEmptyFault(generator, soapVersion, context);
         if (soapVersion == SoapVersion.Soap11) {
             emptyResponse = XmlUtils.setXPathContent(emptyResponse, "//faultcode", faultcode);
             emptyResponse = XmlUtils.setXPathContent(emptyResponse, "//faultstring", faultstring);
@@ -213,25 +213,25 @@ class SoapMessageBuilder {
         return emptyResponse;
     }
 
-    public String buildFault(String faultcode, String faultstring, QName bindingQName) {
-        return buildFault(faultcode, faultstring, getSoapVersion(getBindingByName(bindingQName)));
+    public String buildFault(String faultcode, String faultstring, QName bindingQName, SoapContext context) {
+        return buildFault(faultcode, faultstring, getSoapVersion(getBindingByName(bindingQName)), context);
     }
 
-    public String buildFault(String faultcode, String faultstring, Binding binding) {
-        return buildFault(faultcode, faultstring, getSoapVersion(binding));
+    public String buildFault(String faultcode, String faultstring, Binding binding, SoapContext context) {
+        return buildFault(faultcode, faultstring, getSoapVersion(binding), context);
     }
 
-    public String buildEmptyFault(QName bindingQName) {
-        return buildEmptyFault(getSoapVersion(getBindingByName(bindingQName)));
+    public String buildEmptyFault(QName bindingQName, SoapContext context) {
+        return buildEmptyFault(getSoapVersion(getBindingByName(bindingQName)), context);
     }
 
-    public String buildEmptyFault(Binding binding) {
-        return buildEmptyFault(getSoapVersion(binding));
+    public String buildEmptyFault(Binding binding, SoapContext context) {
+        return buildEmptyFault(getSoapVersion(binding), context);
     }
 
-    public static String buildEmptyFault(SoapVersion soapVersion) {
-        SampleXmlUtil generator = new SampleXmlUtil(false);
-        String emptyResponse = buildEmptyFault(generator, soapVersion);
+    public static String buildEmptyFault(SoapVersion soapVersion, SoapContext context) {
+        SampleXmlUtil generator = new SampleXmlUtil(false, context);
+        String emptyResponse = buildEmptyFault(generator, soapVersion, context);
         return emptyResponse;
     }
 
@@ -634,8 +634,8 @@ class SoapMessageBuilder {
     }
 
 
-    private static String buildEmptyFault(SampleXmlUtil generator, SoapVersion soapVersion) {
-        String emptyResponse = buildEmptyMessage(soapVersion);
+    private static String buildEmptyFault(SampleXmlUtil generator, SoapVersion soapVersion, SoapContext context) {
+        String emptyResponse = buildEmptyMessage(soapVersion, context);
         try {
             XmlObject xmlObject = XmlUtils.createXmlObject(emptyResponse);
             XmlCursor cursor = xmlObject.newCursor();

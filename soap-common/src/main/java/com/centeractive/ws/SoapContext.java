@@ -28,17 +28,27 @@ public class SoapContext {
 
     public final static SoapContext DEFAULT = SoapContext.builder().build();
 
+    private final boolean typeComments;
+    private final boolean valueComments;
     private final boolean exampleContent;
-    private final boolean typeComment;
-    private final boolean skipComments;
     private final boolean buildOptional;
     private final boolean alwaysBuildHeaders;
 
-    private SoapContext(boolean exampleContent, boolean typeComment, boolean skipComments,
-                        boolean buildOptional, boolean alwaysBuildHeaders) {
+    /**
+     * Constructor mainly for SpringFramework purposes, in any other case use the fluent builder interface;
+     * #see builder() method
+     *
+     * @param exampleContent
+     * @param typeComments
+     * @param valueComments
+     * @param buildOptional
+     * @param alwaysBuildHeaders
+     */
+    public SoapContext(boolean exampleContent, boolean typeComments, boolean valueComments,
+                       boolean buildOptional, boolean alwaysBuildHeaders) {
         this.exampleContent = exampleContent;
-        this.typeComment = typeComment;
-        this.skipComments = skipComments;
+        this.typeComments = typeComments;
+        this.valueComments = valueComments;
         this.buildOptional = buildOptional;
         this.alwaysBuildHeaders = alwaysBuildHeaders;
     }
@@ -55,12 +65,12 @@ public class SoapContext {
         return exampleContent;
     }
 
-    public boolean isTypeComment() {
-        return typeComment;
+    public boolean isTypeComments() {
+        return typeComments;
     }
 
-    public boolean isSkipComments() {
-        return skipComments;
+    public boolean isValueComments() {
+        return valueComments;
     }
 
     public static ContextBuilder builder() {
@@ -69,8 +79,8 @@ public class SoapContext {
 
     public static class ContextBuilder {
         private boolean exampleContent = false;
-        private boolean typeComment = false;
-        private boolean skipComments = true;
+        private boolean typeComments = false;
+        private boolean valueComments = true;
         private boolean buildOptional = true;
         private boolean alwaysBuildHeaders = true;
 
@@ -91,8 +101,8 @@ public class SoapContext {
          * @param value
          * @return builder
          */
-        public ContextBuilder typeComment(boolean value) {
-            this.typeComment = value;
+        public ContextBuilder typeComments(boolean value) {
+            this.typeComments = value;
             return this;
         }
 
@@ -102,8 +112,8 @@ public class SoapContext {
          * @param value
          * @return builder
          */
-        public ContextBuilder skipComments(boolean value) {
-            this.skipComments = value;
+        public ContextBuilder valueComments(boolean value) {
+            this.valueComments = value;
             return this;
         }
 
@@ -135,7 +145,7 @@ public class SoapContext {
          * @return fully populated soap context
          */
         public SoapContext build() {
-            return new SoapContext(exampleContent, typeComment, skipComments,
+            return new SoapContext(exampleContent, typeComments, valueComments,
                     buildOptional, alwaysBuildHeaders);
         }
     }

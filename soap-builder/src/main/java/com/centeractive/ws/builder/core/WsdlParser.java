@@ -180,6 +180,18 @@ public final class WsdlParser {
         };
     }
 
+    public SoapBuilder getBuilder(String bindingName) {
+        return getBuilder(QName.valueOf(bindingName));
+    }
+
+    public SoapBuilder getBuilder(QName bindingName) {
+        return getBuilder(bindingName, SoapContext.builder().build());
+    }
+
+    public SoapBuilder getBuilder(String bindingName, SoapContext context) {
+        return getBuilder(QName.valueOf(bindingName), context);
+    }
+
     private SoapBuilder getBuilder(QName bindingName, SoapContext context) {
         Preconditions.checkNotNull(context, "SoapContext cannot be null");
         Binding binding = soapFacade.getBindingByName(bindingName);

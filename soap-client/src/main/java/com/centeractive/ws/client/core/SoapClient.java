@@ -20,6 +20,7 @@ package com.centeractive.ws.client.core;
 
 import com.centeractive.ws.client.SoapClientException;
 import com.centeractive.ws.client.TransmissionException;
+import com.google.common.base.Preconditions;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -55,7 +56,7 @@ public final class SoapClient {
     private URL serverUrl;
     private String basicAuthEncoded;
     private boolean tlsEnabled;
-    private KeyStore keyStore;
+    private KeyStore trustStore;
     private boolean strictHostVerification = false;
     private Proxy proxy;
     private String proxyAuthEncoded;
@@ -136,7 +137,7 @@ public final class SoapClient {
         }
         try {
             TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            trustManagerFactory.init(keyStore);
+            trustManagerFactory.init(trustStore);
             X509TrustManager defaultTrustManager = (X509TrustManager) trustManagerFactory.getTrustManagers()[0];
             context = SSLContext.getInstance(sslContextProtocol);
             context.init(null, new TrustManager[]{defaultTrustManager}, null);
@@ -270,9 +271,11 @@ public final class SoapClient {
     public static class Builder {
         private final SoapClient client = new SoapClient();
 
-        private URL keyStoreUrl;
-        private String keyStoreType = JKS_KEYSTORE;
-        private char[] keyStorePassword;
+        private KeyStore trustStore;
+
+        private URL trustStoreUrl;
+        private String trustStoreType = JKS_KEYSTORE;
+        private char[] trustStorePassword;
 
         private Proxy.Type proxyType = Proxy.Type.DIRECT;
         private String proxyHost;
@@ -286,18 +289,28 @@ public final class SoapClient {
         }
 
         /**
+         * @param urlString URL of the SOAP endpoint to whom the client should send messages. Null is not accepted.
+         * @return builder
+         */
+        public Builder endpointUrl(String urlString) {
+            checkNotNull(urlString);
+            try {
+                URL url = new URL(urlString);
+                return endpointUrl(url);
+            } catch (MalformedURLException ex) {
+                throw new SoapClientException(String.format("URL [%s] is malformed", urlString), ex);
+            }
+        }
+
+        /**
          * @param url URL of the SOAP endpoint to whom the client should send messages. Null is not accepted.
          * @return builder
          */
-        public Builder endpointUrl(String url) {
+        public Builder endpointUrl(URL url) {
             checkNotNull(url);
-            try {
-                client.serverUrl = new URL(url);
-                client.tlsEnabled = client.serverUrl.getProtocol().equalsIgnoreCase("https");
-                return this;
-            } catch (MalformedURLException ex) {
-                throw new SoapClientException(String.format("URL [%s] is malformed", url), ex);
-            }
+            client.serverUrl = url;
+            client.tlsEnabled = client.serverUrl.getProtocol().equalsIgnoreCase("https");
+            return this;
         }
 
         /**
@@ -313,13 +326,37 @@ public final class SoapClient {
         }
 
         /**
+         * @param value Specifies the instance of the truststore to use in the SOAP communication. Null is not accepted.
+         * @return builder
+         */
+        public Builder trustStore(KeyStore value) {
+            checkNotNull(value);
+            trustStore = value;
+            return this;
+        }
+
+        /**
          * @param value Specifies the URL of the truststore to use in the SOAP communication. Null is not accepted.
          * @return builder
          */
         public Builder trustStoreUrl(URL value) {
             checkNotNull(value);
-            keyStoreUrl = value;
+            trustStoreUrl = value;
             return this;
+        }
+
+        /**
+         * @param value Specifies the URL of the truststore to use in the SOAP communication. Null is not accepted.
+         * @return builder
+         */
+        public Builder trustStoreUrl(String value) {
+            checkNotNull(value);
+            try {
+                trustStoreUrl = new URL(value);
+                return this;
+            } catch (MalformedURLException ex) {
+                throw new SoapClientException(String.format("URL [%s] is malformed", value), ex);
+            }
         }
 
         /**
@@ -328,7 +365,7 @@ public final class SoapClient {
          */
         public Builder trustStoreType(String value) {
             checkNotNull(value);
-            keyStoreType = value;
+            trustStoreType = value;
             return this;
         }
 
@@ -338,7 +375,7 @@ public final class SoapClient {
          */
         public Builder trustStorePassword(String value) {
             if (value != null) {
-                keyStorePassword = value.toCharArray();
+                trustStorePassword = value.toCharArray();
             }
             return this;
         }
@@ -432,19 +469,31 @@ public final class SoapClient {
          * @return properly populated soap clients
          */
         public SoapClient build() {
+            validate();
             validateAndInitKeystore();
             validateAndInitProxy();
             return client;
         }
 
+        private void validate() {
+            checkNotNull(client.serverUrl);
+        }
+
         private void validateAndInitKeystore() {
-            if (keyStoreUrl != null) {
+            boolean trustStorePropertiesDefined = trustStoreUrl != null || trustStoreType != null || trustStorePassword != null;
+            if (trustStore != null && trustStorePropertiesDefined) {
+                throw new SoapClientException("Specify either a trustStore instance or properties required to load one " +
+                        "(trustStoreUrl, trustStoreType, trustStorePassword)");
+            }
+            if (trustStore != null) {
+                client.trustStore = trustStore;
+            } else if (trustStoreUrl != null) {
                 try {
-                    InputStream in = keyStoreUrl.openStream();
-                    KeyStore ks = KeyStore.getInstance(keyStoreType);
-                    ks.load(in, keyStorePassword);
+                    InputStream in = trustStoreUrl.openStream();
+                    KeyStore ks = KeyStore.getInstance(trustStoreType);
+                    ks.load(in, trustStorePassword);
                     in.close();
-                    client.keyStore = ks;
+                    client.trustStore = ks;
                 } catch (GeneralSecurityException e) {
                     throw new SoapClientException("Keystore setup failed", e);
                 } catch (IOException e) {
