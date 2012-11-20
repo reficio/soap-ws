@@ -12,10 +12,10 @@
 
     <bean id="soapContext" class="com.centeractive.ws.SoapContext">
         <constructor-arg name="exampleContent" type="boolean" value="true"/>
-        <constructor-arg name="typeComment" type="boolean" value="true"/>
+        <constructor-arg name="typeComments" type="boolean" value="true"/>
         <constructor-arg name="buildOptional" type="boolean" value="true"/>
         <constructor-arg name="alwaysBuildHeaders" type="boolean" value="true"/>
-        <constructor-arg name="skipComments" type="boolean" value="true"/>
+        <constructor-arg name="valueComments" type="boolean" value="true"/>
     </bean>
 
     <bean id="soapBuilder" class="com.centeractive.ws.builder.SoapBuilder" factory-bean="wsdlParser" factory-method="getBuilder">
