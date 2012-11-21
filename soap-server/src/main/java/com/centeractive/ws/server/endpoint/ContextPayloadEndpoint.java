@@ -35,7 +35,7 @@ public interface ContextPayloadEndpoint extends PayloadEndpoint {
      * by decorating the invocation of the invoke method -> it get the context of the message as an argument
      * enabling the user to control the invocation in a more detailed way.
      *
-     * @param messageContext the context of the message containg the request and (possible response)
+     * @param messageContext the context of the message containing the request and (possible response)
      * @return the payload of the response message, may be <code>null</code> to indicate no response
      * @throws Exception if an exception occurs
      */

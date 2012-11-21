@@ -27,10 +27,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.ws.context.MessageContext;
-import org.springframework.ws.server.endpoint.AbstractDomPayloadEndpoint;
 import org.springframework.ws.soap.SoapMessage;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.Source;
@@ -47,8 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Tom Bujok
  * @since 1.0.0
  */
-@SuppressWarnings("deprecation")
-public class GenericContextDomEndpoint extends AbstractDomPayloadEndpoint implements ContextPayloadEndpoint, InitializingBean {
+public class GenericContextDomEndpoint implements ContextPayloadEndpoint, InitializingBean {
 
     private final static Log log = LogFactory.getLog(GenericContextDomEndpoint.class);
 
@@ -59,19 +55,6 @@ public class GenericContextDomEndpoint extends AbstractDomPayloadEndpoint implem
 
     public GenericContextDomEndpoint() {
         this.services = new ConcurrentHashMap<String, RequestResponder>();
-    }
-
-    /**
-     * Empty method included here to be compliant with the AbstractDomPayloadEndpoint.
-     * Not used here as it does not enable the user to get the whole SOAP envelope.
-     *
-     * @param requestElement
-     * @param responseDocument
-     * @return
-     */
-    @Override
-    protected Element invokeInternal(Element requestElement, Document responseDocument) {
-        throw new SoapServerException("This method is not implemented - it SHOULD NOT be used.");
     }
 
     /**
@@ -154,5 +137,14 @@ public class GenericContextDomEndpoint extends AbstractDomPayloadEndpoint implem
     @Override
     public void afterPropertiesSet() {
         log.info("Generic SOAP endpoint initialized");
+    }
+
+    /**
+     * Empty method included here to be compliant with the PayloadEndpoint.
+     * Not used here as it does not enable the user to get the whole SOAP envelope.
+     */
+    @Override
+    public Source invoke(Source request) throws Exception {
+        throw new SoapServerException("This method is not implemented - it SHOULD NOT be used.");
     }
 }
