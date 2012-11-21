@@ -46,10 +46,10 @@
                     <artifactId>maven-war-plugin</artifactId>
                     <version>2.1</version>
                     <configuration>
-                        <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+                        <webXml>src/test/webapp/WEB-INF/web.xml</webXml>
                         <webResources>
                             <resource>
-                                <directory>src/main/resources</directory>
+                                <directory>src/test/resources</directory>
                                 <targetPath>WEB-INF</targetPath>
                                 <includes>
                                     <include>*.wsdl</include>
@@ -92,9 +92,9 @@
                         <configuration>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>src/main/resources/CustomerService.wsdl</wsdl>
+                                    <wsdl>src/test/resources/CustomerService.wsdl</wsdl>
                                     <bindingFiles>
-                                        <bindingFile>src/main/resources/binding.xml</bindingFile>
+                                        <bindingFile>src/test/resources/binding.xml</bindingFile>
                                     </bindingFiles>
                                 </wsdlOption>
                             </wsdlOptions>
@@ -156,7 +156,7 @@
                                 <configuration>
                                     <mainClass>com.example.customerservice.client.CustomerServiceClient</mainClass>
                                     <arguments>
-                                        <argument>src/main/resources/CustomerService.wsdl</argument>
+                                        <argument>src/test/resources/CustomerService.wsdl</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
