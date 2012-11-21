@@ -26,11 +26,7 @@ import org.apache.xmlbeans.*;
 import org.w3c.dom.*;
 
 import javax.xml.namespace.QName;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -534,14 +530,6 @@ class SchemaUtils {
             cursor.removeXml();
             cursor.dispose();
         }
-    }
-
-
-    public static Collection<? extends QName> getExcludedTypes() {
-        // TODO
-        // String excluded = SoapUI.getSettings().getString( WsdlSettings.EXCLUDED_TYPES, null );
-        // return SettingUtils.string2QNames( excluded );
-        return new ArrayList<QName>();
     }
 
 }

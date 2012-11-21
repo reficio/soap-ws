@@ -18,6 +18,10 @@
  */
 package com.centeractive.ws;
 
+import javax.xml.namespace.QName;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Specifies the context of the SOAP message generation.
  *
@@ -28,13 +32,48 @@ public class SoapContext {
 
     public final static SoapContext DEFAULT = SoapContext.builder().build();
 
+    /**
+     * Generates comments with type information in new requests
+     */
     private final boolean typeComments;
     private final boolean valueComments;
     private final boolean exampleContent;
     private final boolean buildOptional;
     private final boolean alwaysBuildHeaders;
 
+    /*
+     * A list of XML-Schema types and global elements in the form of name@namespace which
+     * will be excluded when generating sample requests and responses and input forms.
+     * By default the XML-Schema root element is added since it is quite common in .NET
+     * services and generates a sample xml fragment of about 300 kb!.
+     */
+    private final Set<QName> excludedTypes;
+    private final SoapMultiValuesProvider multiValuesProvider ;
+
     /**
+     * Constructor mainly for SpringFramework purposes, in any other case use the fluent builder interface;
+     * #see builder() method
+     *
+     * @param exampleContent
+     * @param typeComments
+     * @param valueComments
+     * @param buildOptional
+     * @param alwaysBuildHeaders
+     * @param excludedTypes
+     */
+    public SoapContext(boolean exampleContent, boolean typeComments, boolean valueComments,
+                       boolean buildOptional, boolean alwaysBuildHeaders,
+                       Set<QName> excludedTypes, SoapMultiValuesProvider multiValuesProvider) {
+        this.exampleContent = exampleContent;
+        this.typeComments = typeComments;
+        this.valueComments = valueComments;
+        this.buildOptional = buildOptional;
+        this.alwaysBuildHeaders = alwaysBuildHeaders;
+        this.excludedTypes = new HashSet<QName>(excludedTypes);
+        this.multiValuesProvider = multiValuesProvider;
+    }
+
+     /**
      * Constructor mainly for SpringFramework purposes, in any other case use the fluent builder interface;
      * #see builder() method
      *
@@ -51,6 +90,8 @@ public class SoapContext {
         this.valueComments = valueComments;
         this.buildOptional = buildOptional;
         this.alwaysBuildHeaders = alwaysBuildHeaders;
+        this.excludedTypes = new HashSet<QName>();
+        this.multiValuesProvider = null;
     }
 
     public boolean isBuildOptional() {
@@ -73,6 +114,14 @@ public class SoapContext {
         return valueComments;
     }
 
+    public Set<QName> getExcludedTypes() {
+        return new HashSet<QName>(excludedTypes);
+    }
+
+    public SoapMultiValuesProvider getMultiValuesProvider() {
+        return multiValuesProvider;
+    }
+
     public static ContextBuilder builder() {
         return new ContextBuilder();
     }
@@ -83,6 +132,8 @@ public class SoapContext {
         private boolean valueComments = true;
         private boolean buildOptional = true;
         private boolean alwaysBuildHeaders = true;
+        private Set<QName> excludedTypes = new HashSet<QName>();
+        private SoapMultiValuesProvider multiValuesProvider = null;
 
         /**
          * Specifies if to generate example SOAP message content
@@ -140,13 +191,32 @@ public class SoapContext {
         }
 
         /**
+         * A list of XML-Schema types and global elements in the form of name@namespace which
+         * will be excluded when generating sample requests and responses and input forms.
+         * By default the XML-Schema root element is added since it is quite common in .NET
+         * services and generates a sample xml fragment of about 300 kb!.
+         *
+         * @param excludedTypes
+         * @return builder
+         */
+        public ContextBuilder excludedTypes(Set<QName> excludedTypes) {
+            this.excludedTypes = new HashSet<QName>(excludedTypes);
+            return this;
+        }
+
+        public ContextBuilder multiValuesProvider(SoapMultiValuesProvider multiValuesProvider) {
+            this.multiValuesProvider = multiValuesProvider;
+            return this;
+        }
+
+        /**
          * Builds populated context instance
          *
          * @return fully populated soap context
          */
         public SoapContext build() {
             return new SoapContext(exampleContent, typeComments, valueComments,
-                    buildOptional, alwaysBuildHeaders);
+                    buildOptional, alwaysBuildHeaders, excludedTypes, multiValuesProvider);
         }
     }
 

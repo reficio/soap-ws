@@ -37,11 +37,7 @@ public class SoapLegacyFacade {
     private SoapMessageBuilder messageBuilder;
 
     public SoapLegacyFacade(URL wsdlUrl) throws WSDLException {
-        this(wsdlUrl, SoapContext.builder().build());
-    }
-
-    public SoapLegacyFacade(URL wsdlUrl, SoapContext context) throws WSDLException {
-        this.messageBuilder = new SoapMessageBuilder(context, wsdlUrl);
+        this.messageBuilder = new SoapMessageBuilder(wsdlUrl);
     }
 
     public String buildSoapMessageFromInput(Binding binding, BindingOperation bindingOperation, SoapContext context) {
@@ -148,6 +144,5 @@ public class SoapLegacyFacade {
     public Collection<Service> getServices() {
         return (Collection<Service>) messageBuilder.getDefinition().getServices().values();
     }
-
 
 }

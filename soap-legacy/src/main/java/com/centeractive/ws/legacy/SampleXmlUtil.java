@@ -19,6 +19,7 @@
 package com.centeractive.ws.legacy;
 
 import com.centeractive.ws.SoapContext;
+import com.centeractive.ws.SoapMultiValuesProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xmlbeans.*;
 import org.apache.xmlbeans.impl.util.Base64;
@@ -57,51 +58,39 @@ import java.util.*;
  * XmlBeans class for generating XML from XML Schemas
  */
 class SampleXmlUtil {
-    private boolean _soapEnc;
-    private boolean _exampleContent = false;
-    private boolean _typeComment = false;
+    private Random picker = new Random(1);
 
-    private boolean _skipComments = false;
-    private boolean _ignoreOptional = false;
+    private boolean soapEnc;
+    private boolean exampleContent = false;
+    private boolean typeComment = false;
 
+    private boolean skipComments = false;
+    private boolean ignoreOptional = false;
+
+    /*
+     * A list of XML-Schema types and global elements in the form of name@namespace which
+     * will be excluded when generating sample requests and responses and input forms.
+     * By default the XML-Schema root element is added since it is quite common in .NET
+     * services and generates a sample xml fragment of about 300 kb!.
+     */
     private Set<QName> excludedTypes = new HashSet<QName>();
-    private Map<QName, String[]> multiValues = null;
+    private SoapMultiValuesProvider multiValuesProvider;
+
+    private ArrayList<SchemaType> typeStack = new ArrayList<SchemaType>();
+
 
     public SampleXmlUtil(boolean soapEnc, SoapContext context) {
-        this(soapEnc);
-        this._exampleContent = context.isExampleContent();
-        this._typeComment = context.isTypeComments();
-        this._skipComments = !context.isValueComments();
-        this._ignoreOptional = !context.isBuildOptional();
-    }
-
-    public SampleXmlUtil(boolean soapEnc) {
-        _soapEnc = soapEnc;
-        excludedTypes.addAll(SchemaUtils.getExcludedTypes());
+        this.soapEnc = soapEnc;
+        excludedTypes.addAll(context.getExcludedTypes());
+        this.exampleContent = context.isExampleContent();
+        this.typeComment = context.isTypeComments();
+        this.skipComments = !context.isValueComments();
+        this.ignoreOptional = !context.isBuildOptional();
+        this.multiValuesProvider = context.getMultiValuesProvider();
     }
 
     public boolean isSoapEnc() {
-        return _soapEnc;
-    }
-
-    public boolean isExampleContent() {
-        return _exampleContent;
-    }
-
-    public void setExampleContent(boolean content) {
-        _exampleContent = content;
-    }
-
-    public boolean isTypeComment() {
-        return _typeComment;
-    }
-
-    public void setTypeComment(boolean comment) {
-        _typeComment = comment;
-    }
-
-    public void setMultiValues(Map<QName, String[]> multiValues) {
-        this.multiValues = multiValues;
+        return soapEnc;
     }
 
     public String createSample(SchemaType sType) {
@@ -129,82 +118,26 @@ class SampleXmlUtil {
         return result;
     }
 
-    public static String createSampleForElement(SchemaGlobalElement element) {
-        XmlObject xml = XmlObject.Factory.newInstance();
-
-        XmlCursor c = xml.newCursor();
-        c.toNextToken();
-        c.beginElement(element.getName());
-
-        new SampleXmlUtil(false).createSampleForType(element.getType(), c);
-
-        c.dispose();
-
-        XmlOptions options = new XmlOptions();
-        options.put(XmlOptions.SAVE_PRETTY_PRINT);
-        options.put(XmlOptions.SAVE_PRETTY_PRINT_INDENT, 3);
-        options.put(XmlOptions.SAVE_AGGRESSIVE_NAMESPACES);
-        options.setSaveOuter();
-        String result = xml.xmlText(options);
-
-        return result;
-    }
-
-    public static String createSampleForType(SchemaType sType) {
-        XmlObject object = XmlObject.Factory.newInstance();
-        XmlCursor cursor = object.newCursor();
-        // Skip the document node
-        cursor.toNextToken();
-        // Using the type and the cursor, call the utility method to get a
-        // sample XML payload for that Schema element
-        new SampleXmlUtil(false).createSampleForType(sType, cursor);
-        // Cursor now contains the sample payload
-        // Pretty print the result. Note that the cursor is positioned at the
-        // end of the doc so we use the original xml object that the cursor was
-        // created upon to do the xmlText() against.
-
-        cursor.dispose();
-        XmlOptions options = new XmlOptions();
-        options.put(XmlOptions.SAVE_PRETTY_PRINT);
-        options.put(XmlOptions.SAVE_PRETTY_PRINT_INDENT, 3);
-        options.put(XmlOptions.SAVE_AGGRESSIVE_NAMESPACES);
-        options.setSaveOuter();
-        String result = object.xmlText(options);
-
-        return result;
-    }
-
-    Random _picker = new Random(1);
-
-
 
     /**
      * Cursor position Before: <theElement>^</theElement> After:
      * <theElement><lots of stuff/>^</theElement>
      */
     public void createSampleForType(SchemaType stype, XmlCursor xmlc) {
-//		_exampleContent = SoapUI.getSettings().getBoolean( WsdlSettings.XML_GENERATION_TYPE_EXAMPLE_VALUE );
-//		_typeComment = SoapUI.getSettings().getBoolean( WsdlSettings.XML_GENERATION_TYPE_COMMENT_TYPE );
-//		_skipComments = SoapUI.getSettings().getBoolean( WsdlSettings.XML_GENERATION_SKIP_COMMENTS );
-
-//        _exampleContent = false;
-//		_typeComment = false;
-//		_skipComments = false;
-
         QName nm = stype.getName();
         if (nm == null && stype.getContainerField() != null)
             nm = stype.getContainerField().getName();
 
         if (nm != null && excludedTypes.contains(nm)) {
-            if (!_skipComments)
+            if (!skipComments)
                 xmlc.insertComment("Ignoring type [" + nm + "]");
             return;
         }
 
-        if (_typeStack.contains(stype))
+        if (typeStack.contains(stype))
             return;
 
-        _typeStack.add(stype);
+        typeStack.add(stype);
 
         try {
             if (stype.isSimpleType() || stype.isURType()) {
@@ -240,12 +173,12 @@ class SampleXmlUtil {
                     break;
             }
         } finally {
-            _typeStack.remove(_typeStack.size() - 1);
+            typeStack.remove(typeStack.size() - 1);
         }
     }
 
     private void processSimpleType(SchemaType stype, XmlCursor xmlc) {
-        if (_soapEnc) {
+        if (soapEnc) {
             QName typeName = stype.getName();
             if (typeName != null) {
                 xmlc.insertAttributeWithValue(XSI_TYPE, formatQName(xmlc, typeName));
@@ -278,7 +211,7 @@ class SampleXmlUtil {
             return "cid:" + (long) (System.currentTimeMillis() * Math.random());
 
         // if( sType != null )
-        if (!_exampleContent)
+        if (!exampleContent)
             return "?";
 
         if (XmlObject.type.equals(sType))
@@ -388,15 +321,15 @@ class SampleXmlUtil {
                 switch (closestBuiltin(sType).getBuiltinTypeCode()) {
                     case SchemaType.BTC_STRING:
                     case SchemaType.BTC_NORMALIZED_STRING:
-                        result = pick(WORDS, _picker.nextInt(3));
+                        result = pick(WORDS, picker.nextInt(3));
                         break;
 
                     case SchemaType.BTC_TOKEN:
-                        result = pick(WORDS, _picker.nextInt(3));
+                        result = pick(WORDS, picker.nextInt(3));
                         break;
 
                     default:
-                        result = pick(WORDS, _picker.nextInt(3));
+                        result = pick(WORDS, picker.nextInt(3));
                         break;
                 }
 
@@ -439,7 +372,7 @@ class SampleXmlUtil {
     private static final String[] DNS2 = new String[]{"com", "org", "com", "gov", "org", "com", "org", "com", "edu"};
 
     private int pick(int n) {
-        return _picker.nextInt(n);
+        return picker.nextInt(n);
     }
 
     private String pick(String[] a) {
@@ -998,7 +931,7 @@ class SampleXmlUtil {
         if (minOccurs == maxOccurs)
             return minOccurs;
 
-        if (minOccurs == 0 && _ignoreOptional)
+        if (minOccurs == 0 && ignoreOptional)
             return 0;
 
         int result = minOccurs;
@@ -1011,7 +944,7 @@ class SampleXmlUtil {
         // it probably only makes sense to put comments in front of individual
         // elements that repeat
 
-        if (!_skipComments) {
+        if (!skipComments) {
             if (sp.getMaxOccurs() == null) {
                 // xmlc.insertComment("The next " + getItemNameOrType(sp, xmlc) + "
                 // may
@@ -1053,7 +986,7 @@ class SampleXmlUtil {
         addElementTypeAndRestricionsComment(element, xmlc);
 
         // / ^ -> <elemenname></elem>^
-        if (_soapEnc)
+        if (soapEnc)
             xmlc.insertElement(element.getName().getLocalPart()); // test
             // encoded?
             // drop
@@ -1067,10 +1000,10 @@ class SampleXmlUtil {
         // -> <elem>stuff^</elem>
 
         String[] values = null;
-        if (multiValues != null)
-            values = multiValues.get(element.getName());
+        if (multiValuesProvider != null)
+            values = multiValuesProvider.getMultiValues(element.getName()).toArray(new String[]{});
         if (values != null)
-            xmlc.insertChars(StringUtils.join(values, ","));
+            xmlc.insertChars(StringUtils.join(values, "s"));
         else if (sp.isDefault())
             xmlc.insertChars(sp.getDefaultText());
         else
@@ -1113,7 +1046,7 @@ class SampleXmlUtil {
             ENC_OFFSET}));
 
     private void processAttributes(SchemaType stype, XmlCursor xmlc) {
-        if (_soapEnc) {
+        if (soapEnc) {
             QName typeName = stype.getName();
             if (typeName != null) {
                 xmlc.insertAttributeWithValue(XSI_TYPE, formatQName(xmlc, typeName));
@@ -1123,7 +1056,7 @@ class SampleXmlUtil {
         SchemaProperty[] attrProps = stype.getAttributeProperties();
         for (int i = 0; i < attrProps.length; i++) {
             SchemaProperty attr = attrProps[i];
-            if (attr.getMinOccurs().intValue() == 0 && _ignoreOptional)
+            if (attr.getMinOccurs().intValue() == 0 && ignoreOptional)
                 continue;
 
             if (attr.getName().equals(new QName("http://www.w3.org/2005/05/xmlmime", "contentType"))) {
@@ -1131,7 +1064,7 @@ class SampleXmlUtil {
                 continue;
             }
 
-            if (_soapEnc) {
+            if (soapEnc) {
                 if (SKIPPED_SOAP_ATTRS.contains(attr.getName()))
                     continue;
                 if (ENC_ARRAYTYPE.equals(attr.getName())) {
@@ -1145,8 +1078,8 @@ class SampleXmlUtil {
             }
 
             String value = null;
-            if (multiValues != null) {
-                String[] values = multiValues.get(attr.getName());
+            if (multiValuesProvider != null) {
+                String[] values = multiValuesProvider.getMultiValues(attr.getName()).toArray(new String[]{});
                 if (values != null)
                     value = StringUtils.join(values, ",");
             }
@@ -1172,7 +1105,7 @@ class SampleXmlUtil {
 
     private void processChoice(SchemaParticle sp, XmlCursor xmlc, boolean mixed) {
         SchemaParticle[] spc = sp.getParticleChildren();
-        if (!_skipComments)
+        if (!skipComments)
             xmlc.insertComment("You have a CHOICE of the next " + String.valueOf(spc.length) + " items at this level");
 
         for (int i = 0; i < spc.length; i++) {
@@ -1182,7 +1115,7 @@ class SampleXmlUtil {
 
     private void processAll(SchemaParticle sp, XmlCursor xmlc, boolean mixed) {
         SchemaParticle[] spc = sp.getParticleChildren();
-        if (!_skipComments)
+        if (!skipComments)
             xmlc.insertComment("You may enter the following " + String.valueOf(spc.length) + " items in any order");
 
         for (int i = 0; i < spc.length; i++) {
@@ -1193,7 +1126,7 @@ class SampleXmlUtil {
     }
 
     private void processWildCard(SchemaParticle sp, XmlCursor xmlc, boolean mixed) {
-        if (!_skipComments)
+        if (!skipComments)
             xmlc.insertComment("You may enter ANY elements at this point");
         // xmlc.insertElement("AnyElement");
     }
@@ -1238,20 +1171,11 @@ class SampleXmlUtil {
         return returnParticleType.toString();
     }
 
-    private ArrayList<SchemaType> _typeStack = new ArrayList<SchemaType>();
-
-    public boolean isIgnoreOptional() {
-        return _ignoreOptional;
-    }
-
-    public void setIgnoreOptional(boolean ignoreOptional) {
-        this._ignoreOptional = ignoreOptional;
-    }
 
     private void addElementTypeAndRestricionsComment(SchemaLocalElement element, XmlCursor xmlc) {
 
         SchemaType type = element.getType();
-        if (_typeComment && (type != null && type.isSimpleType())) {
+        if (typeComment && (type != null && type.isSimpleType())) {
             String info = "";
 
             XmlAnySimpleType[] values = type.getEnumerationValues();
@@ -1274,4 +1198,11 @@ class SampleXmlUtil {
         }
     }
 
+    public void setTypeComment(boolean b) {
+        typeComment = b;
+    }
+
+    public void setIgnoreOptional(boolean b) {
+        ignoreOptional = b;
+    }
 }

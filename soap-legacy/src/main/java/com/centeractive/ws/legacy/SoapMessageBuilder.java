@@ -79,34 +79,19 @@ class SoapMessageBuilder {
 
     private Definition definition;
     private SchemaDefinitionWrapper definitionWrapper;
-    private Map<QName, String[]> multiValues = null; // TODO What are multiValues???
-    private SoapContext context;
-    private String wsdlPath;
 
     // ----------------------------------------------------------
     // Constructors and factory methods
     // ----------------------------------------------------------
-
     /**
      * @param wsdlUrl url of the wsdl to import
      * @throws WSDLException thrown in case of import errors
      */
     public SoapMessageBuilder(URL wsdlUrl) throws WSDLException {
-        this(SoapContext.builder().build(), wsdlUrl);
-    }
-
-    /**
-     * @param context specifies additional parameters
-     * @param wsdlUrl url of the wsdl to import
-     * @throws WSDLException thrown in case of import errors
-     */
-    public SoapMessageBuilder(SoapContext context, URL wsdlUrl) throws WSDLException {
         WSDLReader reader = new WSDLReaderImpl();
         reader.setFeature("javax.wsdl.verbose", false);
         this.definition = reader.readWSDL(wsdlUrl.toString());
         this.definitionWrapper = new SchemaDefinitionWrapper(definition, wsdlUrl.toString());
-        this.context = context;
-        this.wsdlPath = wsdlUrl.toString();
     }
 
     /**
@@ -189,8 +174,6 @@ class SoapMessageBuilder {
 
     public static String buildEmptyMessage(SoapVersion soapVersion, SoapContext context) {
         SampleXmlUtil generator = new SampleXmlUtil(false, context);
-        generator.setTypeComment(false);
-        generator.setIgnoreOptional(true);
         return generator.createSample(soapVersion.getEnvelopeType());
     }
 
@@ -235,7 +218,6 @@ class SoapMessageBuilder {
         return emptyResponse;
     }
 
-
     // ----------------------------------------------------------
     // INPUT MESSAGE GENERATORS
     // ----------------------------------------------------------
@@ -243,8 +225,6 @@ class SoapMessageBuilder {
         SoapVersion soapVersion = getSoapVersion(binding);
         boolean inputSoapEncoded = WsdlUtils.isInputSoapEncoded(bindingOperation);
         SampleXmlUtil xmlGenerator = new SampleXmlUtil(inputSoapEncoded, context);
-        xmlGenerator.setMultiValues(multiValues);
-        xmlGenerator.setIgnoreOptional(!context.isBuildOptional());
 
         XmlObject object = XmlObject.Factory.newInstance();
         XmlCursor cursor = object.newCursor();
@@ -292,8 +272,6 @@ class SoapMessageBuilder {
     public String buildSoapMessageFromOutput(Binding binding, BindingOperation bindingOperation, SoapContext context) throws Exception {
         boolean inputSoapEncoded = WsdlUtils.isInputSoapEncoded(bindingOperation);
         SampleXmlUtil xmlGenerator = new SampleXmlUtil(inputSoapEncoded, context);
-        xmlGenerator.setIgnoreOptional(!context.isBuildOptional());
-        xmlGenerator.setMultiValues(multiValues);
         SoapVersion soapVersion = getSoapVersion(binding);
 
 
@@ -343,14 +321,6 @@ class SoapMessageBuilder {
     // ----------------------------------------------------------
     // UTILS
     // ----------------------------------------------------------
-    public void setMultiValues(Map<QName, String[]> multiValues) {
-        this.multiValues = multiValues;
-    }
-
-    public void setContext(SoapContext context) {
-        this.context = context;
-    }
-
     public Definition getDefinition() {
         return definition;
     }
@@ -386,7 +356,6 @@ class SoapMessageBuilder {
     // --------------------------------------------------------------------------
     // Internal methods - END OF PUBLIC API
     // --------------------------------------------------------------------------
-
     private static SoapVersion getSoapVersion(Binding binding) {
         List<?> list = binding.getExtensibilityElements();
 
@@ -408,7 +377,6 @@ class SoapMessageBuilder {
         }
         throw new SoapBuilderException("SOAP binding not recognized");
     }
-
 
     private void addHeaders(List<WsdlUtils.SoapHeader> headers, SoapVersion soapVersion, XmlCursor cursor, SampleXmlUtil xmlGenerator) throws Exception {
         // reposition
@@ -633,7 +601,6 @@ class SoapMessageBuilder {
         }
     }
 
-
     private static String buildEmptyFault(SampleXmlUtil generator, SoapVersion soapVersion, SoapContext context) {
         String emptyResponse = buildEmptyMessage(soapVersion, context);
         try {
@@ -654,6 +621,4 @@ class SoapMessageBuilder {
         }
         return emptyResponse;
     }
-
-
 }

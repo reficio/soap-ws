@@ -60,7 +60,7 @@ public class MessageComplianceTest {
             .exampleContent(false)
             .typeComments(false)
             .alwaysBuildHeaders(false)
-            .valueComments(true)
+            .valueComments(false)
             .buildOptional(true)
             .build();
 
