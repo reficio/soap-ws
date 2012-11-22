@@ -79,6 +79,33 @@ public class SoapClientExamplesTest {
     }
 
     /**
+     * Here we're gonna generate the SOAP message using SoapBuilder and post it using SoapClient
+     */
+    @Test
+    public void invoke_tradePriceRequest_generatedMessages() throws Exception, SAXException, WSDLException {
+        // construct the client
+        String url = String.format("http://localhost:%d%s", port, contextPath);
+        SoapClient client = SoapClient.builder()
+                .endpointUrl(url)
+                .build();
+
+        WsdlParser parser = WsdlParser.parse(wsdlUrl);
+        SoapBuilder soapBuilder = parser.binding(bindingName).builder();
+
+        // get the operation to invoked -> assumption our operation is the first operation in the WSDL's
+        SoapOperation operation = soapBuilder.operation().name("GetLastTradePrice").find();
+
+        // construct the request
+        String request = soapBuilder.buildInputMessage(operation);
+        // post the request to the server
+        String response = client.post(request);
+        // get the response
+        String expectedResponse = soapBuilder.buildOutputMessage(operation);
+
+        assertTrue(XMLUnit.compareXML(expectedResponse, response).identical());
+    }
+
+    /**
      * Here we're gonna simply post SOAP hardcoded message using SoapClient
      */
     @Test
@@ -116,34 +143,5 @@ public class SoapClientExamplesTest {
 
         assertTrue(XMLUnit.compareXML(expectedResponse, response).identical());
     }
-
-
-    /**
-     * Here we're gonna generate the SOAP message using SoapBuilder and post it using SoapClient
-     */
-    @Test
-    public void invoke_tradePriceRequest_generatedMessages() throws Exception, SAXException, WSDLException {
-        // construct the client
-        String url = String.format("http://localhost:%d%s", port, contextPath);
-        SoapClient client = SoapClient.builder()
-                .endpointUrl(url)
-                .build();
-
-        WsdlParser parser = WsdlParser.parse(wsdlUrl);
-        SoapBuilder soapBuilder = parser.binding(bindingName).builder();
-
-        // get the operation to invoked -> assumption our operation is the first operation in the WSDL's
-        SoapOperation operation = soapBuilder.operation().name("GetLastTradePrice").find();
-
-        // construct the request
-        String request = soapBuilder.buildInputMessage(operation);
-        // post the request to the server
-        String response = client.post(request);
-        // get the response
-        String expectedResponse = soapBuilder.buildOutputMessage(operation);
-
-        assertTrue(XMLUnit.compareXML(expectedResponse, response).identical());
-    }
-
 
 }
