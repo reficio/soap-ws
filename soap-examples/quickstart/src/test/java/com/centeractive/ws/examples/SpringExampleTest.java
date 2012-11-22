@@ -49,7 +49,6 @@ public class SpringExampleTest {
 
         String response = client.post(request);
         assertNotNull(response);
-//        log.info("\n"+response);
     }
 
 }
