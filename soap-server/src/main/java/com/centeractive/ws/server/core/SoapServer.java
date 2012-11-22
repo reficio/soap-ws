@@ -22,6 +22,7 @@ import com.centeractive.ws.server.ServiceRegistrationException;
 import com.centeractive.ws.server.SoapServerException;
 import com.centeractive.ws.server.endpoint.GenericContextDomEndpoint;
 import com.centeractive.ws.server.responder.RequestResponder;
+import org.apache.log4j.Logger;
 import org.mortbay.jetty.AbstractConnector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
@@ -34,6 +35,9 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
 import javax.servlet.ServletContext;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -54,6 +58,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class SoapServer {
 
+    private final static Logger log = Logger.getLogger(SoapServer.class);
+
     private Integer httpPort = HTTP_PORT;
     private Integer httpsPort = HTTPS_PORT;
     private boolean reuseAddress = REUSE_ADDRESS;
@@ -63,11 +69,13 @@ public final class SoapServer {
     private Integer maxThreads = MAX_THREADS_COUNT;
     private Integer threadKeepAliveTimeInSeconds = THREAD_KEEP_ALIVE_TIME_IN_SECONDS;
 
-    private boolean http;
-    private boolean https;
     private URL keyStoreUrl;
     private String keyStoreType = KEYSTORE_TYPE;
     private String keyStorePassword;
+
+    // helper attributes
+    private boolean http;
+    private boolean https;
 
     // runtime attributes
     private ClassPathXmlApplicationContext context;
@@ -87,6 +95,34 @@ public final class SoapServer {
         } catch (Exception ex) {
             throw new SoapServerException(ex);
         }
+    }
+
+    public boolean isRunning() {
+        return server.isRunning();
+    }
+
+    public boolean isStarted() {
+        return server.isStarted();
+    }
+
+    public boolean isStarting() {
+        return server.isStarting();
+    }
+
+    public boolean isStopping() {
+        return server.isStopping();
+    }
+
+    public boolean isStopped() {
+        return server.isStopped();
+    }
+
+    public boolean isNotRunning() {
+        return isStopping() || isStopped();
+    }
+
+    public boolean isFailed() {
+        return server.isFailed();
     }
 
     /**
@@ -118,6 +154,8 @@ public final class SoapServer {
     public void registerRequestResponder(String contextPath, RequestResponder responder) throws ServiceRegistrationException {
         checkNotNull(contextPath, "contextPath cannot be null");
         checkNotNull(responder, "responder cannot be null");
+        validateUrl(contextPath);
+        log.info(String.format("Registering responder [%s] under the url [%s]", responder, getUrl(contextPath)));
         endpoint.registerRequestResponder(contextPath, responder);
     }
 
@@ -129,7 +167,23 @@ public final class SoapServer {
      */
     public void unregisterRequestResponder(String contextPath) throws ServiceRegistrationException {
         checkNotNull(contextPath, "contextPath cannot be null");
+        log.info(String.format("Unregistering responder from the url [%s]", getUrl(contextPath)));
         endpoint.unregisterRequestResponder(contextPath);
+    }
+
+    private String getUrl(String contextPath) {
+        String format = String.format("%s://localhost:%d%s", http ? "http" : "https", http ? httpPort : httpsPort, contextPath);
+        return format;
+    }
+
+    private void validateUrl(String contextPath) {
+        checkArgument(contextPath.startsWith("/"), "contextPath has to begin with a slash");
+        String url = getUrl(contextPath);
+        try {
+            new URI(url);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(String.format("URL with context path is malformed [%s]", url), e);
+        }
     }
 
     /**
@@ -234,14 +288,14 @@ public final class SoapServer {
     /**
      * Builder to construct a properly populated SoapServer
      */
-    public static class SoapServerBuilder {
+    public static class Builder {
         private final SoapServer server = new SoapServer();
 
         /**
          * @param value Sets the http port on which the server listens. Has to be not negative.
          * @return builder
          */
-        public SoapServerBuilder httpPort(int value) {
+        public Builder httpPort(int value) {
             checkArgument(value >= 0);
             server.http = true;
             server.httpPort = value;
@@ -252,7 +306,7 @@ public final class SoapServer {
          * @param value Sets the https port on which the server listens. Has to be not negative.
          * @return builder
          */
-        public SoapServerBuilder httpsPort(int value) {
+        public Builder httpsPort(int value) {
             checkArgument(value >= 0);
             server.https = true;
             server.httpsPort = value;
@@ -263,7 +317,7 @@ public final class SoapServer {
          * @param value Sets the connection max idle time in seconds. Has to be not negative.
          * @return builder
          */
-        public SoapServerBuilder connectionMaxIdleTimeInSeconds(int value) {
+        public Builder connectionMaxIdleTimeInSeconds(int value) {
             checkArgument(value >= 0);
             server.connectionMaxIdleTimeInSeconds = value;
             return this;
@@ -273,7 +327,7 @@ public final class SoapServer {
          * @param value Sets the number of http server connector acceptor threads. Has to be positive.
          * @return builder
          */
-        public SoapServerBuilder acceptorThreads(int value) {
+        public Builder acceptorThreads(int value) {
             checkArgument(value > 0);
             server.acceptorThreads = value;
             return this;
@@ -283,7 +337,7 @@ public final class SoapServer {
          * @param value Sets the number of http server core threads. Has to be positive.
          * @return builder
          */
-        public SoapServerBuilder coreThreads(int value) {
+        public Builder coreThreads(int value) {
             checkArgument(value > 0);
             server.coreThreads = value;
             return this;
@@ -293,7 +347,7 @@ public final class SoapServer {
          * @param value Sets the maximal number of threads that the http server may spawn. Has to be positive.
          * @return builder
          */
-        public SoapServerBuilder maxThreads(int value) {
+        public Builder maxThreads(int value) {
             checkArgument(value > 0);
             server.maxThreads = value;
             return this;
@@ -303,7 +357,7 @@ public final class SoapServer {
          * @param value Sets the value of thread keep alive in seconds. Has to be not negative.
          * @return builder
          */
-        public SoapServerBuilder threadKeepAliveTimeInSeconds(int value) {
+        public Builder threadKeepAliveTimeInSeconds(int value) {
             checkArgument(value >= 0);
             server.threadKeepAliveTimeInSeconds = value;
             return this;
@@ -314,7 +368,7 @@ public final class SoapServer {
          *              one certificate in the keystore it is undefined which of them will be used
          * @return builder
          */
-        public SoapServerBuilder keyStoreUrl(URL value) {
+        public Builder keyStoreUrl(URL value) {
             checkNotNull(value);
             server.keyStoreUrl = value;
             return this;
@@ -324,7 +378,7 @@ public final class SoapServer {
          * @param value Specifies the type of the keystore. Null is not accepted.
          * @return builder
          */
-        public SoapServerBuilder keyStoreType(String value) {
+        public Builder keyStoreType(String value) {
             checkNotNull(value);
             server.keyStoreType = value;
             return this;
@@ -334,7 +388,7 @@ public final class SoapServer {
          * @param value keystore password. Null is accepted.
          * @return builder
          */
-        public SoapServerBuilder keyStorePassword(String value) {
+        public Builder keyStorePassword(String value) {
             server.keyStorePassword = value;
             return this;
         }
@@ -343,7 +397,7 @@ public final class SoapServer {
          * @param value Sets the reuseAddress on the underlying @see java.net.Socket
          * @return builder
          */
-        public SoapServerBuilder reuseAddress(boolean value) {
+        public Builder reuseAddress(boolean value) {
             server.reuseAddress = value;
             return this;
         }
@@ -362,8 +416,8 @@ public final class SoapServer {
     /**
      * @return a new instance of a SoapServer Builder
      */
-    public static SoapServerBuilder builder() {
-        return new SoapServerBuilder();
+    public static Builder builder() {
+        return new Builder();
     }
 
 }
