@@ -3,11 +3,14 @@
 ## A lightweight and easy-to-use Java library to handle SOAP on a purely XML level.
 
 ### Intro
-Welcome to soap-ws! This is a lightweight and easy-to-use Java library to handle SOAP message generation and SOAP message transmission on a purely XML level. With the usage of this library
-within few lines of code you can easily import your WSDL and generate SOAP messages directly in an XML format. 
-Then you can use the SoapClient to transmit this message over HTTP(s) to a web-service endpoint. 
-Finally, you can run SoapServer to receive SOAP messages and and respond to them. 
-And all of that requires no classes or stubs generation - everything happens directly in an XML format.
+Welcome to soap-ws! This is a lightweight and easy-to-use Java library that enables handling SOAP message generation and transmission on a purely XML level. soap-ws is based on four main abstractions:
+
+* WsdlParser can easily parse your WSDL and produce SoapBuilders,
+* SoapBuilder can generate SOAP messages directly in the XML format, 
+* SoapClient can be used to transmit a SOAP message over HTTP(s) to a web-service endpoint, 
+* SoapServer can be leveraged to process SOAP messages and and respond to them. 
+
+All of that requires no generation of stubs - everything happens directly in XML.
 
 
 ### Why should you use soap-ws?
@@ -24,38 +27,38 @@ Read this carefully and check if you know what we are talking about.
 
 Yes, that's what soap-ws can do for you. But it can do much more, just dive in and check the plethora of stuff that we have implemented.
 
-### SOAP specifications - what is supported
+### What is supported?
 * supports WSDL 1.1
 * supports SOAP 1.1 and 1.2
 * supports all four WS flavors: rpc-encoded, rpc-literal, document-literal and document-encoded
-* supports SSL
+* supports SSL and basic-authentication
+* supports SOCKS and HTTP(s) proxies
+* supports SpringFramework
 
 ### Main features
 
 soap-builder:
 
+* fetch, parse and store WSDL (hierarchical WSDL and hierarchical XSD supported)
 * soap message generation in the XML format on the basis of imported WSDL 
-* fetch and store of a hierarchical WSDL with hierarchical XSD included in it
-
-soap-server:
-
-* endpoint exposition - communication and message handling purely in the XML format
-* auto-responder - respond to a soap request with a sample content - in an unit-test
-* HTTP and HTTPS support
-* extensive operation matcher - match a request to a BindingOperation from the WSDL
 
 soap-client:
 
 * communication and message handling purely in the XML format
 * basic authentication and SSL support
-* proxy with basic authentication support
-* proper SOAPAction support in both SOAP versions
+* HTTP and SOCKS proxy support, with/without basic authentication 
+
+soap-server:
+
+* endpoint exposition - communication and message handling purely in the XML format
+* extensive operation matcher - validate and match a request to a BindingOperation from the WSDL
+* auto-responder - respond to a soap request with a sample content
+* HTTP and HTTPS support
 
 ### License
 The project is open-source and distributed under the Apache license, Version 2.0.
-One module (soap-builder) is distributed under the LGPL 2.1 license (see the Note).
+One module (soap-legacy) is distributed under the LGPL 2.1 license (see the Note).
 You can confidently use soap-ws in your commercial project.
-
 
 
 ## User Guide
@@ -63,7 +66,7 @@ You can confidently use soap-ws in your commercial project.
 ### Quick-start
 
 #### Add soap-ws to your maven project
-In order to use soap-ws in your project you have to declare soap-ws in the dependencies section of your pom.xml. You can add soap-builder, soap-client, soap-server or all of them, depending on the fact which components you want to use.
+In order to use soap-ws in your project you have to declare soap-ws in the dependencies section of your pom.xml. You can mix and match soap-builder, soap-client, soap-server artifacts, depending on the fact what you want to achieve.
 ```xml
     <dependencies>
         <dependency>
@@ -93,47 +96,91 @@ soap-ws is not yet located in the central maven repo, thus you also have to add 
     </repositories>
 ```
 
-#### soap-builder
-SoapBuilder interface describes the functionality of generation of the XML SOAP messages. An instance of SoapBuilder is always bound to one wsdl and one of its bindings. As you probably know there can be more bindings in one WSDL file. In order to handle all of theme you will need an instance of SoapBuilder per binding. How to construct an instance of SoapBuilder you may ask?
-First, we have to construct a WsdlParser - the simplest way is to invoke the static factory method "parse" passing the URL of the WSDL file (1). 
+If you are a Gradle user you probably know how to do it :)
+
+#### Consume a Web-Serivce in 60 seconds
+Let's consume the CurrencyConverter Web-Service. Thanks to the fluent builders the API is straigtforward and intuitive. 
+Does it need any explanation? Welcome to soap-ws :)
+```java
+	WsdlParser parser = WsdlParser.parse("http://www.webservicex.net/CurrencyConvertor.asmx?WSDL");
+    
+    SoapBuilder builder = parser.binding()
+    	.localPart("CurrencyConvertorSoap")
+    	.builder();
+    SoapOperation operation = builder.operation()
+    	.soapAction("http://www.webserviceX.NET/ConversionRate")
+    	.find();
+    Request request = builder.buildInputMessage(operation)
+    
+    SoapClient client = SoapClient.builder()
+    	.endpointUrl("http://www.webservicex.net/CurrencyConvertor.asmx")
+    	.build();
+    String response = client.post(request);
+```
+
+
+#### Provide a Web-Service in 60 seconds
+Let's provide the CurrencyConverter Web-Service that returns random results (compliant with the schema!).
+```java
+	WsdlParser parser = WsdlParser.parse("http://www.webservicex.net/CurrencyConvertor.asmx?WSDL");
+	SoapBuilder builder = parser.binding()
+    	.localPart("CurrencyConvertorSoap")
+    	.builder();
+    	
+    SoapServer server = SoapServer.builder()
+    	.httpPort(9090)
+   		.build();
+    server.registerRequestResponder("/currencyConvertor", new AutoResponder(builder));
+    server.start();
+``` 
+
+That's more or less what you need to generate a SOAP message and consume/provide a Web-Service.
+
+### API
+Let's have a closer look at the API and the main abstractions.
+
+#### SoapBuilder
+SoapBuilder interface describes the features of generation of XML SOAP messages. An instance of the SoapBuilder class is always bound to a specific wsdl file and one of its bindings. There can be more bindings in one WSDL file - in order to handle all of theme an instance of SoapBuilder is needed for every binding. 
+The simplest way to construct an instance of the WsdlParser is to call the static factory method "parse", passing the URL of the WSDL file (1). 
 ```java
     WsdlParser parser = WsdpParser.parse(wsdlUrl);  // (1)
         
-    List<QName> bindings = parser.getBindings(); // (2)        
-    SoapBuilder builder = parser.getBinding(bindingName); // (3)    
+	List<QName> bindings = parser.getBindings(); // (2)        	SoapBuilder builder = parser.binding().localPart("CurrencyConvertorSoap").builder(); // (3)    
+	parser.printBindings(); // (4)
     
-    List<SoapOperation> operations = builder.getOperations(); // (4)
+    List<SoapOperation> operations = builder.getOperations(); // (5)
+	SoapOperation operation = builder.operation().name("ConversionRate").find();  // (6)
     
-    SoapOperation op = operations.iterator.next(); // take the first operation
 ```
-SoapParser reads the specified WSDL file recursively, fetching all included WSDL and XSD files, and constructs an underlying javax.wsdl.Definition object that is the Java-based representation of the WSDL (see WSDL4j to read more about the Definitoin object). 
+SoapParser reads the specified WSDL file recursively, fetching all included WSDL and XSD files and constructs an underlying javax.wsdl.Definition object that is the Java-based representation of the WSDL (see WSDL4j to read more about the Definitoin object). 
 
-In order to generate a SOAP message you have to specify the QName of the Binding. To check what binding are defined in the WSDL invoke the getBindings() method (2). You can also invoke the printBindings() method that will print all the binding to the stdout (just for quick hacking around).
+In order to generate a SOAP message you have to specify the Binding. To check what binding are defined in the WSDL invoke the getBindings() method (2). You can also use the binding finder, just call the binding() method and add additional parameters such as localPart(""), etc. Then invoke builder to get an instance of the SoapBuilder(). 
+Finally, you can invoke the printBindings() method that will print all the  binding to the stdout (just as a quick hack) (4).
 
-When you decide which binding you want to use you can easily create a SoapBuilder instance just by invoking the getBuilder() method on the SoapParser object (3).
-
-The last step is to generate a SOAP message using the SoapBuilder. In order to do it though you have to specify the SOAP operation. In order to get the list of operations specified in that binding just invoke the getOperations() method on the SoapBuilder object (4).
+The last step is to generate a SOAP message using the SoapBuilder. In order to do it though you have to specify the SOAP operation. In order to get the list of operations specified in that binding just invoke the getOperations() method on the SoapBuilder object (5). You can also use the SOAP operation finder - just call the operation() method and chain additional parameters such as name(), etc. Then call find() and get a reference to the Soap Operation.
 
 Now you are all set. To generate a SOAP message in the XML format just invoke one of the methods defined in the SoapBuilder interface specifiying the SoapOperation. You can also build generic empty messages invoking buildEmptyMessage or buildFault:
 ```java
 	public interface SoapBuilder {
 
-	    String buildInputMessage(SoapOperation operation);
+		String buildInputMessage(SoapOperation operation);
     	String buildInputMessage(SoapOperation operation, SoapContext context);
+
 	    String buildOutputMessage(SoapOperation operation);
     	String buildOutputMessage(SoapOperation operation, SoapContext context);
-    
-    	String buildFault(String code, String message);
-    	String buildEmptyFault();
-    	String buildEmptyMessage();
 
-		List<SoapOperation> getOperations();
-		QName getBindingName();
-    	Binding getBinding(); 	
+	    String buildFault(String code, String message);
+    	String buildFault(String code, String message, SoapContext context);
+
+	    String buildEmptyFault();
+    	String buildEmptyFault(SoapContext context);
+	    String buildEmptyMessage();
+
+		// (…)
 	}
 ```
 
-Last, but not least. In most of the cases, you can relay on the default settings of the SoapContext the specifies how messages are generate, but if you would like to change it you have to populate the SoapContext object and pass it either to the SoapParser (from that moment on, SoapBuilder will use this context as the default one), or to single methods, changing the context of the generation for time span of single method invocation. In order to populate a SoapContext object use the fluent builder. 
+Last, but not least. In most of the cases, you can relay on the default settings of the SoapContext that specifies how messages are generated, but if you would like to change it you have to populate the SoapContext object and pass it either to the WsdlParser (from that moment on, SoapBuilder will use this context as the default one), or to single methods, changing the context of the generation for the time span of a single method invocation. In order to populate a SoapContext object use the fluent builder presented below. 
 ```java
     SoapContext context = SoapContext.builder()
         .alwaysBuildHeaders(true)
@@ -144,9 +191,7 @@ Last, but not least. In most of the cases, you can relay on the default settings
         .build();
 ```
 
-OK, now the easy part begins...
-
-#### soap-client
+#### SoapClient
 You can create an instance of a soap-client using a fluent builder. If you want to use a plain HTTP connection without tweaking any advance options you are good to go with the following snippet:
 ```java
     SoapClient client = SoapClient.builder()
@@ -162,9 +207,9 @@ You can also skip the SOAPAction header and send the envelope only:
 ```java
     client.post(envelope);
 ```
-Isn't it easy? But it's gonna be even better :)
 
-#### soap-server
+
+#### SoapServer
 Use a similar builder to create an instance of the soap-server. 
 ```java
     SoapServer server = SoapServer.builder()
@@ -233,52 +278,23 @@ That's a lot of stuff. I hope you enjoyed it! Have a look at the examples locate
 * soap-legacy - legacy code extracted from 3rd party projects
 
 ### Example usage
-#### Post a SOAP message with SoapClient
-```java
-	String url = String.format("http://localhost:%d%s", port, contextPath);
-    SoapClient client = SoapClient.builder()
-            .endpointUrl(url)
-            .build();
-
-    String request =
-            "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"" +
-                    "xmlns:stoc=\"http://centeractive.com/stockquote.wsdl\""+
-                    "xmlns:stoc1=\"http://centeractive.com/stockquote.xsd\">\n" +
-                    "   <soapenv:Header/>\n" +
-                    "   <soapenv:Body>\n" +
-                    "      <stoc:GetLastTradePrice>\n" +
-                    "         <stoc1:TradePriceRequest>\n" +
-                    "            <tickerSymbol>?</tickerSymbol>\n" +
-                    "         </stoc1:TradePriceRequest>\n" +
-                    "      </stoc:GetLastTradePrice>\n" +
-                    "   </soapenv:Body>\n" +
-                    "</soapenv:Envelope>";
-
-    String response = client.post(request);
-```    
 
 #### Generate and post a SOAP message
 ```java
-	// construct the client
-    String url = String.format("http://localhost:%d%s", port, contextPath);
+	WsdlParser parser = WsdlParser.parse("http://www.webservicex.net/CurrencyConvertor.asmx?WSDL");
+    
+    SoapBuilder builder = parser.binding()
+    	.localPart("CurrencyConvertorSoap")
+    	.builder();
+    SoapOperation operation = builder.operation()
+    	.soapAction("http://www.webserviceX.NET/ConversionRate")
+    	.find();
+    Request request = builder.buildInputMessage(operation)
+    
     SoapClient client = SoapClient.builder()
-            .endpointUrl(url)
-            .build();
-
-    SoapParser parser = new SoapParser(wsdlUrl);
-    SoapBuilder soapBuilder = parser.getBuilder(bindingName);
-
-    // get the operation to invoked -> assumption our operation is the first operation in the WSDL's
-    SoapOperation operation = soapBuilder.getOperations().iterator().next();
-
-    // construct the request
-    String request = soapBuilder.buildInputMessage(operation);
-    // post the request to the server
+    	.endpointUrl("http://www.webservicex.net/CurrencyConvertor.asmx")
+    	.build();
     String response = client.post(request);
-    // get the response
-    String expectedResponse = soapBuilder.buildOutputMessage(operation);
-
-    assertTrue(XMLUnit.compareXML(expectedResponse, response).identical());
 ```
 
 #### Create a SoapServer
@@ -296,13 +312,13 @@ That's a lot of stuff. I hope you enjoyed it! Have a look at the examples locate
             .build();
     server.start();
 
-    QName bindingName = new QName("http://centeractive.com/stockquote.wsdl", "StockQuoteSoapBinding");
-    URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "stockquote-service.wsdl");
-
-    SoapParser parser = new SoapParser(wsdlUrl);
-    AutoResponder responder = new AutoResponder(parser.getBuilder(bindingName));
+    URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "wsdl/stockquote-service.wsdl");
+    WsdlParser parser = WsdlParser.parse(wsdlUrl);
+    SoapBuilder builder = parser.binding().localPart("StockQuoteSoapBinding").builder();
+    AutoResponder responder = new AutoResponder(builder);
 
     server.registerRequestResponder("/service", responder);
+    server.stop();
 ```
 
 #### Create a SoapServer with a custom responder
@@ -312,10 +328,10 @@ That's a lot of stuff. I hope you enjoyed it! Have a look at the examples locate
             .build();
     server.start();
 
-    URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "stockquote-service.wsdl");
-    SoapParser parser = new SoapParser(wsdlUrl);
-    // assumption -> we take the first binding
-    final SoapBuilder builder = parser.getBuilder(parser.getBindings().get(0));
+    URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "wsdl/stockquote-service.wsdl");
+    WsdlParser parser = WsdlParser.parse(wsdlUrl);
+    final SoapBuilder builder = parser.binding().localPart("StockQuoteSoapBinding").builder();
+    
     AbstractResponder customResponder = new AbstractResponder(builder) {
         @Override
         public Source respond(SoapOperation invokedOperation, SoapMessage message) {
