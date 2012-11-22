@@ -145,7 +145,8 @@ The simplest way to construct an instance of the WsdlParser is to call the stati
 ```java
     WsdlParser parser = WsdpParser.parse(wsdlUrl);  // (1)
         
-	List<QName> bindings = parser.getBindings(); // (2)        	SoapBuilder builder = parser.binding().localPart("CurrencyConvertorSoap").builder(); // (3)    
+	List<QName> bindings = parser.getBindings(); // (2)
+	SoapBuilder builder = parser.binding().localPart("CurrencyConvertorSoap").builder(); // (3)
 	parser.printBindings(); // (4)
     
     List<SoapOperation> operations = builder.getOperations(); // (5)
