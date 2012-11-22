@@ -28,14 +28,26 @@
 
     <!-- soap-client part -->
     <bean id="soapClientFactory" class="com.centeractive.ws.client.core.SoapClientFactory">
-        <property name="endpointUrl" value="http://onet.pl:80"/>
+        <property name="endpointUrl" value="http://localhost:8778/currencyConverter/soap"/>
     </bean>
 
     <bean id="soapClient" class="com.centeractive.ws.client.core.SoapClient" factory-bean="soapClientFactory" factory-method="create"/>
+
 
     <!-- soap-server part -->
     <bean id="autoResponder" class="com.centeractive.ws.server.responder.AutoResponder">
         <constructor-arg ref="soapBuilder"/>
     </bean>
+
+    <bean id="soapServerFactory" class="com.centeractive.ws.server.core.SoapServerFactory">
+        <property name="httpPort" value="8778"/>
+        <property name="responders">
+            <map>
+                <entry key="/currencyConverter/soap" value-ref="autoResponder" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="soapServer" factory-bean="soapServerFactory" factory-method="create" init-method="start"/>
 
 </beans>
