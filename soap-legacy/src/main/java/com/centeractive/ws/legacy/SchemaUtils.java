@@ -103,12 +103,12 @@ class SchemaUtils {
 
         defaultSchemas.put(targetNamespace, xmlObject);
 
-        log.info("Added default schema from " + url.getPath() + " with targetNamespace " + targetNamespace);
+        log.debug("Added default schema from " + url.getPath() + " with targetNamespace " + targetNamespace);
     }
 
     public static SchemaTypeSystem loadSchemaTypes(String wsdlUrl, SchemaLoader loader) {
         try {
-            log.info("Loading schema types from [" + wsdlUrl + "]");
+            log.debug("Loading schema types from [" + wsdlUrl + "]");
             ArrayList<XmlObject> schemas = new ArrayList<XmlObject>(getSchemas(wsdlUrl, loader).values());
             return buildSchemaTypes(schemas);
         } catch (Exception e) {
@@ -228,7 +228,7 @@ class SchemaUtils {
             return;
         }
 
-        log.info("Getting schema " + wsdlUrl);
+        log.debug("Getting schema " + wsdlUrl);
 
         ArrayList<?> errorList = new ArrayList<Object>();
 
