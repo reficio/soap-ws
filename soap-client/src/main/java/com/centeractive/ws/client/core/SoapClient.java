@@ -20,7 +20,6 @@ package com.centeractive.ws.client.core;
 
 import com.centeractive.ws.client.SoapClientException;
 import com.centeractive.ws.client.TransmissionException;
-import com.google.common.base.Preconditions;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -289,26 +288,26 @@ public final class SoapClient {
         }
 
         /**
-         * @param urlString URL of the SOAP endpoint to whom the client should send messages. Null is not accepted.
+         * @param value URL of the SOAP endpoint to whom the client should send messages. Null is not accepted.
          * @return builder
          */
-        public Builder endpointUrl(String urlString) {
-            checkNotNull(urlString);
+        public Builder endpointUrl(String value) {
+            checkNotNull(value);
             try {
-                URL url = new URL(urlString);
+                URL url = new URL(value);
                 return endpointUrl(url);
             } catch (MalformedURLException ex) {
-                throw new SoapClientException(String.format("URL [%s] is malformed", urlString), ex);
+                throw new SoapClientException(String.format("URL [%s] is malformed", value), ex);
             }
         }
 
         /**
-         * @param url URL of the SOAP endpoint to whom the client should send messages. Null is not accepted.
+         * @param value URL of the SOAP endpoint to whom the client should send messages. Null is not accepted.
          * @return builder
          */
-        public Builder endpointUrl(URL url) {
-            checkNotNull(url);
-            client.serverUrl = url;
+        public Builder endpointUrl(URL value) {
+            checkNotNull(value);
+            client.serverUrl = value;
             client.tlsEnabled = client.serverUrl.getProtocol().equalsIgnoreCase("https");
             return this;
         }
