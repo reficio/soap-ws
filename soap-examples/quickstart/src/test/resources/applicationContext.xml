@@ -3,13 +3,27 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- soap-builder part -->
+    <!-- wsdl-parser part (locally referenced wsdl) -->
+    <bean id="wsdl" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg><value>wsdl/currency-convertor.wsdl</value></constructor-arg>
+    </bean>
+
+    <bean id="wsdlUrl" class="java.net.URL" factory-bean="wsdl" factory-method="getURL"/>
+
+    <!-- uncomment to use the local wsdl" -->
+    <!--<bean id="wsdlParser" class="com.centeractive.ws.builder.core.WsdlParser" factory-method="parse">-->
+        <!--<constructor-arg ref="wsdlUrl"/>-->
+    <!--</bean>-->
+
+    <!-- wsdl-parser part (remote wsdl) -->
     <bean id="wsdlParser" class="com.centeractive.ws.builder.core.WsdlParser" factory-method="parse">
         <constructor-arg>
             <value>http://www.webservicex.net/CurrencyConvertor.asmx?WSDL</value>
         </constructor-arg>
     </bean>
 
+
+    <!-- soap-builder part -->
     <bean id="soapContext" class="com.centeractive.ws.SoapContext">
         <constructor-arg name="exampleContent" type="boolean" value="true"/>
         <constructor-arg name="typeComments" type="boolean" value="true"/>
