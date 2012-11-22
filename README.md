@@ -357,18 +357,32 @@ You can find all these working examples in the soap-examples project. Enjoy!
 #### Spring example
 Spring configuration:
 ```xml
-	<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
     <beans xmlns="http://www.springframework.org/schema/beans"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-    
-        <!-- soap-builder part -->
+
+        <!-- wsdl-parser part (locally referenced wsdl) -->
+        <bean id="wsdl" class="org.springframework.core.io.ClassPathResource">
+            <constructor-arg><value>wsdl/currency-convertor.wsdl</value></constructor-arg>
+        </bean>
+
+        <bean id="wsdlUrl" class="java.net.URL" factory-bean="wsdl" factory-method="getURL"/>
+
+        <!-- uncomment to use the local wsdl" -->
+        <!--<bean id="wsdlParser" class="com.centeractive.ws.builder.core.WsdlParser" factory-method="parse">-->
+            <!--<constructor-arg ref="wsdlUrl"/>-->
+        <!--</bean>-->
+
+        <!-- wsdl-parser part (remote wsdl) -->
         <bean id="wsdlParser" class="com.centeractive.ws.builder.core.WsdlParser" factory-method="parse">
             <constructor-arg>
                 <value>http://www.webservicex.net/CurrencyConvertor.asmx?WSDL</value>
             </constructor-arg>
         </bean>
-    
+
+
+        <!-- soap-builder part -->
         <bean id="soapContext" class="com.centeractive.ws.SoapContext">
             <constructor-arg name="exampleContent" type="boolean" value="true"/>
             <constructor-arg name="typeComments" type="boolean" value="true"/>
@@ -376,28 +390,28 @@ Spring configuration:
             <constructor-arg name="alwaysBuildHeaders" type="boolean" value="true"/>
             <constructor-arg name="valueComments" type="boolean" value="true"/>
         </bean>
-    
+
         <bean id="soapBuilder" class="com.centeractive.ws.builder.SoapBuilder" factory-bean="wsdlParser" factory-method="getBuilder">
             <constructor-arg name="bindingName">
                 <value>{http://www.webserviceX.NET/}CurrencyConvertorSoap</value>
             </constructor-arg>
             <constructor-arg name="context" ref="soapContext"/>
         </bean>
-    
-    
+
+
         <!-- soap-client part -->
         <bean id="soapClientFactory" class="com.centeractive.ws.client.core.SoapClientFactory">
             <property name="endpointUrl" value="http://localhost:8778/currencyConverter/soap"/>
         </bean>
-    
+
         <bean id="soapClient" class="com.centeractive.ws.client.core.SoapClient" factory-bean="soapClientFactory" factory-method="create"/>
-    
-    
+
+
         <!-- soap-server part -->
         <bean id="autoResponder" class="com.centeractive.ws.server.responder.AutoResponder">
             <constructor-arg ref="soapBuilder"/>
         </bean>
-    
+
         <bean id="soapServerFactory" class="com.centeractive.ws.server.core.SoapServerFactory">
             <property name="httpPort" value="8778"/>
             <property name="responders">
@@ -406,9 +420,9 @@ Spring configuration:
                 </map>
             </property>
         </bean>
-    
+
         <bean id="soapServer" factory-bean="soapServerFactory" factory-method="create" init-method="start"/>
-    
+
     </beans>
 ```
 
