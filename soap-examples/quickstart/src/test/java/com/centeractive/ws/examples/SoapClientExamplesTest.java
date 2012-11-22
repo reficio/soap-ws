@@ -49,7 +49,7 @@ public class SoapClientExamplesTest {
     private static final int port = 9797;
     private static final String contextPath = "/stockquote";
 
-    private static final URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "stockquote-service.wsdl");
+    private static final URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "wsdl/stockquote-service.wsdl");
     private static final QName bindingName = new QName("http://centeractive.com/stockquote.wsdl", "StockQuoteSoapBinding");
     private static SoapBuilder builder;
 

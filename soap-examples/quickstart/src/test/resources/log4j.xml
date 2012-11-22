@@ -22,7 +22,6 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-    <!-- Appenders -->
     <appender name="console" class="org.apache.log4j.ConsoleAppender">
         <param name="Target" value="System.out"/>
         <layout class="org.apache.log4j.PatternLayout">
@@ -30,19 +29,14 @@
         </layout>
     </appender>
 
-    <!--<logger name="com.centeractive.ws.server.HttpsCooperationTest">-->
-        <!--<level value="info"/>-->
-    <!--</logger>-->
-
     <logger name="com.centeractive">
-        <level value="info"/>
+        <level value="warn"/>
     </logger>
 
     <logger name="org.springframework">
         <level value="error"/>
     </logger>
 
-    <!-- Root Logger -->
     <root>
         <priority value="error"/>
         <appender-ref ref="console"/>

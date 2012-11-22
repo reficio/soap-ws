@@ -15,10 +15,9 @@
     </parent>
 
     <modules>
-        <module>quickstart</module>
         <module>customer-cxf</module>
         <module>customer-soapws</module>
-        <module>spring</module>
+        <module>quickstart</module>
     </modules>
 
     <properties>
