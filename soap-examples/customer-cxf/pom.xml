@@ -87,9 +87,10 @@
                 <version>${cxf.version}</version>
                 <executions>
                     <execution>
-                        <id>generate-sources</id>
-                        <phase>generate-sources</phase>
+                        <id>generate-test-sources</id>
+                        <phase>generate-test-sources</phase>
                         <configuration>
+                            <sourceRoot>${project.build.directory}/generated/cxf</sourceRoot>
                             <wsdlOptions>
                                 <wsdlOption>
                                     <wsdl>src/test/resources/CustomerService.wsdl</wsdl>
@@ -105,6 +106,28 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin
+                </artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>add-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated/cxf</source>
+                            </sources>
+                        </configuration>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
         <finalName>wsdl_first</finalName>
     </build>
