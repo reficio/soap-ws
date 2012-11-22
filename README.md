@@ -360,7 +360,8 @@ Spring configuration:
 <?xml version="1.0" encoding="UTF-8"?>
     <beans xmlns="http://www.springframework.org/schema/beans"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+           xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
 
         <!-- wsdl-parser part (locally referenced wsdl) -->
         <bean id="wsdl" class="org.springframework.core.io.ClassPathResource">
@@ -391,7 +392,8 @@ Spring configuration:
             <constructor-arg name="valueComments" type="boolean" value="true"/>
         </bean>
 
-        <bean id="soapBuilder" class="com.centeractive.ws.builder.SoapBuilder" factory-bean="wsdlParser" factory-method="getBuilder">
+        <bean id="soapBuilder" class="com.centeractive.ws.builder.SoapBuilder"
+            factory-bean="wsdlParser" factory-method="getBuilder">
             <constructor-arg name="bindingName">
                 <value>{http://www.webserviceX.NET/}CurrencyConvertorSoap</value>
             </constructor-arg>
@@ -404,7 +406,8 @@ Spring configuration:
             <property name="endpointUrl" value="http://localhost:8778/currencyConverter/soap"/>
         </bean>
 
-        <bean id="soapClient" class="com.centeractive.ws.client.core.SoapClient" factory-bean="soapClientFactory" factory-method="create"/>
+        <bean id="soapClient" class="com.centeractive.ws.client.core.SoapClient"
+            factory-bean="soapClientFactory" factory-method="create"/>
 
 
         <!-- soap-server part -->
