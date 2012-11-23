@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centeractive.ws.builder.utils;
+package com.centeractive.ws.common;
 
 /**
  * User: Tom Bujok (tomasz.bujok@centeractive.com)
@@ -24,8 +24,6 @@ package com.centeractive.ws.builder.utils;
  * Time: 10:31 AM
  */
 
-import com.centeractive.ws.common.XmlUtils;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -38,8 +36,6 @@ import java.util.List;
 import java.util.Map;
 
 public class XmlComparator {
-
-    private final static Logger log = Logger.getLogger(XmlComparator.class);
 
     private boolean nodeTypeDiff = true;
     private boolean nodeValueDiff = true;
@@ -59,8 +55,8 @@ public class XmlComparator {
         doc1.normalizeDocument();
         doc2.normalizeDocument();
 
-        log.info("\n" + XmlUtils.serializePretty(doc1));
-        log.info("\n" + XmlUtils.serializePretty(doc2));
+        // log.info("\n" + XmlUtils.serializePretty(doc1));
+        // log.info("\n" + XmlUtils.serializePretty(doc2));
 
         return diff(doc1, doc2, diffs);
 
@@ -82,8 +78,7 @@ public class XmlComparator {
             diffNodeValue(node1, node2, diffs);
         }
 
-
-        log.info(node1.getNodeName() + "/" + node2.getNodeName());
+//        log.info(node1.getNodeName() + "/" + node2.getNodeName());
 
         diffAttributes(node1, node2, diffs);
         diffNodes(node1, node2, diffs);
