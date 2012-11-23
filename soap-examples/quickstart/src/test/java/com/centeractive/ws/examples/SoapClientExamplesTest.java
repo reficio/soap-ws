@@ -100,7 +100,7 @@ public class SoapClientExamplesTest {
         // post the request to the server
         String response = client.post(request);
         // get the response
-        String expectedResponse = soapBuilder.buildOutputMessage(operation);
+        String expectedResponse = soapBuilder.buildOutputMessage(operation, SoapContext.NO_CONTENT);
 
         assertTrue(XMLUnit.compareXML(expectedResponse, response).identical());
     }

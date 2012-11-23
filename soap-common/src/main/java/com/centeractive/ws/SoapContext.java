@@ -31,6 +31,7 @@ import java.util.Set;
 public class SoapContext {
 
     public final static SoapContext DEFAULT = SoapContext.builder().build();
+    public final static SoapContext NO_CONTENT = SoapContext.builder().exampleContent(false).build();
 
     /**
      * Generates comments with type information in new requests

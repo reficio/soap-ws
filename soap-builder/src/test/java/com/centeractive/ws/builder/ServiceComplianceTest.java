@@ -18,6 +18,7 @@
  */
 package com.centeractive.ws.builder;
 
+import com.centeractive.ws.SoapContext;
 import com.centeractive.ws.builder.core.WsdlParser;
 import com.centeractive.ws.common.ResourceUtils;
 import com.centeractive.ws.common.XmlUtils;
@@ -97,9 +98,9 @@ public class ServiceComplianceTest {
     private static void testService(int testServiceId) throws Exception {
         URL wsdlUrl = getDefinitionUrl(testServiceId);
         WsdlParser parser = WsdlParser.parse(wsdlUrl);
-        // SoapBuilderLegacy builder = new SoapBuilderLegacy(wsdlUrl);
-
-
+        SoapContext context = SoapContext.builder()
+                .exampleContent(false)
+                .build();
         for (QName bindingQName : parser.getBindings()) {
             String bindingName = bindingQName.getLocalPart();
             SoapBuilder builder = parser.binding(bindingQName).builder();
@@ -116,7 +117,7 @@ public class ServiceComplianceTest {
                 log.info("EXPECTED_REQUEST_NO_VALUES:\n" + expectedRequest);
                 assertTrue(XMLUnit.compareXML(expectedRequest, request).identical());
 
-                String response = builder.buildOutputMessage(operation);
+                String response = builder.buildOutputMessage(operation, context);
                 String expectedResponse = getExpectedResponse(testServiceId, bindingName, operation.getOperationName());
                 log.info("RESPONSE:\n" + response);
                 log.info("EXPECTED_RESPONSE:\n" + expectedResponse);

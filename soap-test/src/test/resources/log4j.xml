@@ -30,7 +30,7 @@
     </appender>
 
     <logger name="com.centeractive">
-        <level value="info"/>
+        <level value="warn"/>
     </logger>
 
     <logger name="org.springframework">

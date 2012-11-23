@@ -18,6 +18,7 @@
  */
 package com.centeractive.ws.test;
 
+import com.centeractive.ws.SoapContext;
 import com.centeractive.ws.builder.SoapBuilder;
 import com.centeractive.ws.builder.SoapOperation;
 import com.centeractive.ws.builder.core.SoapUtils;
@@ -105,8 +106,9 @@ public abstract class AbstractCooperationTest {
             response = postRequest(endpointUrl, request);
         }
 
+        SoapContext context = SoapContext.builder().exampleContent(false).build();
         if (op.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
-            String expectedResponse = builder.buildOutputMessage(wrapper);
+            String expectedResponse = builder.buildOutputMessage(wrapper, context);
             assertTrue("Generated expectedResponse is empty!", expectedResponse.length() > 0);
             boolean identical = XmlUtils.isIdenticalNormalizedWithoutValues(expectedResponse, response);
             assertTrue("Error during validation of service " + testServiceId, identical);
