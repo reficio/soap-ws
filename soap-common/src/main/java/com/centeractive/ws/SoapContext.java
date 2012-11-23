@@ -48,7 +48,7 @@ public class SoapContext {
      * services and generates a sample xml fragment of about 300 kb!.
      */
     private final Set<QName> excludedTypes;
-    private final SoapMultiValuesProvider multiValuesProvider ;
+    private final SoapMultiValuesProvider multiValuesProvider;
 
     /**
      * Constructor mainly for SpringFramework purposes, in any other case use the fluent builder interface;
@@ -73,7 +73,7 @@ public class SoapContext {
         this.multiValuesProvider = multiValuesProvider;
     }
 
-     /**
+    /**
      * Constructor mainly for SpringFramework purposes, in any other case use the fluent builder interface;
      * #see builder() method
      *
@@ -127,9 +127,9 @@ public class SoapContext {
     }
 
     public static class ContextBuilder {
-        private boolean exampleContent = false;
+        private boolean exampleContent = true;
         private boolean typeComments = false;
-        private boolean valueComments = true;
+        private boolean valueComments = false;
         private boolean buildOptional = true;
         private boolean alwaysBuildHeaders = true;
         private Set<QName> excludedTypes = new HashSet<QName>();

@@ -40,7 +40,7 @@ public class SimpleValuesProvider implements SoapMultiValuesProvider {
 
     public SimpleValuesProvider(Map<QName, Set<String>> multiValues) {
         multiValues = new HashMap<QName, Set<String>>();
-        for(Map.Entry<QName, Set<String>> entry : multiValues.entrySet()) {
+        for (Map.Entry<QName, Set<String>> entry : multiValues.entrySet()) {
             multiValues.put(entry.getKey(), new HashSet<String>(entry.getValue()));
         }
     }
