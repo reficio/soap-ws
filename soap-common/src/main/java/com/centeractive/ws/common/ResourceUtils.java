@@ -57,7 +57,7 @@ public class ResourceUtils {
     private static Path parsePath(String resourcePath) {
         checkNotNull(resourcePath, "resourcePath cannot be null");
         Path path = new Path();
-        path.packagePath = getFullPath();
+        path.packagePath = getFullPath(resourcePath);
         path.resourcePath = FilenameUtils.getName(resourcePath);
         return path;
     }
