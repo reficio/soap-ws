@@ -27,6 +27,9 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+// This creates a SOAP server that provides auto-responder for the specified binding
+// Generated responses are compliant with the schema and the type
+// In such a way the the SOAP client can be tested - it's real http communication, not mocking
 @Server(wsdl = "http://www.webservicex.net/CurrencyConvertor.asmx?WSDL", binding = "CurrencyConvertorSoap")
 public class SoapRuleTest {
 
