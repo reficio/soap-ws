@@ -31,26 +31,49 @@ import java.net.URL;
  */
 public class ResourceUtilsTest {
 
-    @Test(expected = NullPointerException.class)
-    public void testResourceLoadingFailed() {
+    @Test(expected = IllegalArgumentException.class)
+    public void testResourceLoading_failed() {
         URL url = ResourceUtils.getResourceWithAbsolutePackagePath(System.class, "com/centeractive/ws/common/test", "soapEncoding.xsd123123");
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testResourceLoading_failed_noPackage() {
+        URL url = ResourceUtils.getResource(System.class, "asdasdasdasd.txt");
+    }
+
     @Test
-    public void testResourceLoadingNoLeadingTrailing() {
+    public void testResourceLoading_noLeadingTrailing() {
         URL url = ResourceUtils.getResourceWithAbsolutePackagePath(System.class, "com/centeractive/ws/common/test", "soapEncoding.xsd");
         Assert.assertNotNull(url);
     }
 
     @Test
-    public void testResourceLoadingNoLeading() {
+    public void testResourceLoading_noLeadingTrailing_noPackage() {
+        URL url = ResourceUtils.getResource(System.class, "com/centeractive/ws/common/test/soapEncoding.xsd");
+        Assert.assertNotNull(url);
+    }
+
+    @Test
+    public void testResourceLoading_noLeading() {
         URL url = ResourceUtils.getResourceWithAbsolutePackagePath(System.class, "com/centeractive/ws/common/test/", "soapEncoding.xsd");
         Assert.assertNotNull(url);
     }
 
     @Test
-    public void testResourceLoadingMultipleLeading() {
+    public void testResourceLoading_noLeading_noPackage() {
+        URL url = ResourceUtils.getResource(System.class, "com/centeractive/ws/common/test/soapEncoding.xsd");
+        Assert.assertNotNull(url);
+    }
+
+    @Test
+    public void testResourceLoading_multipleLeading() {
         URL url = ResourceUtils.getResourceWithAbsolutePackagePath(System.class, "//////com/centeractive/ws/common/test/", "soapEncoding.xsd");
+        Assert.assertNotNull(url);
+    }
+
+    @Test
+    public void testResourceLoading_multipleLeading_noPackage() {
+        URL url = ResourceUtils.getResource(System.class, "//////com/centeractive/ws/common/test/soapEncoding.xsd");
         Assert.assertNotNull(url);
     }
 
@@ -61,32 +84,68 @@ public class ResourceUtilsTest {
     }
 
     @Test
-    public void testResourceLoadingWhiteSpaces() {
+    public void testResourceLoadingNoTrailing_noPackage() {
+        URL url = ResourceUtils.getResource(System.class, "/com/centeractive/ws/common/test/soapEncoding.xsd");
+        Assert.assertNotNull(url);
+    }
+
+    @Test
+    public void testResourceLoading_whiteSpaces() {
         URL url = ResourceUtils.getResourceWithAbsolutePackagePath(System.class, "  /com/centeractive/ws/common/test  ", "soapEncoding.xsd");
         Assert.assertNotNull(url);
     }
 
     @Test
-    public void testResourceLoadingMultipleInner() {
+    public void testResourceLoading_whiteSpaces_noPackage() {
+        URL url = ResourceUtils.getResource(System.class, "  /com/centeractive/ws/common/test/soapEncoding.xsd");
+        Assert.assertNotNull(url);
+    }
+
+    @Test
+    public void testResourceLoading_multipleInner() {
         URL url = ResourceUtils.getResourceWithAbsolutePackagePath(System.class, "/com///centeractive////ws/common/////test", "soapEncoding.xsd");
         Assert.assertNotNull(url);
     }
 
     @Test
-    public void testResourceLoadingMultipleTrailing() {
+    public void testResourceLoading_multipleInner_noPackage() {
+        URL url = ResourceUtils.getResource(System.class, "/com///centeractive////ws/common/////test/////soapEncoding.xsd");
+        Assert.assertNotNull(url);
+    }
+
+    @Test
+    public void testResourceLoading_multipleTrailing() {
         URL url = ResourceUtils.getResourceWithAbsolutePackagePath(System.class, "com/centeractive/ws/common/test//////", "soapEncoding.xsd");
         Assert.assertNotNull(url);
     }
 
     @Test
-    public void testResourceLoadingNotNormalized() {
+    public void testResourceLoading_multipleTrailing_noPackage() {
+        URL url = ResourceUtils.getResource(System.class, "com/centeractive/ws/common/test//////soapEncoding.xsd");
+        Assert.assertNotNull(url);
+    }
+
+    @Test
+    public void testResourceLoading_notNormalized() {
         URL url = ResourceUtils.getResourceWithAbsolutePackagePath(System.class, "com/../com/centeractive/../centeractive/ws/common/test/", "soapEncoding.xsd");
         Assert.assertNotNull(url);
     }
 
     @Test
-    public void testResourceLoadingNotNormalizedAsStream() {
+    public void testResourceLoading_notNormalized_noPackage() {
+        URL url = ResourceUtils.getResource(System.class, "com/../com/centeractive/../centeractive/ws/common/test/soapEncoding.xsd");
+        Assert.assertNotNull(url);
+    }
+
+    @Test
+    public void testResourceLoading_notNormalized_asStream() {
         InputStream stream = ResourceUtils.getResourceWithAbsolutePackagePathAsStream(System.class, "/com/../com/centeractive/../centeractive/ws/common/test/", "soapEncoding.xsd");
+        Assert.assertNotNull(stream);
+    }
+
+    @Test
+    public void testResourceLoading_notNormalized_asStream_noPackage() {
+        InputStream stream = ResourceUtils.getResourceAsStream(System.class, "/com/../com/centeractive/../centeractive/ws/common/test/soapEncoding.xsd");
         Assert.assertNotNull(stream);
     }
 
@@ -97,8 +156,20 @@ public class ResourceUtilsTest {
     }
 
     @Test
+    public void testResourceLoadingObject_noPackage() {
+        InputStream stream = ResourceUtils.getResourceAsStream(Object.class, "/com/centeractive/ws/common/test/soapEncoding.xsd");
+        Assert.assertNotNull(stream);
+    }
+
+    @Test
     public void testResourceLoadingThis() {
         InputStream stream = ResourceUtils.getResourceWithAbsolutePackagePathAsStream(ResourceUtilsTest.class, "/com/centeractive/ws/common/test/", "soapEncoding.xsd");
+        Assert.assertNotNull(stream);
+    }
+
+    @Test
+    public void testResourceLoadingThis_noPackage() {
+        InputStream stream = ResourceUtils.getResourceAsStream(ResourceUtilsTest.class, "/com/centeractive/ws/common/test/soapEncoding.xsd");
         Assert.assertNotNull(stream);
     }
 
@@ -109,8 +180,20 @@ public class ResourceUtilsTest {
     }
 
     @Test
+    public void testResourceLoadingGetClass_noPackage() {
+        InputStream stream = ResourceUtils.getResourceAsStream(getClass(), "/com/centeractive/ws/common/test/soapEncoding.xsd");
+        Assert.assertNotNull(stream);
+    }
+
+    @Test
     public void testResourceLoadingNoClass() {
         InputStream stream = ResourceUtils.getResourceWithAbsolutePackagePathAsStream("/com/centeractive/ws/common/test/", "soapEncoding.xsd");
+        Assert.assertNotNull(stream);
+    }
+
+    @Test
+    public void testResourceLoadingNoClass_noPackage() {
+        InputStream stream = ResourceUtils.getResourceAsStream("/com/centeractive/ws/common/test/soapEncoding.xsd");
         Assert.assertNotNull(stream);
     }
 
@@ -121,8 +204,20 @@ public class ResourceUtilsTest {
     }
 
     @Test
+    public void testResourceLoadingNotNormalizedNoClass_noPackage() {
+        URL url = ResourceUtils.getResource("com/../com/centeractive/../centeractive/ws/common/test/soapEncoding.xsd");
+        Assert.assertNotNull(url);
+    }
+
+    @Test
     public void testResourceLoadingSpaceInTheResource() {
         URL url = ResourceUtils.getResourceWithAbsolutePackagePath("my folder", "resource.txt");
+        Assert.assertNotNull(url);
+    }
+
+    @Test
+    public void testResourceLoadingSpaceInTheResource_noPackage() {
+        URL url = ResourceUtils.getResource("my folder/resource.txt");
         Assert.assertNotNull(url);
     }
 

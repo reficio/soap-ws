@@ -18,11 +18,13 @@
  */
 package com.centeractive.ws.common;
 
+import com.apple.eio.FileManager;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.InputStream;
 import java.net.URL;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -38,6 +40,49 @@ public class ResourceUtils {
         return getResourceWithAbsolutePackagePath(ResourceUtils.class, absolutePackagePath, resourceName);
     }
 
+    private static class Path {
+        String packagePath = "";
+        String resourcePath = "";
+    }
+
+    private static String getFullPath(String resourcePath) {
+        int linuxIndex = resourcePath.lastIndexOf("/");
+        int windowsIndex = resourcePath.lastIndexOf("\\");
+        int index = Math.max(linuxIndex, windowsIndex);
+        if(index < 0) {
+            return "";
+        }
+        return resourcePath.substring(0, index);
+    }
+
+    private static Path parsePath(String resourcePath) {
+        checkNotNull(resourcePath, "resourcePath cannot be null");
+        Path path = new Path();
+        path.packagePath = getFullPath(resourcePath);
+        path.resourcePath = FilenameUtils.getName(resourcePath);
+        return path;
+    }
+
+    public static URL getResource(String resourcePath) {
+        Path path = parsePath(resourcePath);
+        return getResourceWithAbsolutePackagePath(path.packagePath, path.resourcePath);
+    }
+
+    public static URL getResource(Class<?> clazz, String resourcePath) {
+        Path path = parsePath(resourcePath);
+        return getResourceWithAbsolutePackagePath(clazz, path.packagePath, path.resourcePath);
+    }
+
+    public static InputStream getResourceAsStream(String resourcePath) {
+        Path path = parsePath(resourcePath);
+        return getResourceWithAbsolutePackagePathAsStream(path.packagePath, path.resourcePath);
+    }
+
+    public static InputStream getResourceAsStream(Class<?> clazz, String resourcePath) {
+        Path path = parsePath(resourcePath);
+        return getResourceWithAbsolutePackagePathAsStream(clazz, path.packagePath, path.resourcePath);
+    }
+
     public static URL getResourceWithAbsolutePackagePath(Class<?> clazz, String absolutePackagePath, String resourceName) {
         checkNotNull(clazz, "clazz cannot be null");
         String resourcePath = getResourcePath(absolutePackagePath, resourceName);
@@ -51,7 +96,8 @@ public class ResourceUtils {
                 resource = Thread.currentThread().getContextClassLoader().getResource(resourcePathWithoutLeadingSlash);
             }
         }
-        return checkNotNull(resource, String.format("Resource [%s] loading failed", resourcePath));
+        checkArgument(resource != null, String.format("Resource [%s] loading failed", resourcePath));
+        return resource;
     }
 
     public static InputStream getResourceWithAbsolutePackagePathAsStream(String absolutePackagePath, String resourceName) {
@@ -70,7 +116,8 @@ public class ResourceUtils {
             if (classLoader != null)
                 resource = classLoader.getResourceAsStream(resourcePath);
         }
-        return checkNotNull(resource, String.format("Resource [%s] loading failed", resourcePath));
+        checkArgument(resource != null, String.format("Resource [%s] loading failed", resourcePath));
+        return resource;
     }
 
     private static String getResourcePath(String absolutePackagePath, String resourceName) {
