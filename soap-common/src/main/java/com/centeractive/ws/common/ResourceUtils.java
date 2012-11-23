@@ -18,7 +18,6 @@
  */
 package com.centeractive.ws.common;
 
-import com.apple.eio.FileManager;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.InputStream;
@@ -49,7 +48,7 @@ public class ResourceUtils {
         int linuxIndex = resourcePath.lastIndexOf("/");
         int windowsIndex = resourcePath.lastIndexOf("\\");
         int index = Math.max(linuxIndex, windowsIndex);
-        if(index < 0) {
+        if (index < 0) {
             return "";
         }
         return resourcePath.substring(0, index);
@@ -58,7 +57,7 @@ public class ResourceUtils {
     private static Path parsePath(String resourcePath) {
         checkNotNull(resourcePath, "resourcePath cannot be null");
         Path path = new Path();
-        path.packagePath = getFullPath(resourcePath);
+        path.packagePath = getFullPath();
         path.resourcePath = FilenameUtils.getName(resourcePath);
         return path;
     }

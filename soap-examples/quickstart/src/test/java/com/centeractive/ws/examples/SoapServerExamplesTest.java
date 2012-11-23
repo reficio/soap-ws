@@ -30,7 +30,6 @@ import org.junit.Test;
 import org.springframework.ws.soap.SoapMessage;
 
 import javax.wsdl.WSDLException;
-import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import java.net.URL;
 

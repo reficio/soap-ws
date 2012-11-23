@@ -22,11 +22,8 @@ import com.centeractive.ws.builder.SoapBuilder;
 import com.centeractive.ws.builder.SoapOperation;
 import com.centeractive.ws.builder.core.WsdlParser;
 import com.centeractive.ws.client.core.SoapClient;
-import com.centeractive.ws.server.SoapServerException;
-import com.centeractive.ws.server.core.SoapServer;
 import org.apache.log4j.Logger;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
