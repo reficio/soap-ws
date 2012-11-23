@@ -24,7 +24,7 @@ package com.centeractive.ws;
  * @author Tom Bujok
  * @since 1.0.0
  */
-public class SoapBuilderException extends RuntimeException {
+public class SoapBuilderException extends SoapException {
     public SoapBuilderException(String message) {
         super(message);
     }
