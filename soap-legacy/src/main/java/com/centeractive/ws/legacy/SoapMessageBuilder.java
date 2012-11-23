@@ -72,6 +72,7 @@ import java.util.List;
  *
  * @author Ole.Matzura
  */
+@SuppressWarnings("unchecked")
 class SoapMessageBuilder {
 
     private final static Logger log = Logger.getLogger(SoapMessageBuilder.class);

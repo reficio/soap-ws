@@ -40,8 +40,9 @@ public class SoapRuleTest {
     public static SoapRule classRule = new SoapRule();
 
     @Test
+    @Server(wsdl = WSDL, binding = "CurrencyConvertorSoap", port = 41414)
     public void testSoapMock_perMethodServer() {
-        SoapClient client = SoapClient.builder().endpointUrl("http://localhost:51515/service").build();
+        SoapClient client = SoapClient.builder().endpointUrl("http://localhost:41414/service").build();
         SoapBuilder builder = WsdlParser.parse(WSDL).binding().localPart("CurrencyConvertorSoap").builder();
         SoapOperation operation = builder.operation().name("ConversionRate").find();
         String request = builder.buildInputMessage(operation);
@@ -54,9 +55,8 @@ public class SoapRuleTest {
     }
 
     @Test
-    @Server(wsdl = WSDL, binding = "CurrencyConvertorSoap", port = 41414)
     public void testSoapMock_perClassServer() {
-        SoapClient client = SoapClient.builder().endpointUrl("http://localhost:41414/service").build();
+        SoapClient client = SoapClient.builder().endpointUrl("http://localhost:51515/service").build();
         SoapBuilder builder = WsdlParser.parse(WSDL).binding().localPart("CurrencyConvertorSoap").builder();
         SoapOperation operation = builder.operation().name("ConversionRate").find();
         String request = builder.buildInputMessage(operation);
