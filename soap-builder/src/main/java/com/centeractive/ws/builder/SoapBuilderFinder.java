@@ -18,6 +18,11 @@
  */
 package com.centeractive.ws.builder;
 
+/**
+ * @author Tom Bujok
+ * @since 1.0.0
+ */
+
 public interface SoapBuilderFinder extends SoapBuilderFinderResult {
 
     SoapBuilderFinder namespaceURI(String namespaceURI);

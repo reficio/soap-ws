@@ -30,6 +30,10 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * @author Tom Bujok
+ * @since 1.0.0
+ */
 public class SoapLegacyFacade {
 
     public static enum Soap {SOAP_1_1, SOAP_1_2}

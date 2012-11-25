@@ -41,7 +41,6 @@ import org.apache.xmlbeans.XmlOptions;
  * - removal of dependencies and code parts that are out of scope of SOAP message generation
  * - minor fixes to make the class compile out of soapUI's code base
  */
-
 interface SchemaLoader {
     XmlObject loadXmlObject(String wsdlUrl, XmlOptions options) throws Exception;
 

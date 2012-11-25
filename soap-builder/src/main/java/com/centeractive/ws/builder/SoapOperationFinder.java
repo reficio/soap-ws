@@ -20,6 +20,10 @@ package com.centeractive.ws.builder;
 
 import com.centeractive.ws.SoapContext;
 
+/**
+ * @author Tom Bujok
+ * @since 1.0.0
+ */
 public interface SoapOperationFinder {
 
     SoapOperationFinder name(String operationName);

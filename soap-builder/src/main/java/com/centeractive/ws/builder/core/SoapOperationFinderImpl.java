@@ -30,6 +30,10 @@ import javax.wsdl.BindingOperation;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Tom Bujok
+ * @since 1.0.0
+ */
 class SoapOperationFinderImpl implements SoapOperationFinder {
 
     private final Binding binding;

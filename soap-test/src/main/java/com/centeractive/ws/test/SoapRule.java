@@ -33,6 +33,10 @@ import org.junit.runners.model.Statement;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * @author Tom Bujok
+ * @since 1.0.0
+ */
 public class SoapRule implements TestRule {
 
     @Override

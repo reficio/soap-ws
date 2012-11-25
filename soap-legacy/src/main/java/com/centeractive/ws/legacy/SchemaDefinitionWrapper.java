@@ -49,7 +49,6 @@ import java.util.Set;
  * - removal of dependencies and code parts that are out of scope of SOAP message generation
  * - minor fixes to make the class compile out of soapUI's code base
  */
-
 class SchemaDefinitionWrapper {
     private SchemaTypeSystem schemaTypes;
     private SchemaTypeLoader schemaTypeLoader;
