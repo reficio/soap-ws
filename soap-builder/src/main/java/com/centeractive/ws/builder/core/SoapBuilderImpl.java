@@ -23,6 +23,7 @@ import com.centeractive.ws.SoapBuilderException;
 import com.centeractive.ws.SoapContext;
 import com.centeractive.ws.builder.SoapBuilder;
 import com.centeractive.ws.builder.SoapOperation;
+import com.centeractive.ws.builder.SoapOperationBuilder;
 import com.centeractive.ws.builder.SoapOperationFinder;
 import com.centeractive.ws.legacy.SoapLegacyFacade;
 
@@ -88,6 +89,12 @@ class SoapBuilderImpl implements SoapBuilder {
     @Override
     public SoapContext getContext() {
         return context;
+    }
+
+    @Override
+    public SoapOperationBuilder getOperationBuilder(SoapOperation operation) {
+        BindingOperation bindingOperation = getBindingOperation(operation);
+        return SoapOperationImpl.create(this, binding, bindingOperation);
     }
 
     @Override

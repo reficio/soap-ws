@@ -36,6 +36,8 @@ public interface SoapBuilder {
 
     SoapContext getContext();
 
+    SoapOperationBuilder getOperationBuilder(SoapOperation operation);
+
     String buildInputMessage(SoapOperation operation);
 
     String buildInputMessage(SoapOperation operation, SoapContext context);
