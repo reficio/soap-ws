@@ -19,7 +19,9 @@
 package com.centeractive.ws.builder.core;
 
 import com.centeractive.ws.SoapBuilderException;
-import com.centeractive.ws.builder.SoapOperation;
+import com.centeractive.ws.SoapContext;
+import com.centeractive.ws.builder.SoapBuilder;
+import com.centeractive.ws.builder.SoapOperationBuilder;
 import com.centeractive.ws.builder.SoapOperationFinder;
 import com.google.common.base.Preconditions;
 
@@ -36,9 +38,11 @@ class SoapOperationFinderImpl implements SoapOperationFinder {
     private String operationInputName;
     private String operationOutputName;
     private String soapAction;
+    private SoapBuilder builder;
 
-    SoapOperationFinderImpl(Binding binding) {
+    SoapOperationFinderImpl(SoapBuilder builder, Binding binding) {
         this.binding = binding;
+        this.builder = builder;
     }
 
     @Override
@@ -71,9 +75,9 @@ class SoapOperationFinderImpl implements SoapOperationFinder {
 
     @Override
     @SuppressWarnings("unchecked")
-    public SoapOperation find() {
+    public SoapOperationBuilder find() {
         validateInput();
-        List<SoapOperation> found = new ArrayList<SoapOperation>();
+        List<SoapOperationBuilder> found = new ArrayList<SoapOperationBuilder>();
         for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {
             boolean condition = true;
             condition &= checkOperationName(operation);
@@ -81,7 +85,7 @@ class SoapOperationFinderImpl implements SoapOperationFinder {
             condition &= checkOperationInputName(operation);
             condition &= checkOperationOutputName(operation);
             if(condition) {
-                found.add(SoapOperation.create(binding, operation));
+                found.add(SoapOperationImpl.create(builder, binding, operation));
                 if(found.size() > 1) {
                     throw new SoapBuilderException("Operation not unique - found more than one operation");
                 }
@@ -91,6 +95,13 @@ class SoapOperationFinderImpl implements SoapOperationFinder {
             throw new SoapBuilderException("Found no operations");
         }
         return found.iterator().next();
+    }
+
+    @Override
+    public SoapOperationBuilder find(SoapContext context) {
+        SoapOperationBuilder builder = find();
+        builder.setContext(context);
+        return builder;
     }
 
     private void validateInput() {
@@ -131,5 +142,6 @@ class SoapOperationFinderImpl implements SoapOperationFinder {
         }
         return true;
     }
+
 
 }

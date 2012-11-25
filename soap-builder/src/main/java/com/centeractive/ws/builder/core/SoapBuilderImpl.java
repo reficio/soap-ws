@@ -80,7 +80,7 @@ class SoapBuilderImpl implements SoapBuilder {
     public List<SoapOperation> getOperations() {
         List<SoapOperation> operationNames = new ArrayList<SoapOperation>();
         for (BindingOperation operation : (List<BindingOperation>) binding.getBindingOperations()) {
-            operationNames.add(SoapOperation.create(binding, operation));
+            operationNames.add(SoapOperationImpl.create(this, binding, operation));
         }
         return operationNames;
     }
@@ -92,7 +92,7 @@ class SoapBuilderImpl implements SoapBuilder {
 
     @Override
     public SoapOperationFinder operation() {
-        return new SoapOperationFinderImpl(binding);
+        return new SoapOperationFinderImpl(this, binding);
     }
 
     @Override

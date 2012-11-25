@@ -63,6 +63,7 @@ import java.util.Map;
  *
  * @author Ole.Matzura
  */
+@SuppressWarnings("unchecked")
 class WsdlUtils {
     private final static Logger log = Logger.getLogger(WsdlUtils.class);
 

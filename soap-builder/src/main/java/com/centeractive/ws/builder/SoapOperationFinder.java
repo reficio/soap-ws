@@ -18,6 +18,8 @@
  */
 package com.centeractive.ws.builder;
 
+import com.centeractive.ws.SoapContext;
+
 public interface SoapOperationFinder {
 
     SoapOperationFinder name(String operationName);
@@ -28,6 +30,9 @@ public interface SoapOperationFinder {
 
     SoapOperationFinder outputName(String inputName);
 
-    SoapOperation find();
+    SoapOperationBuilder find();
+
+    SoapOperationBuilder find(SoapContext context);
+
 
 }

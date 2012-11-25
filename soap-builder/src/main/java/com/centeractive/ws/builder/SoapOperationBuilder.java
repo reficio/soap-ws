@@ -20,12 +20,34 @@ package com.centeractive.ws.builder;
 
 import com.centeractive.ws.SoapContext;
 
-public interface SoapBuilderFinderResult {
+/**
+ * @author Tom Bujok
+ * @since 1.0.0
+ */
+public interface SoapOperationBuilder extends SoapOperation {
 
-    SoapBuilder builder();
+    void setContext(SoapContext context);
 
-    SoapBuilder builder(SoapContext context);
+    SoapContext getContext();
 
-    SoapOperationFinder operation();
+    String buildInputMessage();
 
+    String buildInputMessage(SoapContext context);
+
+    String buildOutputMessage();
+
+    String buildOutputMessage(SoapContext context);
+
+    String buildFault(String code, String message);
+
+    String buildFault(String code, String message, SoapContext context);
+
+    String buildEmptyFault();
+
+    String buildEmptyFault(SoapContext context);
+
+    String buildEmptyMessage();
+
+    String buildEmptyMessage(SoapContext context);
+    
 }

@@ -18,6 +18,10 @@
  */
 package com.centeractive.ws.builder.core;
 
+import com.centeractive.ws.builder.SoapBuilder;
+import com.centeractive.ws.builder.SoapOperationBuilder;
+
+import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPOperation;
@@ -29,24 +33,6 @@ import java.util.List;
  * @since 1.0.0
  */
 public class SoapUtils {
-
-//    public static enum Soap {SOAP_1_1, SOAP_1_2}
-//
-//    public static boolean isRpc(Binding binding) {
-//        SOAPBinding soapBinding = WsdlUtils
-//                .getExtensiblityElement(binding.getExtensibilityElements(), SOAPBinding.class);
-//
-//        if (soapBinding != null)
-//            return "rpc".equalsIgnoreCase(soapBinding.getStyle());
-//
-//        SOAP12Binding soap12Binding = WsdlUtils.getExtensiblityElement(binding.getExtensibilityElements(),
-//                SOAP12Binding.class);
-//
-//        if (soap12Binding != null)
-//            return "rpc".equalsIgnoreCase(soap12Binding.getStyle());
-//
-//        return false;
-//    }
 
     // removes "" from soap action
     public static String normalizeSoapAction(String soapAction) {
@@ -77,5 +63,7 @@ public class SoapUtils {
         return null;
     }
 
-
+    public static SoapOperationBuilder createOperation(SoapBuilder builder, Binding binding, BindingOperation operation, String soapAction) {
+        return SoapOperationImpl.create(builder, binding, operation, soapAction);
+    }
 }

@@ -20,9 +20,7 @@ package com.centeractive.ws.builder.core;
 
 import com.centeractive.ws.SoapBuilderException;
 import com.centeractive.ws.SoapContext;
-import com.centeractive.ws.builder.SoapBuilder;
-import com.centeractive.ws.builder.SoapBuilderFinder;
-import com.centeractive.ws.builder.SoapBuilderFinderResult;
+import com.centeractive.ws.builder.*;
 import com.centeractive.ws.legacy.SoapLegacyFacade;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
@@ -91,6 +89,11 @@ public final class WsdlParser {
             public SoapBuilder builder(final SoapContext context) {
                 return getBuilder(QName.valueOf(bindingName), context);
             }
+
+            @Override
+            public SoapOperationFinder operation() {
+                return builder().operation();
+            }
         };
     }
 
@@ -105,6 +108,11 @@ public final class WsdlParser {
             @Override
             public SoapBuilder builder(final SoapContext context) {
                 return getBuilder(bindingName, context);
+            }
+
+            @Override
+            public SoapOperationFinder operation() {
+                return builder().operation();
             }
         };
     }
@@ -143,6 +151,11 @@ public final class WsdlParser {
             public SoapBuilder builder(SoapContext context) {
                 validate();
                 return getBuilder(getBindingName(), context);
+            }
+
+            @Override
+            public SoapOperationFinder operation() {
+                return builder().operation();
             }
 
             private QName getBindingName() {
@@ -191,7 +204,7 @@ public final class WsdlParser {
         return getBuilder(QName.valueOf(bindingName), context);
     }
 
-    private SoapBuilder getBuilder(QName bindingName, SoapContext context) {
+    public SoapBuilder getBuilder(QName bindingName, SoapContext context) {
         Preconditions.checkNotNull(context, "SoapContext cannot be null");
         Binding binding = soapFacade.getBindingByName(bindingName);
         return new SoapBuilderImpl(soapFacade, binding, context);

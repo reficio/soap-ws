@@ -18,11 +18,6 @@
  */
 package com.centeractive.ws.builder;
 
-import com.centeractive.ws.builder.core.SoapUtils;
-
-import javax.wsdl.Binding;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.OperationType;
 import javax.xml.namespace.QName;
 
 /**
@@ -31,61 +26,16 @@ import javax.xml.namespace.QName;
  * @author Tom Bujok
  * @since 1.0.0
  */
-public class SoapOperation {
+ public interface SoapOperation {
 
-    private final QName bindingName;
-    private final String operationName;
-    private final String operationInputName;
-    private final String operationOutputName;
-    private final String soapAction;
+     QName getBindingName();
 
-    public SoapOperation(QName bindingName, String operationName, String operationInputName,
-                         String operationOutputName, String soapAction) {
-        this.bindingName = bindingName;
-        this.operationName = operationName;
-        this.operationInputName = operationInputName;
-        this.operationOutputName = operationOutputName;
-        this.soapAction = soapAction;
-    }
+     String getOperationName();
 
-    public QName getBindingName() {
-        return bindingName;
-    }
+     String getOperationInputName();
 
-    public String getOperationName() {
-        return operationName;
-    }
+     String getOperationOutputName();
 
-    public String getOperationInputName() {
-        return operationInputName;
-    }
-
-    public String getOperationOutputName() {
-        return operationOutputName;
-    }
-
-    public String getSoapAction() {
-        return soapAction;
-    }
-
-    public static SoapOperation create(Binding binding, BindingOperation operation) {
-        String soapAction = SoapUtils.getSOAPActionUri(operation);
-        return create(binding, operation, soapAction);
-    }
-
-    public static SoapOperation create(Binding binding, BindingOperation operation, String soapAction) {
-        if (operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
-            return new SoapOperation(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-                    operation.getBindingOutput().getName(), SoapUtils.normalizeSoapAction(soapAction));
-        } else {
-            return new SoapOperation(binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-                    null, SoapUtils.normalizeSoapAction(soapAction));
-        }
-    }
-
-    public String toString() {
-        return String.format("bindingName=[%s] operationName=[%s] operationInputName=[%s] operationOutputName=[%s] soapAction=[%s]",
-                bindingName.toString(), operationName, operationInputName, operationOutputName, soapAction);
-    }
+     String getSoapAction();
 
 }

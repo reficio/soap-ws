@@ -15,8 +15,10 @@
     </parent>
 
     <modules>
+        <!--
         <module>customer-cxf</module>
         <module>customer-soapws</module>
+        -->
         <module>quickstart</module>
     </modules>
 

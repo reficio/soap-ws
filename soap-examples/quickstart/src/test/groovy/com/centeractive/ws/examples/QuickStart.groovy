@@ -1,7 +1,5 @@
 package com.centeractive.ws.examples
 
-import com.centeractive.ws.builder.SoapBuilder
-import com.centeractive.ws.builder.SoapOperation
 import com.centeractive.ws.builder.core.WsdlParser
 import com.centeractive.ws.client.core.SoapClient
 import groovy.xml.StreamingMarkupBuilder
@@ -12,13 +10,11 @@ class QuickStart {
 
     @Test
     void invokeConversionRate() {
-        // get parser, builder and operation
-        WsdlParser parser = WsdlParser.parse("http://www.webservicex.net/CurrencyConvertor.asmx?WSDL");
-        SoapBuilder builder = parser.binding().localPart("CurrencyConvertorSoap").builder();
-        SoapOperation operation = builder.operation().soapAction("http://www.webserviceX.NET/ConversionRate").find();
-
-        // generate the message
-        String input = builder.buildInputMessage(operation)
+        // generate the message (the quickest way)
+        String input = WsdlParser.parse("http://www.webservicex.net/CurrencyConvertor.asmx?WSDL")
+            .binding("{http://www.webserviceX.NET/}CurrencyConvertorSoap")
+            .operation().soapAction("http://www.webserviceX.NET/ConversionRate")
+            .find().buildInputMessage()
 
         // modify the request providing real data
         def slurper = new XmlSlurper().parseText(input)

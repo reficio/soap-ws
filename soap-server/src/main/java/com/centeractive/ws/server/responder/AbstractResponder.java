@@ -20,6 +20,7 @@ package com.centeractive.ws.server.responder;
 
 import com.centeractive.ws.builder.SoapBuilder;
 import com.centeractive.ws.builder.SoapOperation;
+import com.centeractive.ws.builder.core.SoapUtils;
 import com.centeractive.ws.server.OperationNotFoundException;
 import com.centeractive.ws.server.SoapServerException;
 import com.centeractive.ws.server.matcher.SoapOperationMatcher;
@@ -51,7 +52,7 @@ public abstract class AbstractResponder implements RequestResponder {
     /**
      * Constructs a responder for the specified binding of the builder
      *
-     * @param builder     Soap builder used to construct messages
+     * @param builder Soap builder used to construct messages
      */
     public AbstractResponder(SoapBuilder builder) {
         this.builder = builder;
@@ -72,7 +73,7 @@ public abstract class AbstractResponder implements RequestResponder {
         try {
             BindingOperation invokedOperation = soapOperationMatcher.getInvokedOperation(message);
             if (soapOperationMatcher.isRequestResponseOperation(invokedOperation)) {
-                SoapOperation operation = SoapOperation.create(binding, invokedOperation, message.getSoapAction());
+                SoapOperation operation = SoapUtils.createOperation(builder, binding, invokedOperation, message.getSoapAction());
                 return respond(operation, message);
             }
             return null;
