@@ -27,18 +27,22 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-// This creates a SOAP server that provides auto-responder for the specified binding
-// Generated responses are compliant with the schema and the type
-// In such a way the the SOAP client can be tested - it's real http communication, not mocking
+// When a class is annotated with the @Server annotation an instance of the SoapServer is created for the lifespan of the test
+// The SOAP server provides a SOAP auto-responder for the specified binding
+// The generated responses are compliant with the WSDL and the schema type (including enumerations, etc.)
+// @Server annotation may be also used to annotate a method - it creates the SoapServer for the lifespan of the test method.
+// In order to enable the server exposition a @Rule or @ClassRule has to be defined (JUnit requirement)
 @Server(wsdl = "http://www.webservicex.net/CurrencyConvertor.asmx?WSDL", binding = "CurrencyConvertorSoap")
 public class SoapRuleTest {
 
     private final static Logger log = Logger.getLogger(SoapRuleTest.class);
     private static final String WSDL = "http://www.webservicex.net/CurrencyConvertor.asmx?WSDL";
 
+    // define an instance rule if the @Server is used per method
     @Rule
     public SoapRule rule = new SoapRule();
 
+    // define a class rule if the @Server is used per class
     @ClassRule
     public static SoapRule classRule = new SoapRule();
 
