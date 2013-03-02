@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2012 centeractive ag. All Rights Reserved.
+    Copyright (c) 2012 Reficio (TM) - Reestablish your software!. All Rights Reserved.
 
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
@@ -72,9 +72,8 @@
             <answer>
                 Try here:
                 <ul>
-                    <li>GitHub -> https://github.com/centeractive/soap-ws</li>
+                    <li>GitHub -> https://github.com/reficio/soap-ws</li>
                     <li>Jenkins -> https://reficio.ci.cloudbees.com/job/soap-ws</li>
-                    <li>Sonar -> http://nemo.sonarsource.org/dashboard/index/com.centeractive:soap-ws</li>
                     <li>Site -> http://projects.reficio.org/soap-ws/1.0.0-SNAPSHOT</li>
                 </ul>
             </answer>

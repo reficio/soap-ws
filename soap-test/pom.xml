@@ -4,23 +4,25 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
+    <groupId>org.reficio</groupId>
     <artifactId>soap-test</artifactId>
     <name>soap-test - soap testing tools</name>
 
     <parent>
+        <groupId>org.reficio</groupId>
         <artifactId>soap-ws</artifactId>
-        <groupId>com.centeractive</groupId>
         <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <dependencies>
         <dependency>
-            <groupId>com.centeractive</groupId>
+            <groupId>org.reficio</groupId>
             <artifactId>soap-client</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.centeractive</groupId>
+            <groupId>org.reficio</groupId>
             <artifactId>soap-server</artifactId>
             <version>${project.version}</version>
         </dependency>

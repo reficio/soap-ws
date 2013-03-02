@@ -30,11 +30,11 @@
         </layout>
     </appender>
 
-    <!--<logger name="com.centeractive.ws.server.HttpsCooperationTest">-->
+    <!--<logger name="org.reficio.ws.server.HttpsCooperationTest">-->
         <!--<level value="info"/>-->
     <!--</logger>-->
 
-    <logger name="com.centeractive">
+    <logger name="org.reficio">
         <level value="error"/>
     </logger>
 

@@ -30,7 +30,7 @@
         </layout>
     </appender>
 
-    <logger name="com.centeractive">
+    <logger name="org.reficio">
         <level value="error"/>
     </logger>
 

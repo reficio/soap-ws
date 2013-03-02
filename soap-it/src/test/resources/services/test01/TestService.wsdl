@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
-xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
-xmlns:s="http://www.w3.org/2001/XMLSchema" 
-xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
-xmlns:tns="http://schemas.eviware.com/TestService/v1/" 
-xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" 
-xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
-xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
-          xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"
-          xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
-targetNamespace="http://schemas.eviware.com/TestService/v1/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:s="http://www.w3.org/2001/XMLSchema"
+                  xmlns:tns="http://schemas.eviware.com/TestService/v1/"
+                  xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+                  xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"
+                  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                  targetNamespace="http://schemas.eviware.com/TestService/v1/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
 
 <wsp:Policy wsu:Id="UsernameTokenPolicy" >
 		<sp:UsernameToken/>

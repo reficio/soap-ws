@@ -34,7 +34,7 @@
         <level value="fatal"/>
     </logger>
 
-    <logger name="com.centeractive">
+    <logger name="org.reficio">
         <level value="fatal"/>
     </logger>
 

@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<definitions name="StockQuote" targetNamespace="http://centeractive.com/stockquote.wsdl"
+<definitions name="StockQuote" targetNamespace="http://reficio.org/stockquote.wsdl"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-             xmlns:tns="http://centeractive.com/stockquote.wsdl"
-             xmlns:types="http://centeractive.com/stockquote.xsd"
+             xmlns:tns="http://reficio.org/stockquote.wsdl"
+             xmlns:types="http://reficio.org/stockquote.xsd"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
     <types>
-        <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://centeractive.com/stockquote.xsd">
+        <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://reficio.org/stockquote.xsd">
             <element name="TradePriceRequest">
                 <complexType>
                     <all>
@@ -71,7 +71,7 @@
         <documentation>My first service
         </documentation>
         <port name="StockQuotePort" binding="tns:StockQuoteSoapBinding">
-            <soap:address location="http://centeractive.com/stockquote"/>
+            <soap:address location="http://reficio.org/stockquote"/>
         </port>
     </service>
 

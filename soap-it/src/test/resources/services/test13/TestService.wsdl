@@ -1,4 +1,6 @@
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://api.ifyouwannabecool.com/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns0="http://api.ifyouwannabecool.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://api.ifyouwannabecool.com/"
+             xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+             xmlns:ns0="http://api.ifyouwannabecool.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
   <types>
     <xs:schema targetNamespace="http://api.ifyouwannabecool.com/" xmlns="http://api.ifyouwannabecool.com/">
       <xs:include schemaLocation="chameleon.xsd"/>

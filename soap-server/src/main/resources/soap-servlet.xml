@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:sws="http://www.springframework.org/schema/web-services"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-       http://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services-2.0.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 
-    <bean id="adapter" class="com.centeractive.ws.server.endpoint.ContextEndpointAdapter"/>
+    <bean id="adapter" class="org.reficio.ws.server.endpoint.ContextEndpointAdapter"/>
 
-    <bean class="com.centeractive.ws.server.endpoint.GenericEndpointMapping">
+    <bean class="org.reficio.ws.server.endpoint.GenericEndpointMapping">
         <property name="genericEndpoint" ref="endpoint"/>
         <property name="interceptors">
             <list>

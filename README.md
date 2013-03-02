@@ -1,4 +1,4 @@
-# soap-ws [![Build Status](https://secure.travis-ci.org/centeractive/soap-ws.png)](http://travis-ci.org/centeractive/soap-ws)
+# soap-ws [![Build Status](https://secure.travis-ci.org/reficio/soap-ws.png)](http://travis-ci.org/reficio/soap-ws)
 
 ## A lightweight and easy-to-use Java library to handle SOAP on a purely XML level.
 
@@ -70,17 +70,17 @@ In order to use soap-ws in your project you have to declare soap-ws in the depen
 ```xml
     <dependencies>
         <dependency>
-            <groupId>com.centeractive</groupId>
+            <groupId>org.reficio</groupId>
             <artifactId>soap-builder</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.centeractive</groupId>
+            <groupId>org.reficio</groupId>
             <artifactId>soap-client</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.centeractive</groupId>
+            <groupId>org.reficio</groupId>
             <artifactId>soap-server</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -371,12 +371,12 @@ Spring configuration:
         <bean id="wsdlUrl" class="java.net.URL" factory-bean="wsdl" factory-method="getURL"/>
 
         <!-- uncomment to use the local wsdl" -->
-        <!--<bean id="wsdlParser" class="com.centeractive.ws.builder.core.WsdlParser" factory-method="parse">-->
+        <!--<bean id="wsdlParser" class="org.reficio.ws.builder.core.WsdlParser" factory-method="parse">-->
             <!--<constructor-arg ref="wsdlUrl"/>-->
         <!--</bean>-->
 
         <!-- wsdl-parser part (remote wsdl) -->
-        <bean id="wsdlParser" class="com.centeractive.ws.builder.core.WsdlParser" factory-method="parse">
+        <bean id="wsdlParser" class="org.reficio.ws.builder.core.WsdlParser" factory-method="parse">
             <constructor-arg>
                 <value>http://www.webservicex.net/CurrencyConvertor.asmx?WSDL</value>
             </constructor-arg>
@@ -384,7 +384,7 @@ Spring configuration:
 
 
         <!-- soap-builder part -->
-        <bean id="soapContext" class="com.centeractive.ws.SoapContext">
+        <bean id="soapContext" class="org.reficio.ws.SoapContext">
             <constructor-arg name="exampleContent" type="boolean" value="true"/>
             <constructor-arg name="typeComments" type="boolean" value="true"/>
             <constructor-arg name="buildOptional" type="boolean" value="true"/>
@@ -392,7 +392,7 @@ Spring configuration:
             <constructor-arg name="valueComments" type="boolean" value="true"/>
         </bean>
 
-        <bean id="soapBuilder" class="com.centeractive.ws.builder.SoapBuilder"
+        <bean id="soapBuilder" class="org.reficio.ws.builder.SoapBuilder"
             factory-bean="wsdlParser" factory-method="getBuilder">
             <constructor-arg name="bindingName">
                 <value>{http://www.webserviceX.NET/}CurrencyConvertorSoap</value>
@@ -402,20 +402,20 @@ Spring configuration:
 
 
         <!-- soap-client part -->
-        <bean id="soapClientFactory" class="com.centeractive.ws.client.core.SoapClientFactory">
+        <bean id="soapClientFactory" class="org.reficio.ws.client.core.SoapClientFactory">
             <property name="endpointUrl" value="http://localhost:8778/currencyConverter/soap"/>
         </bean>
 
-        <bean id="soapClient" class="com.centeractive.ws.client.core.SoapClient"
+        <bean id="soapClient" class="org.reficio.ws.client.core.SoapClient"
             factory-bean="soapClientFactory" factory-method="create"/>
 
 
         <!-- soap-server part -->
-        <bean id="autoResponder" class="com.centeractive.ws.server.responder.AutoResponder">
+        <bean id="autoResponder" class="org.reficio.ws.server.responder.AutoResponder">
             <constructor-arg ref="soapBuilder"/>
         </bean>
 
-        <bean id="soapServerFactory" class="com.centeractive.ws.server.core.SoapServerFactory">
+        <bean id="soapServerFactory" class="org.reficio.ws.server.core.SoapServerFactory">
             <property name="httpPort" value="8778"/>
             <property name="responders">
                 <map>
@@ -445,15 +445,19 @@ Then you can inject the beans to your code, for example in such a way:
 ## Last but not least
 
 ### How can I hack around?
-* GitHub -> https://github.com/centeractive/soap-ws
+* GitHub -> https://github.com/reficio/soap-ws
 * Jenkins -> https://reficio.ci.cloudbees.com/job/soap-ws/
 * Site -> http://projects.reficio.org/soap-ws/1.0.0-SNAPSHOT/manual.html
 
 ### Who's behind it?
 Tom Bujok [tom.bujok@gmail.com]
 
-centeractive ag
-www.centeractive.com
+### History
+This project was initially developed at centeractive ag for the purposes of the
+open-sphere project. The library has been successfully incorporated into open-sphere
+and that initial version could be found in the centeractive's repository at github.
+
+Currently the project is developed and maintained solely by Tom Bujok at reficio.org
 
 ### Note
 This project contains classes extracted from the soapUI code base by centeractive ag

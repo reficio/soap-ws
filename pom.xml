@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.centeractive</groupId>
+    <groupId>org.reficio</groupId>
     <artifactId>soap-ws</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
@@ -45,8 +45,8 @@
             <id>tom.bujok</id>
             <name>Tom Bujok</name>
             <email>tom.bujok@gmail.com</email>
-            <organization>centeractive ag</organization>
-            <organizationUrl>http://www.centeractive.com</organizationUrl>
+            <organization>reficio</organization>
+            <organizationUrl>http://www.reficio.org</organizationUrl>
             <roles>
                 <role>project lead</role>
                 <role>developer</role>
@@ -57,13 +57,13 @@
 
     <issueManagement>
         <system>github</system>
-        <url>https://github.com/centeractive/soap-ws/issues</url>
+        <url>https://github.com/reficio/soap-ws/issues</url>
     </issueManagement>
 
     <scm>
-        <connection>scm:git:git://github.com/centeractive/soap-ws.git</connection>
-        <developerConnection>scm:git:git@github.com:centeractive/soap-ws.git</developerConnection>
-        <url>http://github.com/centeractive/soap-ws</url>
+        <connection>scm:git:git://github.com/reficio/soap-ws.git</connection>
+        <developerConnection>scm:git:git@github.com:reficio/soap-ws.git</developerConnection>
+        <url>http://github.com/reficio/soap-ws</url>
     </scm>
 
     <ciManagement>
@@ -156,7 +156,7 @@
                     <useDefaultMapping>true</useDefaultMapping>
                     <properties>
                         <year>${project.inceptionYear}</year>
-                        <company>centeractive ag</company>
+                        <company>Reficio (TM) - Reestablish your software!</company>
                     </properties>
                     <encoding>UTF-8</encoding>
                 </configuration>
@@ -462,6 +462,14 @@
                 </plugins>
             </build>
         </profile>
+
+        <!--<profile>-->
+            <!--<id>examples</id>-->
+            <!--<modules>-->
+                <!--<module>soap-examples</module>-->
+            <!--</modules>-->
+        <!--</profile>-->
+
     </profiles>
 
     <distributionManagement>

@@ -19,7 +19,7 @@
 -->
 <wsdl:definitions name="CustomerServiceService" targetNamespace="http://customerservice.example.com/"
                   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://customerservice.example.com/"
-                  xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
     <wsdl:types>
         <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://customerservice.example.com/"
                    attributeFormDefault="unqualified" elementFormDefault="unqualified"

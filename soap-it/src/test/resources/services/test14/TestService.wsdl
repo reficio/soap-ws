@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wsdl:definitions targetNamespace="http://cyclic.test" xmlns:impl="http://cyclic.test"
                   xmlns:intf="http://cyclic.test"
-                  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
                   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
                   xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
                   xmlns:xsd="http://www.w3.org/2001/XMLSchema">
@@ -10,7 +9,6 @@
         <schema targetNamespace="http://cyclic.test"
                 xmlns="http://www.w3.org/2001/XMLSchema" xmlns:impl="http://cyclic.test"
                 xmlns:intf="http://cyclic.test"
-                xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
                 xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema">
             <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>

@@ -2,22 +2,21 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd
-                           http://www.springframework.org/schema/context
-                           http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 
-    <bean name="genericReceiver" id="genericReceiver" class="com.centeractive.ws.server.endpoint.GenericContextDomEndpoint"/>
+    <bean name="genericReceiver" id="genericReceiver" class="org.reficio.ws.server.endpoint.GenericContextDomEndpoint"/>
 
-    <bean name="endpoint" id="endpoint" class="com.centeractive.ws.server.endpoint.GenericContextDomEndpoint"/>
+    <bean name="endpoint" id="endpoint" class="org.reficio.ws.server.endpoint.GenericContextDomEndpoint"/>
 
     <bean id="connector" class="org.mortbay.jetty.nio.SelectChannelConnector" />
     <bean id="sslConnector" class="org.mortbay.jetty.security.SslSelectChannelConnector" />
 
-    <bean id="messageFactory" class="com.centeractive.ws.server.protocol.GenericSoapMessageFactory" />
+    <bean id="messageFactory" class="org.reficio.ws.server.protocol.GenericSoapMessageFactory" />
 
     <bean id="jettyServer"
           class="org.mortbay.jetty.Server"
