@@ -32,9 +32,9 @@ import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
-import static org.reficio.ws.client.core.SoapClientConstants.*;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.reficio.ws.client.core.SoapClientConstants.*;
 
 /**
  * SOAP client enables the user to communicate with a SOAP server on a purely XML level.
@@ -171,9 +171,8 @@ public final class SoapClient {
 
     private void decorateConnectionWithSoap(String soapAction, String requestEnvelope) {
         if (requestEnvelope.contains(SOAP_1_1_NAMESPACE)) {
-            if (soapAction != null) {
-                connection.setRequestProperty(PROP_SOAP_ACTION_11, soapAction);
-            }
+            soapAction = soapAction != null ? "\"" + soapAction + "\"" : "";
+            connection.setRequestProperty(PROP_SOAP_ACTION_11, soapAction);
             connection.setRequestProperty(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
         } else if (requestEnvelope.contains(SOAP_1_2_NAMESPACE)) {
             connection.setRequestProperty(PROP_CONTENT_TYPE, MIMETYPE_APPLICATION_XML);
@@ -207,12 +206,7 @@ public final class SoapClient {
             outputWriter.flush();
 
             inputStream = connection.getInputStream();
-            StringBuilder response = new StringBuilder();
-            int inputChar;
-            while ((inputChar = inputStream.read()) != -1) {
-                response.append((char) inputChar);
-            }
-            return response.toString();
+            return IOUtils.toString(inputStream, "UTF-8");
         } finally {
             if (outputWriter != null) {
                 IOUtils.closeQuietly(outputWriter);

@@ -243,7 +243,7 @@ public class SoapOperationMatcher {
     }
 
     public boolean isRequestResponseOperation(BindingOperation operation) {
-        return operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE);
+        return operation.getBindingOutput() != null && operation.getBindingOutput().getName() != null;
     }
 
 }

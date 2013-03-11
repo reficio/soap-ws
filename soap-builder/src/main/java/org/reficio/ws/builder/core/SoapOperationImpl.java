@@ -25,7 +25,6 @@ import org.reficio.ws.builder.SoapOperationBuilder;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
-import javax.wsdl.OperationType;
 import javax.xml.namespace.QName;
 
 /**
@@ -80,13 +79,10 @@ class SoapOperationImpl implements SoapOperation, SoapOperationBuilder {
     }
 
     static SoapOperationBuilder create(SoapBuilder builder, Binding binding, BindingOperation operation, String soapAction) {
-        if (operation.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
-            return new SoapOperationImpl(builder, binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-                    operation.getBindingOutput().getName(), SoapUtils.normalizeSoapAction(soapAction));
-        } else {
-            return new SoapOperationImpl(builder, binding.getQName(), operation.getName(), operation.getBindingInput().getName(),
-                    null, SoapUtils.normalizeSoapAction(soapAction));
-        }
+        String bindingInputName = operation.getBindingInput() != null ? operation.getBindingInput().getName() : null;
+        String bindingOutputName = operation.getBindingOutput() != null ? operation.getBindingOutput().getName() : null;
+        return new SoapOperationImpl(builder, binding.getQName(), operation.getName(), bindingInputName, bindingOutputName,
+                SoapUtils.normalizeSoapAction(soapAction));
     }
 
     public String toString() {

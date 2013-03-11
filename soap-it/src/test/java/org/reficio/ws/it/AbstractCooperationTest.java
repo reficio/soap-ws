@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.reficio.ws.test;
+package org.reficio.ws.it;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,7 +27,7 @@ import org.reficio.ws.builder.core.SoapUtils;
 import org.reficio.ws.builder.core.WsdlParser;
 import org.reficio.ws.common.XmlUtils;
 import org.reficio.ws.server.core.SoapServer;
-import org.reficio.ws.test.util.TestUtils;
+import org.reficio.ws.it.util.TestUtils;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;

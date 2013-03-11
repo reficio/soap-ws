@@ -18,5 +18,24 @@
  */
 package org.reficio.ws.builder;
 
+import org.junit.Test;
+import org.reficio.ws.builder.core.WsdlParser;
+import org.reficio.ws.common.ResourceUtils;
+
+import javax.wsdl.WSDLException;
+import java.net.URL;
+
+import static junit.framework.Assert.assertNotNull;
+
 public class SoapBuilderImplTest {
+
+    @Test
+    public void testLoadSnowboard_Bug_851() throws WSDLException {
+        URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("builder", "snowboard.wsdl");
+        SoapBuilder builder = WsdlParser.parse(wsdlUrl).binding("{http://namespaces.snowboard-info.com}EndorsementSearchSoapBinding").builder();
+        for (SoapOperation op : builder.getOperations()) {
+            assertNotNull(op);
+        }
+    }
+
 }
