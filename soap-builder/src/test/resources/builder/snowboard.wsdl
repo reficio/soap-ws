@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="EndorsementSearch" targetNamespace="http://namespaces.snowboard-info.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:esxsd="http://schemas.snowboard-info.com/EndorsementSearch.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:es="http://www.snowboard-info.com/EndorsementSearch.wsdl">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://namespaces.snowboard-info.com" xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+
+      <!-- xsd definition: GetEndorsingBoarder [manufacturer string, model string] -->
+      <xsd:element name="GetEndorsingBoarder">
+	<xsd:complexType>
+	  <xsd:sequence>
+	    <xsd:element name="manufacturer" type="string"/>
+            <xsd:element name="model" type="string"/>
+	  </xsd:sequence>
+	</xsd:complexType>
+      </xsd:element>
+
+      <!-- xsd definition: GetEndorsingBoarderResponse [... endorsingBoarder string ...] -->
+      <xsd:element name="GetEndorsingBoarderResponse">
+	<xsd:complexType>
+	  <xsd:all>
+	    <xsd:element name="endorsingBoarder" type="string"/>
+	  </xsd:all>
+	</xsd:complexType>
+      </xsd:element>
+
+      <!-- xsd definition: GetEndorsingBoarderFault [... errorMessage string ...] -->
+      <xsd:element name="GetEndorsingBoarderFault">
+	<xsd:complexType>
+	  <xsd:all>
+	    <xsd:element name="errorMessage" type="string"/>
+	  </xsd:all>
+	</xsd:complexType>
+      </xsd:element>
+
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="GetEndorsingBoarderResponse">
+    <wsdl:part name="body" element="esxsd:GetEndorsingBoarderResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetEndorsingBoarderRequest">
+    <wsdl:part name="body" element="esxsd:GetEndorsingBoarder">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="GetEndorsingBoarderPortType">
+    <wsdl:operation name="GetEndorsingBoarder">
+      <wsdl:input message="es:GetEndorsingBoarderRequest">
+    </wsdl:input>
+      <wsdl:output message="es:GetEndorsingBoarderResponse">
+    </wsdl:output>
+      <wsdl:fault message="es:GetEndorsingBoarderFault">
+    </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="EndorsementSearchSoapBinding" type="es:GetEndorsingBoarderPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="GetEndorsingBoarder">
+      <soap:operation soapAction="http://www.snowboard-info.com/EndorsementSearch"/>
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://schemas.snowboard-info.com/EndorsementSearch.xsd"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://schemas.snowboard-info.com/EndorsementSearch.xsd"/>
+      </wsdl:output>
+      <wsdl:fault>
+    <soap:body namespace="http://schemas.snowboard-info.com/EndorsementSearch.xsd" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EndorsementSearchService">
+<wsdl:documentation>snowboarding-info.com Endorsement Service</wsdl:documentation>
+    <wsdl:port name="GetEndorsingBoarderPort" binding="es:EndorsementSearchSoapBinding">
+      <soap:address location="http://www.snowboard-info.com/EndorsementSearch"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
