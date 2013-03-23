@@ -19,7 +19,7 @@
 package org.reficio.ws.builder;
 
 import org.junit.Test;
-import org.reficio.ws.builder.core.WsdlParser;
+import org.reficio.ws.builder.core.Wsdl;
 import org.reficio.ws.common.ResourceUtils;
 
 import javax.wsdl.WSDLException;
@@ -32,7 +32,7 @@ public class SoapBuilderImplTest {
     @Test
     public void testLoadSnowboard_Bug_851() throws WSDLException {
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("builder", "snowboard.wsdl");
-        SoapBuilder builder = WsdlParser.parse(wsdlUrl).binding("{http://namespaces.snowboard-info.com}EndorsementSearchSoapBinding").builder();
+        SoapBuilder builder = Wsdl.parse(wsdlUrl).binding().name("{http://namespaces.snowboard-info.com}EndorsementSearchSoapBinding").find();
         for (SoapOperation op : builder.getOperations()) {
             assertNotNull(op);
         }

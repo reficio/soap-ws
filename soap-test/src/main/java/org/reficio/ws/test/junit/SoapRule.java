@@ -25,7 +25,7 @@ import org.junit.runners.model.Statement;
 import org.reficio.ws.SoapContext;
 import org.reficio.ws.SoapException;
 import org.reficio.ws.builder.SoapBuilder;
-import org.reficio.ws.builder.core.WsdlParser;
+import org.reficio.ws.builder.core.Wsdl;
 import org.reficio.ws.common.ResourceUtils;
 import org.reficio.ws.server.core.SoapServer;
 import org.reficio.ws.server.responder.AutoResponder;
@@ -65,7 +65,7 @@ public class SoapRule implements TestRule {
         }
         validate(annotation);
         URL wsdlUrl = getWsdlUrl(annotation, testClass);
-        WsdlParser parser = WsdlParser.parse(wsdlUrl);
+        Wsdl parser = Wsdl.parse(wsdlUrl);
         SoapBuilder builder = getBuilder(annotation, parser);
         SoapServer server = construct(annotation);
         AutoResponder responder = getAutoResponder(builder);
@@ -100,15 +100,15 @@ public class SoapRule implements TestRule {
         return new AutoResponder(builder, context);
     }
 
-    private SoapBuilder getBuilder(Server server, WsdlParser parser) {
+    private SoapBuilder getBuilder(Server server, Wsdl parser) {
         SoapBuilder builder = null;
         try {
-            builder = parser.binding(server.binding()).builder();
+            builder = parser.binding().name(server.binding()).find();
         } catch (SoapException ex) {
             // ignore
         }
         if (builder == null) {
-            builder = parser.binding().localPart(server.binding()).builder();
+            builder = parser.binding().localPart(server.binding()).find();
         }
         Preconditions.checkNotNull(builder, "Binding not found");
         return builder;

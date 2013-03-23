@@ -18,19 +18,37 @@
  */
 package org.reficio.ws.client.core;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.*;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.NTCredentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.routing.HttpRoutePlanner;
+import org.apache.http.conn.routing.RouteInfo;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeLayeredSocketFactory;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.reficio.ws.client.SoapClientException;
 import org.reficio.ws.client.TransmissionException;
+import org.reficio.ws.client.security.SSLUtils;
 
-import javax.net.ssl.*;
-import java.io.*;
-import java.net.*;
-import java.nio.charset.Charset;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -51,24 +69,21 @@ public final class SoapClient {
 
     private final static Log log = LogFactory.getLog(SoapClient.class);
 
-    // attributes
-    private URL serverUrl;
-    private String basicAuthEncoded;
-    private boolean tlsEnabled;
-    private KeyStore trustStore;
-    private boolean strictHostVerification = false;
-    private Proxy proxy;
-    private String proxyAuthEncoded;
-    private String sslContextProtocol = SSL_CONTEXT_PROTOCOL;
-    private int readTimeoutInMillis = INFINITE_TIMEOUT;
-    private int connectTimeoutInMillis = INFINITE_TIMEOUT;
+    private final static String NULL_SOAP_ACTION = null;
 
-    // runtime attributes
-    private HttpURLConnection connection;
-    private OutputStream outputStream = null;
-    private InputStream inputStream = null;
-    private SSLContext context;
-    private SSLSocketFactory sslSocketFactory;
+    private int readTimeoutInMillis;
+    private int connectTimeoutInMillis;
+
+    private URI endpointUri;
+    private Security endpointProperties;
+    private boolean endpointTlsEnabled;
+
+    private URI proxyUri;
+    private Security proxyProperties;
+    private boolean proxyTlsEnabled;
+
+    private DefaultHttpClient client;
+
 
     // ----------------------------------------------------------------
     // PUBLIC API
@@ -81,7 +96,7 @@ public final class SoapClient {
      * @return The result returned by the SOAP server
      */
     public String post(String requestEnvelope) {
-        return post(null, requestEnvelope);
+        return post(NULL_SOAP_ACTION, requestEnvelope);
     }
 
     /**
@@ -92,15 +107,99 @@ public final class SoapClient {
      * @return The result returned by the SOAP server
      */
     public String post(String soapAction, String requestEnvelope) {
-        log.debug(String.format("Sending request to host=[%s] action=[%s] request:%n%s", serverUrl.toString(),
+        log.debug(String.format("Sending request to host=[%s] action=[%s] request:%n%s", endpointUri.toString(),
                 soapAction, requestEnvelope));
-        openConnection();
+        initializeClient();
+        configureAuthentication();
         configureTls();
-        configureConnection();
-        decorateConnectionWithSoap(soapAction, requestEnvelope);
-        String response = transmit(requestEnvelope);
+        configureProxy();
+        String response = transmit(soapAction, requestEnvelope);
         log.debug("Received response:\n" + requestEnvelope);
         return response;
+    }
+
+    // ----------------------------------------------------------------
+    // INTERNAL API
+    // ----------------------------------------------------------------
+    private void initializeClient() {
+        client = new DefaultHttpClient();
+        HttpParams httpParameters = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParameters, connectTimeoutInMillis);
+        HttpConnectionParams.setSoTimeout(httpParameters, readTimeoutInMillis);
+    }
+
+    private void configureAuthentication() {
+        configureAuthentication(endpointUri, endpointProperties);
+        configureAuthentication(proxyUri, proxyProperties);
+    }
+
+    private void configureAuthentication(URI uri, Security security) {
+        if (security.isAuthEnabled()) {
+            AuthScope scope = new AuthScope(uri.getHost(), uri.getPort());
+            Credentials credentials = null;
+            if (security.isAuthBasic()) {
+                credentials = new UsernamePasswordCredentials(security.getAuthUsername(), security.getAuthPassword());
+            } else if (security.isAuthDigest()) {
+                credentials = new UsernamePasswordCredentials(security.getAuthUsername(), security.getAuthPassword());
+            } else if (security.isAuthNtlm()) {
+                // TODO
+                credentials = new NTCredentials(security.getAuthUsername(), security.getAuthPassword(), null, null);
+            } else if (security.isAuthSpnego()) {
+                // TODO
+            }
+            client.getCredentialsProvider().setCredentials(scope, credentials);
+        }
+    }
+
+    private void configureTls() {
+        SSLSocketFactory factory;
+        int port;
+        try {
+            if (endpointTlsEnabled && proxyTlsEnabled) {
+                factory = SSLUtils.getMergedSocketFactory(endpointProperties, proxyProperties);
+                registerTlsScheme(factory, proxyUri.getPort());
+            } else if (endpointTlsEnabled) {
+                factory = SSLUtils.getFactory(endpointProperties);
+                port = endpointUri.getPort();
+                registerTlsScheme(factory, port);
+            } else if (proxyTlsEnabled) {
+                factory = SSLUtils.getFactory(proxyProperties);
+                port = proxyUri.getPort();
+                registerTlsScheme(factory, port);
+            }
+        } catch (GeneralSecurityException ex) {
+            throw new SoapClientException(ex);
+        }
+    }
+
+    private void registerTlsScheme(SchemeLayeredSocketFactory factory, int port) {
+        Scheme sch = new Scheme("https", port, factory);
+        client.getConnectionManager().getSchemeRegistry().register(sch);
+    }
+
+    private void configureProxy() {
+        if (proxyUri == null) {
+            return;
+        }
+        if (proxyTlsEnabled) {
+            final HttpHost proxy = new HttpHost(proxyUri.getHost(), proxyUri.getPort(), "https");
+            // https://issues.apache.org/jira/browse/HTTPCLIENT-1318
+            // http://stackoverflow.com/questions/15048102/httprouteplanner-how-does-it-work-with-an-https-proxy
+            // To make the HttpClient talk to a HTTP End-site through an HTTPS Proxy, the route should be secure,
+            //  but there should not be any Tunnelling or Layering.
+            if (!endpointTlsEnabled) {
+                client.setRoutePlanner(new HttpRoutePlanner() {
+                    @Override
+                    public HttpRoute determineRoute(HttpHost target, HttpRequest request, HttpContext context) {
+                        return new HttpRoute(target, null, proxy, true, RouteInfo.TunnelType.PLAIN, RouteInfo.LayerType.PLAIN);
+                    }
+                });
+            }
+            client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+        } else {
+            HttpHost proxy = new HttpHost(proxyUri.getHost(), proxyUri.getPort());
+            client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+        }
     }
 
     /**
@@ -110,146 +209,59 @@ public final class SoapClient {
      * @link http://docs.oracle.com/javase/1.5.0/docs/guide/net/http-keepalive.html
      */
     public void disconnect() {
-        if (connection != null) {
-            connection.disconnect();
+        if (client != null) {
+            client.getConnectionManager().shutdown();
         }
     }
 
-    // ----------------------------------------------------------------
-    // INTERNAL API
-    // ----------------------------------------------------------------
-    private void openConnection() {
+    private HttpPost generatePost(String soapAction, String requestEnvelope) {
         try {
-            if (proxy != null) {
-                connection = (HttpURLConnection) serverUrl.openConnection(proxy);
-            } else {
-                connection = (HttpURLConnection) serverUrl.openConnection();
+            HttpPost post = new HttpPost(endpointUri.toString());
+            StringEntity contentEntity = new StringEntity(requestEnvelope);
+            post.setEntity(contentEntity);
+            if (requestEnvelope.contains(SOAP_1_1_NAMESPACE)) {
+                soapAction = soapAction != null ? "\"" + soapAction + "\"" : "";
+                post.addHeader(PROP_SOAP_ACTION_11, soapAction);
+                post.addHeader(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
+                client.getParams().setParameter(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
+            } else if (requestEnvelope.contains(SOAP_1_2_NAMESPACE)) {
+                String contentType = MIMETYPE_APPLICATION_XML;
+                if (soapAction != null) {
+                    contentType = contentType + PROP_DELIMITER + PROP_SOAP_ACTION_12 + "\"" + soapAction + "\"";
+                }
+                post.addHeader(PROP_CONTENT_TYPE, contentType);
             }
-        } catch (IOException e) {
-            throw new SoapClientException("Connection initialization failed", e);
+            return post;
+        } catch (UnsupportedEncodingException ex) {
+            throw new SoapClientException(ex);
         }
     }
 
-    private void configureTls() {
-        if (tlsEnabled == false) {
-            return;
-        }
+    private String transmit(String soapAction, String data) {
+        HttpPost post = generatePost(soapAction, data);
         try {
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            trustManagerFactory.init(trustStore);
-            X509TrustManager defaultTrustManager = (X509TrustManager) trustManagerFactory.getTrustManagers()[0];
-            context = SSLContext.getInstance(sslContextProtocol);
-            context.init(null, new TrustManager[]{defaultTrustManager}, null);
-            sslSocketFactory = context.getSocketFactory();
-            ((HttpsURLConnection) connection).setSSLSocketFactory(sslSocketFactory);
-            if (strictHostVerification == false) {
-                ((HttpsURLConnection) connection).setHostnameVerifier(new SoapHostnameVerifier());
-            }
-        } catch (GeneralSecurityException e) {
-            throw new SoapClientException("TLS/SSL setup failed", e);
-        }
-    }
-
-    private void configureConnection() {
-        try {
-            connection.setDoOutput(true);
-            connection.setDoInput(true);
-            connection.setRequestMethod(POST);
-            connection.setConnectTimeout(connectTimeoutInMillis);
-            connection.setReadTimeout(readTimeoutInMillis);
-            if (basicAuthEncoded != null) {
-                connection.setRequestProperty(PROP_AUTH, PROP_BASIC_AUTH + " " + basicAuthEncoded);
-            }
-            if (proxyAuthEncoded != null) {
-                connection.setRequestProperty(PROP_PROXY_AUTH, PROP_BASIC_AUTH + " " + basicAuthEncoded);
-            }
-        } catch (ProtocolException e) {
-            throw new SoapClientException("Connection setup failed", e);
-        }
-
-    }
-
-    private void decorateConnectionWithSoap(String soapAction, String requestEnvelope) {
-        if (requestEnvelope.contains(SOAP_1_1_NAMESPACE)) {
-            soapAction = soapAction != null ? "\"" + soapAction + "\"" : "";
-            connection.setRequestProperty(PROP_SOAP_ACTION_11, soapAction);
-            connection.setRequestProperty(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
-        } else if (requestEnvelope.contains(SOAP_1_2_NAMESPACE)) {
-            connection.setRequestProperty(PROP_CONTENT_TYPE, MIMETYPE_APPLICATION_XML);
-            if (soapAction != null) {
-                String prop = connection.getRequestProperty(PROP_CONTENT_TYPE);
-                connection.setRequestProperty(PROP_CONTENT_TYPE, prop + PROP_DELIMITER
-                        + PROP_SOAP_ACTION_12 + "\"" + soapAction + "\"");
-            }
-
-        }
-        connection.setRequestProperty(PROP_CONTENT_LENGTH, Integer.toString(requestEnvelope.length()));
-    }
-
-    private String transmit(String data) {
-        try {
-            return performTransmission(data);
+            HttpResponse response = client.execute(post);
+            return handleResponse(response);
         } catch (IOException ex) {
-            properlyHandleTransmissionError(ex);
-        } finally {
-            cleanupResources();
-        }
-        return null;
-    }
-
-    private String performTransmission(String data) throws IOException {
-        Writer outputWriter = null;
-        try {
-            outputStream = connection.getOutputStream();
-            outputWriter = new OutputStreamWriter(outputStream, Charset.forName("UTF-8"));
-            outputWriter.write(data);
-            outputWriter.flush();
-
-            inputStream = connection.getInputStream();
-            return IOUtils.toString(inputStream, "UTF-8");
-        } finally {
-            if (outputWriter != null) {
-                IOUtils.closeQuietly(outputWriter);
-            }
+            // In case of an IOException the connection will be released
+            // back to the connection manager automatically
+            throw new SoapClientException(ex);
+        } catch (SoapClientException ex) {
+            throw ex;
+        } catch (RuntimeException ex) {
+            post.abort();
+            throw new SoapClientException(ex);
         }
     }
 
-    private void properlyHandleTransmissionError(IOException ex) {
-        StringBuilder errorMessage = new StringBuilder();
-        int errorCode = 0;
-        try {
-            errorCode = connection.getResponseCode();
-        } catch (IOException e) {
-            // ignore
+    public String handleResponse(final HttpResponse response) throws IOException {
+        StatusLine statusLine = response.getStatusLine();
+        HttpEntity entity = response.getEntity();
+        if (statusLine.getStatusCode() >= 300) {
+            EntityUtils.consume(entity);
+            throw new TransmissionException(statusLine.getReasonPhrase(), statusLine.getStatusCode());
         }
-        try {
-            InputStream errorStream = ((HttpURLConnection) connection).getErrorStream();
-            int ret = 0;
-            while ((ret = errorStream.read()) > 0) {
-                errorMessage.append((char) ret);
-            }
-            errorStream.close();
-        } catch (IOException e) {
-            // ignore
-        } finally {
-            throw new TransmissionException(errorMessage.toString(), errorCode, ex);
-        }
-    }
-
-    private void cleanupResources() {
-        if (inputStream != null) {
-            IOUtils.closeQuietly(inputStream);
-        }
-        if (outputStream != null) {
-            IOUtils.closeQuietly(outputStream);
-        }
-    }
-
-    private static class SoapHostnameVerifier implements HostnameVerifier {
-        @Override
-        public boolean verify(String urlHost, SSLSession sslSession) {
-            return true;
-        }
+        return entity == null ? null : EntityUtils.toString(entity);
     }
 
     // ----------------------------------------------------------------
@@ -262,36 +274,29 @@ public final class SoapClient {
      * Builder to construct a properly populated SoapClient
      */
     public static class Builder {
-        private final SoapClient client = new SoapClient();
 
-        private KeyStore trustStore;
+        private Integer readTimeoutInMillis = INFINITE_TIMEOUT;
+        private Integer connectTimeoutInMillis = INFINITE_TIMEOUT;
 
-        private URL trustStoreUrl;
-        private String trustStoreType = JKS_KEYSTORE;
-        private char[] trustStorePassword;
+        private URI endpointUri;
+        private Security endpointProperties;
+        private boolean endpointTlsEnabled;
 
-        private Proxy.Type proxyType = Proxy.Type.DIRECT;
-        private String proxyHost;
-        private int proxyPort;
-
-        private String encodeBasicCredentials(String user, String password) {
-            checkNotNull(user);
-            checkNotNull(password);
-            String basicAuthCredentials = user + ":" + password;
-            return Base64.encodeBase64String(basicAuthCredentials.getBytes(Charset.forName("UTF-8")));
-        }
+        private URI proxyUri;
+        private Security proxyProperties;
+        private boolean proxyTlsEnabled;
 
         /**
          * @param value URL of the SOAP endpoint to whom the client should send messages. Null is not accepted.
          * @return builder
          */
-        public Builder endpointUrl(String value) {
+        public Builder endpointUri(String value) {
             checkNotNull(value);
             try {
-                URL url = new URL(value);
-                return endpointUrl(url);
-            } catch (MalformedURLException ex) {
-                throw new SoapClientException(String.format("URL [%s] is malformed", value), ex);
+                URI uri = new URI(value);
+                return endpointUri(uri);
+            } catch (URISyntaxException ex) {
+                throw new SoapClientException(String.format("URI [%s] is malformed", value), ex);
             }
         }
 
@@ -299,140 +304,43 @@ public final class SoapClient {
          * @param value URL of the SOAP endpoint to whom the client should send messages. Null is not accepted.
          * @return builder
          */
-        public Builder endpointUrl(URL value) {
-            checkNotNull(value);
-            client.serverUrl = value;
-            client.tlsEnabled = client.serverUrl.getProtocol().equalsIgnoreCase("https");
+        public Builder endpointUri(URI value) {
+            endpointUri = checkNotNull(value);
+            endpointTlsEnabled = value.getScheme().equalsIgnoreCase("https");
             return this;
         }
 
         /**
-         * Enables basic authentication while communication with the SOAP server
-         *
-         * @param user     User for the basic-authentication. Null is not accepted.
-         * @param password Password for the basic-authentication. Null is not accepted.
+         * @param value URL of the SOAP endpoint to whom the client should send messages. Null is not accepted.
          * @return builder
          */
-        public Builder basicAuth(String user, String password) {
-            client.basicAuthEncoded = encodeBasicCredentials(user, password);
-            return this;
-        }
-
-        /**
-         * @param value Specifies the instance of the truststore to use in the SOAP communication. Null is not accepted.
-         * @return builder
-         */
-        public Builder trustStore(KeyStore value) {
-            checkNotNull(value);
-            trustStore = value;
-            return this;
-        }
-
-        /**
-         * @param value Specifies the URL of the truststore to use in the SOAP communication. Null is not accepted.
-         * @return builder
-         */
-        public Builder trustStoreUrl(URL value) {
-            checkNotNull(value);
-            trustStoreUrl = value;
-            return this;
-        }
-
-        /**
-         * @param value Specifies the URL of the truststore to use in the SOAP communication. Null is not accepted.
-         * @return builder
-         */
-        public Builder trustStoreUrl(String value) {
+        public Builder proxyUri(String value) {
             checkNotNull(value);
             try {
-                trustStoreUrl = new URL(value);
-                return this;
-            } catch (MalformedURLException ex) {
-                throw new SoapClientException(String.format("URL [%s] is malformed", value), ex);
+                URI uri = new URI(value);
+                return proxyUri(uri);
+            } catch (URISyntaxException ex) {
+                throw new SoapClientException(String.format("URI [%s] is malformed", value), ex);
             }
         }
 
         /**
-         * @param value Specifies the type of the truststore. Null is not accepted.
+         * @param value URL of the SOAP endpoint to whom the client should send messages. Null is not accepted.
          * @return builder
          */
-        public Builder trustStoreType(String value) {
-            checkNotNull(value);
-            trustStoreType = value;
+        public Builder proxyUri(URI value) {
+            proxyUri = checkNotNull(value);
+            proxyTlsEnabled = value.getScheme().equalsIgnoreCase("https");
             return this;
         }
 
-        /**
-         * @param value truststore password. Null is accepted.
-         * @return builder
-         */
-        public Builder trustStorePassword(String value) {
-            if (value != null) {
-                trustStorePassword = value.toCharArray();
-            }
+        public Builder endpointSecurity(Security value) {
+            this.endpointProperties = checkNotNull(value);
             return this;
         }
 
-        /**
-         * Enables strict host verification
-         *
-         * @param value strict host verification enables/disabled
-         * @return builder
-         */
-        public Builder strictHostVerification(boolean value) {
-            client.strictHostVerification = value;
-            return this;
-        }
-
-        /**
-         * @param value Specifies the proxy type. Null is not accepted.
-         * @return builder
-         */
-        public Builder proxyType(Proxy.Type value) {
-            checkNotNull(value);
-            proxyType = value;
-            return this;
-        }
-
-        /**
-         * @param value Specifies the proxy host (IP or hostname). Null is not accepted.
-         * @return builder
-         */
-        public Builder proxyHost(String value) {
-            checkNotNull(value);
-            proxyHost = value;
-            return this;
-        }
-
-        /**
-         * @param value Specifies the proxy port. Has to be positive.
-         * @return builder
-         */
-        public Builder proxyPort(int value) {
-            checkArgument(value > 0);
-            proxyPort = value;
-            return this;
-        }
-
-        /**
-         * Enables basic authentication while communication with the proxy server
-         *
-         * @param user     User for the basic-authentication. Null is not accepted.
-         * @param password Password for the basic-authentication. Null is not accepted.
-         * @return builder
-         */
-        public Builder proxyBasicAuth(String user, String password) {
-            client.proxyAuthEncoded = encodeBasicCredentials(user, password);
-            return this;
-        }
-
-        /**
-         * @param value Specifies the SSL Context Protocol. By default it's SSLv3. Null is not accepted.
-         * @return builder
-         */
-        public Builder sslContextProtocol(String value) {
-            checkNotNull(value);
-            client.sslContextProtocol = value;
+        public Builder proxySecurity(Security value) {
+            this.proxyProperties = checkNotNull(value);
             return this;
         }
 
@@ -442,7 +350,7 @@ public final class SoapClient {
          */
         public Builder readTimeoutInMillis(int value) {
             checkArgument(value >= 0);
-            client.readTimeoutInMillis = value;
+            readTimeoutInMillis = value;
             return this;
         }
 
@@ -452,7 +360,7 @@ public final class SoapClient {
          */
         public Builder connectTimeoutInMillis(int value) {
             checkArgument(value >= 0);
-            client.connectTimeoutInMillis = value;
+            connectTimeoutInMillis = value;
             return this;
         }
 
@@ -462,45 +370,28 @@ public final class SoapClient {
          * @return properly populated soap clients
          */
         public SoapClient build() {
-            validate();
-            validateAndInitKeystore();
-            validateAndInitProxy();
+            return initializeClient();
+        }
+
+        private SoapClient initializeClient() {
+            SoapClient client = new SoapClient();
+            client.endpointUri = endpointUri;
+            if (endpointProperties == null) {
+                endpointProperties = Security.builder().build();
+            }
+            client.endpointProperties = endpointProperties;
+            client.endpointTlsEnabled = endpointTlsEnabled;
+
+            client.proxyUri = proxyUri;
+            if (proxyProperties == null) {
+                proxyProperties = Security.builder().build();
+            }
+            client.proxyProperties = proxyProperties;
+            client.proxyTlsEnabled = proxyTlsEnabled;
+
+            client.readTimeoutInMillis = readTimeoutInMillis;
+            client.connectTimeoutInMillis = connectTimeoutInMillis;
             return client;
-        }
-
-        private void validate() {
-            checkNotNull(client.serverUrl);
-        }
-
-        private void validateAndInitKeystore() {
-            boolean trustStorePropertiesDefined = trustStoreUrl != null || trustStoreType != null || trustStorePassword != null;
-            if (trustStore != null && trustStorePropertiesDefined) {
-                throw new SoapClientException("Specify either a trustStore instance or properties required to load one " +
-                        "(trustStoreUrl, trustStoreType, trustStorePassword)");
-            }
-            if (trustStore != null) {
-                client.trustStore = trustStore;
-            } else if (trustStoreUrl != null) {
-                try {
-                    InputStream in = trustStoreUrl.openStream();
-                    KeyStore ks = KeyStore.getInstance(trustStoreType);
-                    ks.load(in, trustStorePassword);
-                    in.close();
-                    client.trustStore = ks;
-                } catch (GeneralSecurityException e) {
-                    throw new SoapClientException("Keystore setup failed", e);
-                } catch (IOException e) {
-                    throw new SoapClientException("Keystore setup failed", e);
-                }
-            }
-        }
-
-        private void validateAndInitProxy() {
-            if (proxyType != Proxy.Type.DIRECT) {
-                checkNotNull(proxyHost);
-                checkNotNull(proxyPort);
-                client.proxy = new Proxy(proxyType, new InetSocketAddress(proxyHost, proxyPort));
-            }
         }
     }
 

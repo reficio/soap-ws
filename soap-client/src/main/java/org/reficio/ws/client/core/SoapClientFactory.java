@@ -46,7 +46,6 @@ public class SoapClientFactory {
     private String trustStorePassword;
 
     // will be validated as a group later in the builder
-    private Proxy.Type proxyType;
     private String proxyHost;
     private Integer proxyPort;
 
@@ -101,12 +100,6 @@ public class SoapClientFactory {
         this.trustStorePassword = trustStorePassword;
     }
 
-
-    public void setProxyType(String proxyType) {
-        checkNotNull(proxyType);
-        this.proxyType = Proxy.Type.valueOf(proxyType);
-    }
-
     public void setProxyHost(String proxyHost) {
         checkNotNull(proxyHost);
         this.proxyHost = proxyHost;
@@ -154,56 +147,58 @@ public class SoapClientFactory {
     }
 
     private void configureConnection(SoapClient.Builder builder) {
-        if (endpointUrl != null) {
-            builder.endpointUrl(endpointUrl);
-        }
-        if (readTimeoutInMillis != null) {
-            builder.readTimeoutInMillis(readTimeoutInMillis);
-        }
-        if (connectTimeoutInMillis != null) {
-            builder.connectTimeoutInMillis(connectTimeoutInMillis);
-        }
+        // TODO
+//        if (endpointUrl != null) {
+//            builder.endpointUri(endpointUrl);
+//        }
+//        if (readTimeoutInMillis != null) {
+//            builder.readTimeoutInMillis(readTimeoutInMillis);
+//        }
+//        if (connectTimeoutInMillis != null) {
+//            builder.connectTimeoutInMillis(connectTimeoutInMillis);
+//        }
     }
 
     private void configureSecurity(SoapClient.Builder builder) {
-        if (basicAuth) {
-            builder.basicAuth(basicAuthUser, basicAuthPassword);
-        }
-        if (strictHostVerification != null) {
-            builder.strictHostVerification(strictHostVerification);
-        }
-        if (sslContextProtocol != null) {
-            builder.sslContextProtocol(sslContextProtocol);
-        }
+        // TODO
+//        if (basicAuth) {
+//            builder.basicAuth(basicAuthUser, basicAuthPassword);
+//        }
+//        if (strictHostVerification != null) {
+//            builder.strictHostVerification(strictHostVerification);
+//        }
+//        if (sslContextProtocol != null) {
+//            builder.sslContextProtocol(sslContextProtocol);
+//        }
     }
 
     private void configureProxy(SoapClient.Builder builder) {
-        if (proxyHost != null) {
-            builder.proxyHost(proxyHost);
-        }
-        if (proxyPort != null) {
-            builder.proxyPort(proxyPort);
-        }
-        if (proxyType != null) {
-            builder.proxyType(proxyType);
-        }
-        if (proxyBasicAuth) {
-            builder.proxyBasicAuth(proxyBasicAuthUser, proxyBasicAuthPassword);
-        }
+        // TODO
+//        if (proxyHost != null) {
+//            builder.proxyHost(proxyHost);
+//        }
+//        if (proxyPort != null) {
+//            builder.proxyPort(proxyPort);
+//        }
+//        if (proxyBasicAuth) {
+//            builder.proxyBasicAuth(proxyBasicAuthUser, proxyBasicAuthPassword);
+//        }
     }
 
     private void configureTrustStore(SoapClient.Builder builder) {
-        if (trustStore != null) {
-            builder.trustStore(trustStore);
-        }
-        if (trustStoreUrl != null) {
-            builder.trustStoreUrl(trustStoreUrl);
-        }
-        if (trustStoreType != null) {
-            builder.trustStoreType(trustStoreType);
-        }
+        // TODO
+//        if (trustStore != null) {
+//            builder.trustStore(trustStore);
+//        }
+//        if (trustStoreUrl != null) {
+//            builder.trustStoreUrl(trustStoreUrl);
+//        }
+//        if (trustStoreType != null) {
+//            builder.trustStoreType(trustStoreType);
+//        }
+
         // trustStorePassword may be null
-        builder.trustStorePassword(trustStorePassword);
+//        builder.trustStorePassword(trustStorePassword);
     }
 
 }

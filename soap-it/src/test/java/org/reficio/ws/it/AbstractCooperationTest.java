@@ -24,18 +24,23 @@ import org.reficio.ws.SoapContext;
 import org.reficio.ws.builder.SoapBuilder;
 import org.reficio.ws.builder.SoapOperation;
 import org.reficio.ws.builder.core.SoapUtils;
-import org.reficio.ws.builder.core.WsdlParser;
+import org.reficio.ws.builder.core.Wsdl;
+import org.reficio.ws.client.core.SoapClient;
+import org.reficio.ws.common.ResourceUtils;
 import org.reficio.ws.common.XmlUtils;
-import org.reficio.ws.server.core.SoapServer;
+import org.reficio.ws.it.util.ClientBuilder;
 import org.reficio.ws.it.util.TestUtils;
+import org.reficio.ws.server.core.SoapServer;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.OperationType;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
+import java.io.InputStream;
+import java.net.URL;
+import java.security.KeyStore;
 
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 /**
@@ -59,76 +64,117 @@ public abstract class AbstractCooperationTest {
 
     protected SoapServer server;
 
-    protected void verifyServiceBehavior(int testServiceId) throws Exception {
-        verifyServiceBehavior(testServiceId, null);
+    protected static URL getKeyStoreUrlOne() {
+        return ResourceUtils.getResourceWithAbsolutePackagePath("/keystores/single-cert-keystore", ".keystore_1");
     }
 
-    protected void verifyServiceBehavior(int testServiceId, Boolean postSoapAction) throws Exception {
+    protected static URL getKeyStoreUrlTwo() {
+        return ResourceUtils.getResourceWithAbsolutePackagePath("/keystores/single-cert-keystore", ".keystore_2");
+    }
+
+    protected static URL getMultiKeyStoreUrl() {
+        return ResourceUtils.getResourceWithAbsolutePackagePath("/keystores/multi-cert-keystore", ".keystore");
+    }
+
+    protected String getKeyStorePassword() {
+        return "changeit";
+    }
+
+    protected void verifyServiceBehavior(int testServiceId, ClientBuilder clientBuilder) throws Exception {
+        verifyServiceBehavior(testServiceId, null, clientBuilder);
+    }
+
+    protected void verifyServiceBehavior(int testServiceId) throws Exception {
+        verifyServiceBehavior(testServiceId, new ClientBuilderImpl());
+    }
+
+    protected void verifyServiceBehavior(int testServiceId, Boolean postSoapAction, ClientBuilder clientBuilder) throws Exception {
         log.info(String.format("------------------- TESTING SERVICE [%d] -----------------------", testServiceId));
-        String url = getUrlString();
-        WsdlParser parser = TestUtils.createParserForService(testServiceId);
-        registerHandler(testServiceId, parser);
-        assertNotNull(parser);
+        Wsdl parser = TestUtils.createParserForService(testServiceId);
+        registerHandler(server, testServiceId, parser);
+
+        boolean a = false;
         for (QName bindingName : parser.getBindings()) {
-            SoapBuilder builder = parser.binding(bindingName).builder();
+            SoapBuilder builder = parser.binding().name(bindingName).find();
+            String contextPath = TestUtils.formatContextPath(testServiceId, builder.getBindingName());
+            String endpointUrl = formatEndpointAddress(contextPath);
+
             for (SoapOperation operation : builder.getOperations()) {
-                if(postSoapAction == null) {
+                if (postSoapAction == null) {
                     // test both with and without soap action
-                    testOperation(builder, operation, url, testServiceId, Boolean.TRUE);
-                    testOperation(builder, operation, url, testServiceId, Boolean.FALSE);
+                    testOperation(clientBuilder, builder, operation, endpointUrl, Boolean.TRUE);
+                    testOperation(clientBuilder, builder, operation, endpointUrl, Boolean.FALSE);
                 } else {
-                    testOperation(builder, operation, url, testServiceId, postSoapAction);
+                    testOperation(clientBuilder, builder, operation, endpointUrl, postSoapAction);
                 }
             }
         }
-        log.info("------------------------------------------------------------------------");
     }
 
+    protected void verifyServiceBehavior(int testServiceId, Boolean postSoapAction) throws Exception {
+        verifyServiceBehavior(testServiceId, postSoapAction, new ClientBuilderImpl());
+    }
 
-    private void testOperation(SoapBuilder builder, SoapOperation wrapper, String url,
-                                 int testServiceId, Boolean postSoapAction) throws Exception {
-
-        log.info("Testing operation: " + wrapper);
-        String request = builder.buildInputMessage(wrapper);
+    private void testOperation(ClientBuilder clientBuilder, SoapBuilder soapBuilder, SoapOperation operation, String endpointUrl, Boolean postSoapAction) throws Exception {
+        log.info("Testing operation: " + operation);
+        String request = soapBuilder.buildInputMessage(operation);
         assertTrue("Generated request is empty!", request.length() > 0);
-        String contextPath = TestUtils.formatContextPath(testServiceId, builder.getBindingName());
-        String endpointUrl = formatEndpointAddress(url, contextPath);
 
-        Binding binding = builder.getBinding();
-        BindingOperation op = binding.getBindingOperation(wrapper.getOperationName(), wrapper.getOperationInputName(),
-                wrapper.getOperationOutputName());
+        Binding binding = soapBuilder.getBinding();
+        BindingOperation op = binding.getBindingOperation(operation.getOperationName(), operation.getOperationInputName(),
+                operation.getOperationOutputName());
 
         String response;
+        SoapClient client = clientBuilder.buildClient(endpointUrl);
         if (postSoapAction.booleanValue()) {
             String soapAction = SoapUtils.getSOAPActionUri(op);
-            response = postRequest(endpointUrl, request, soapAction);
+            response = postRequest(client, request, soapAction);
         } else {
-            response = postRequest(endpointUrl, request);
+            response = postRequest(client, request);
         }
 
         SoapContext context = SoapContext.builder().exampleContent(false).build();
         if (op.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
-            String expectedResponse = builder.buildOutputMessage(wrapper, context);
+            String expectedResponse = soapBuilder.buildOutputMessage(operation, context);
             assertTrue("Generated expectedResponse is empty!", expectedResponse.length() > 0);
             boolean identical = XmlUtils.isIdenticalNormalizedWithoutValues(expectedResponse, response);
-            assertTrue("Error during validation of service " + testServiceId, identical);
+            assertTrue("Error during validation of service " + endpointUrl, identical);
         }
     }
 
-    protected void registerHandler(int testServiceId, WsdlParser parser) throws WSDLException {
+    private void registerHandler(SoapServer server, int testServiceId, Wsdl parser) throws WSDLException {
         TestUtils.registerService(server, testServiceId, parser);
     }
 
-    protected String getUrlString() {
-        return String.format("%s:%s", HOST_URL, HOST_PORT);
+    private String formatEndpointAddress(String contextPath) {
+        return String.format("%s:%s%s", HOST_URL, HOST_PORT, contextPath);
     }
 
-    protected String formatEndpointAddress(String urlString, String contextPath) {
-        return String.format("%s%s", urlString, contextPath);
+    private String postRequest(SoapClient client, String request) {
+        return client.post(request);
     }
 
-    protected abstract String postRequest(String endpointUrl, String request);
+    private String postRequest(SoapClient client, String request, String soapAction) {
+        return client.post(soapAction, request);
+    }
 
-    protected abstract String postRequest(String endpointUrl, String request, String soapAction);
+    class ClientBuilderImpl implements ClientBuilder {
+        @Override
+        public SoapClient buildClient(String endpointUrl) {
+            return SoapClient.builder().endpointUri("http://" + endpointUrl).build();
+        }
+    }
+
+    protected KeyStore readKeyStore(URL keyStoreUrl, String keyStorePassword, String keyStoreType) {
+        InputStream in = null;
+        try {
+            in = keyStoreUrl.openStream();
+            KeyStore ks = KeyStore.getInstance(keyStoreType);
+            ks.load(in, keyStorePassword.toCharArray());
+            return ks;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

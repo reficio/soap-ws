@@ -18,17 +18,23 @@
  */
 package org.reficio.ws.it;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.reficio.ws.client.SoapClientException;
+import org.reficio.ws.client.TransmissionException;
+import org.reficio.ws.client.core.Security;
 import org.reficio.ws.client.core.SoapClient;
-import org.reficio.ws.common.ResourceUtils;
+import org.reficio.ws.it.util.ClientBuilder;
 import org.reficio.ws.server.core.SoapServer;
 
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Test SoapServer<->SoapClient communication using HTTPS
@@ -36,23 +42,28 @@ import java.net.URL;
  * @author Tom Bujok
  * @since 1.0.0
  */
+@RunWith(Parameterized.class)
 public class HttpsCooperationTest extends AbstractCooperationTest {
 
-    private final static Log log = LogFactory.getLog(HttpsCooperationTest.class);
+    private URL keyStoreUrl;
 
-    protected URL getTestKeyStoreUrl() {
-        return ResourceUtils.getResourceWithAbsolutePackagePath("/keystores/single-cert-keystore", ".keystore");
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
+    public HttpsCooperationTest(URL url) {
+        keyStoreUrl = url;
     }
 
-    protected String getTestKeyStorePassword() {
-        return "changeit";
+    @Parameterized.Parameters
+    public static Collection keyStores() {
+        return Arrays.asList(new Object[][]{{getKeyStoreUrlOne()}, {getMultiKeyStoreUrl()}});
     }
 
     @Before
     public void initializeServer() {
         server = SoapServer.builder()
-                .keyStoreUrl(getTestKeyStoreUrl())
-                .keyStorePassword(getTestKeyStorePassword())
+                .keyStoreUrl(keyStoreUrl)
+                .keyStorePassword(getKeyStorePassword())
                 .httpsPort(HOST_PORT)
                 .build();
         server.start();
@@ -63,30 +74,53 @@ public class HttpsCooperationTest extends AbstractCooperationTest {
         server.stop();
     }
 
-    public String postRequest(String endpointUrl, String request) {
-        return postRequest(endpointUrl, request, null);
-    }
-
-    @Override
-    protected String postRequest(String endpointUrl, String request, String soapAction) {
-        SoapClient client = SoapClient.builder()
-                .endpointUrl("https://" + endpointUrl)
-                .trustStoreUrl(getTestKeyStoreUrl())
-                .trustStorePassword(getTestKeyStorePassword())
-                .build();
-        return client.post(soapAction, request);
-    }
-
     @Test
-    @Ignore
     public void testService1() throws Exception {
-        verifyServiceBehavior(1);
+        verifyServiceBehavior(1, client());
     }
 
     @Test
-    @Ignore
     public void testService2() throws Exception {
-        verifyServiceBehavior(2);
+        verifyServiceBehavior(2, client());
+    }
+
+    @Test
+    public void testService2_wrongKeyStore_failure() throws Exception {
+
+        exception.expect(SoapClientException.class);
+        exception.expectMessage("not authenticated");
+
+        verifyServiceBehavior(2, new ClientBuilder() {
+            @Override
+            public SoapClient buildClient(String endpointUrl) {
+                Security securityContext = Security.builder()
+                        .trustStoreUrl(getKeyStoreUrlTwo())
+                        .trustStorePassword(getKeyStorePassword())
+                        .build();
+
+                return SoapClient.builder().endpointUri("https://" + endpointUrl)
+                        .endpointSecurity(securityContext)
+                        .build();
+            }
+        });
+    }
+
+    private class HttpsClientBuilder implements ClientBuilder {
+        @Override
+        public SoapClient buildClient(String endpointUrl) {
+            Security securityContext = Security.builder()
+                    .trustStoreUrl(keyStoreUrl)
+                    .trustStorePassword(getKeyStorePassword())
+                    .build();
+
+            return SoapClient.builder().endpointUri("https://" + endpointUrl)
+                    .endpointSecurity(securityContext)
+                    .build();
+        }
+    }
+
+    private ClientBuilder client() {
+        return new HttpsClientBuilder();
     }
 
 }

@@ -24,7 +24,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.reficio.ws.builder.SoapBuilder;
 import org.reficio.ws.builder.SoapOperation;
-import org.reficio.ws.builder.core.WsdlParser;
+import org.reficio.ws.builder.core.Wsdl;
 import org.reficio.ws.client.core.SoapClient;
 
 // When a class is annotated with the @Server annotation an instance of the SoapServer is created for the lifespan of the test
@@ -49,8 +49,8 @@ public class SoapRuleTest {
     @Test
     @Server(wsdl = WSDL, binding = "CurrencyConvertorSoap", port = 41414)
     public void testSoapMock_perMethodServer() {
-        SoapClient client = SoapClient.builder().endpointUrl("http://localhost:41414/service").build();
-        SoapBuilder builder = WsdlParser.parse(WSDL).binding().localPart("CurrencyConvertorSoap").builder();
+        SoapClient client = SoapClient.builder().endpointUri("http://localhost:41414/service").build();
+        SoapBuilder builder = Wsdl.parse(WSDL).binding().localPart("CurrencyConvertorSoap").find();
         SoapOperation operation = builder.operation().name("ConversionRate").find();
         String request = builder.buildInputMessage(operation);
 
@@ -63,8 +63,8 @@ public class SoapRuleTest {
 
     @Test
     public void testSoapMock_perClassServer() {
-        SoapClient client = SoapClient.builder().endpointUrl("http://localhost:51515/service").build();
-        SoapBuilder builder = WsdlParser.parse(WSDL).binding().localPart("CurrencyConvertorSoap").builder();
+        SoapClient client = SoapClient.builder().endpointUri("http://localhost:51515/service").build();
+        SoapBuilder builder = Wsdl.parse(WSDL).binding().localPart("CurrencyConvertorSoap").find();
         SoapOperation operation = builder.operation().name("ConversionRate").find();
         String request = builder.buildInputMessage(operation);
 

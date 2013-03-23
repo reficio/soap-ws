@@ -22,7 +22,7 @@ package org.reficio.ws.builder;
 import org.junit.Test;
 import org.reficio.ws.SoapBuilderException;
 import org.reficio.ws.SoapContext;
-import org.reficio.ws.builder.core.WsdlParser;
+import org.reficio.ws.builder.core.Wsdl;
 import org.reficio.ws.common.ResourceUtils;
 
 import javax.xml.namespace.QName;
@@ -33,24 +33,24 @@ import java.util.List;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class WsdlParserTest {
+public class WsdlTest {
 
     @Test(expected = NullPointerException.class)
     public void testParseNullUrl() {
-        WsdlParser.parse((String) null);
+        Wsdl.parse((String) null);
     }
 
     @Test(expected = SoapBuilderException.class)
     public void testParseWrongUrl() throws MalformedURLException {
         URL wsdlUrl = new URL("http://asd.com/asd.wsdl");
-        WsdlParser parser = WsdlParser.parse(wsdlUrl);
+        Wsdl parser = Wsdl.parse(wsdlUrl);
         assertNotNull(parser);
     }
 
     @Test
     public void testParseTestWsdl() {
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("wsdl", "TestService.wsdl");
-        WsdlParser parser = WsdlParser.parse(wsdlUrl);
+        Wsdl parser = Wsdl.parse(wsdlUrl);
         assertNotNull(parser);
 
         List<QName> bindings = parser.getBindings();
@@ -60,25 +60,25 @@ public class WsdlParserTest {
         assertEquals(1, bindings.size());
         assertEquals(expectedBinding, bindings.iterator().next());
 
-        assertNotNull(parser.binding(expectedBindingString).builder());
-        assertNotNull(parser.binding(expectedBinding).builder());
+        assertNotNull(parser.binding().name(expectedBindingString).find());
+        assertNotNull(parser.binding().name(expectedBinding).find());
     }
 
     @Test(expected = NullPointerException.class)
     public void testParseTestWsdlNullContext() {
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("wsdl", "TestService.wsdl");
-        WsdlParser parser = WsdlParser.parse(wsdlUrl);
+        Wsdl parser = Wsdl.parse(wsdlUrl);
         String expectedBindingString = "{http://schemas.eviware.com/TestService/v1/}TestServiceSoap";
-        parser.binding(expectedBindingString).builder(null);
+        parser.binding().name(expectedBindingString).find(null);
     }
 
     @Test
     public void testParseTestWsdlProperContext() {
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("wsdl", "TestService.wsdl");
-        WsdlParser parser = WsdlParser.parse(wsdlUrl);
+        Wsdl parser = Wsdl.parse(wsdlUrl);
         String expectedBindingString = "{http://schemas.eviware.com/TestService/v1/}TestServiceSoap";
         SoapContext context = SoapContext.builder().typeComments(true).build();
-        SoapBuilder builder = parser.binding(expectedBindingString).builder(context);
+        SoapBuilder builder = parser.binding().name(expectedBindingString).find(context);
 
         assertEquals(context, builder.getContext());
     }

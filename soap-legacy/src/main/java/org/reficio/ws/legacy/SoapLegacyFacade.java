@@ -76,7 +76,7 @@ public class SoapLegacyFacade {
         return messageBuilder.saveWsdl(rootFileName, folder);
     }
 
-    public static URL saveWsdl(String rootFileName, URL wsdlUrl, File folder) {
+    public static URL saveWsdl(URL wsdlUrl, String rootFileName, File folder) {
         try {
             return SoapMessageBuilder.saveWsdl(rootFileName, wsdlUrl, folder);
         } catch (WSDLException e) {

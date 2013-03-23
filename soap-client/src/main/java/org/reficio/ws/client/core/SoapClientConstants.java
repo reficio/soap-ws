@@ -52,6 +52,8 @@ final class SoapClientConstants {
             PROP_CONTENT_LENGTH = "Content-Length",
             PROP_AUTH = "Authorization",
             PROP_PROXY_AUTH = "Proxy-Authorization",
+            PROP_PROXY_CONN = "Proxy-Connection",
+            PROP_KEEP_ALIVE = "Keep-Alive",
             PROP_BASIC_AUTH = "Basic",
             PROP_DELIMITER = "; ";
 

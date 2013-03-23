@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.reficio.ws.SoapContext;
-import org.reficio.ws.builder.core.WsdlParser;
+import org.reficio.ws.builder.core.Wsdl;
 import org.reficio.ws.common.ResourceUtils;
 import org.reficio.ws.common.XmlUtils;
 
@@ -97,13 +97,13 @@ public class ServiceComplianceTest {
     @SuppressWarnings("unchecked")
     private static void testService(int testServiceId) throws Exception {
         URL wsdlUrl = getDefinitionUrl(testServiceId);
-        WsdlParser parser = WsdlParser.parse(wsdlUrl);
+        Wsdl parser = Wsdl.parse(wsdlUrl);
         SoapContext context = SoapContext.builder()
                 .exampleContent(false)
                 .build();
         for (QName bindingQName : parser.getBindings()) {
             String bindingName = bindingQName.getLocalPart();
-            SoapBuilder builder = parser.binding(bindingQName).builder();
+            SoapBuilder builder = parser.binding().name(bindingQName).find();
             for (SoapOperation operation : builder.getOperations()) {
                 String request = builder.buildInputMessage(operation);
                 String expectedRequest = getExpectedRequest(testServiceId, bindingName, operation.getOperationName());

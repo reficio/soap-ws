@@ -21,7 +21,7 @@ package org.reficio.ws.examples;
 import org.junit.Test;
 import org.reficio.ws.builder.SoapBuilder;
 import org.reficio.ws.builder.SoapOperation;
-import org.reficio.ws.builder.core.WsdlParser;
+import org.reficio.ws.builder.core.Wsdl;
 import org.reficio.ws.common.ResourceUtils;
 import org.reficio.ws.common.XmlUtils;
 import org.reficio.ws.server.core.SoapServer;
@@ -56,8 +56,8 @@ public class SoapServerExamplesTest {
         server.start();
 
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "wsdl/stockquote-service.wsdl");
-        WsdlParser parser = WsdlParser.parse(wsdlUrl);
-        SoapBuilder builder = parser.binding().localPart("StockQuoteSoapBinding").builder();
+        Wsdl parser = Wsdl.parse(wsdlUrl);
+        SoapBuilder builder = parser.binding().localPart("StockQuoteSoapBinding").find();
         AutoResponder responder = new AutoResponder(builder);
 
         server.registerRequestResponder("/service", responder);
@@ -72,8 +72,8 @@ public class SoapServerExamplesTest {
         server.start();
 
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "wsdl/stockquote-service.wsdl");
-        WsdlParser parser = WsdlParser.parse(wsdlUrl);
-        final SoapBuilder builder = parser.binding().localPart("StockQuoteSoapBinding").builder();
+        Wsdl parser = Wsdl.parse(wsdlUrl);
+        final SoapBuilder builder = parser.binding().localPart("StockQuoteSoapBinding").find();
 
         AbstractResponder customResponder = new AbstractResponder(builder) {
             @Override

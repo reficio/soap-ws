@@ -18,13 +18,10 @@
  */
 package org.reficio.ws.it;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.reficio.ws.client.TransmissionException;
-import org.reficio.ws.client.core.SoapClient;
 import org.reficio.ws.server.core.SoapServer;
 
 import static junit.framework.Assert.assertEquals;
@@ -36,9 +33,7 @@ import static junit.framework.Assert.assertNotNull;
  * @author Tom Bujok
  * @since 1.0.0
  */
-public class PlainHttpCooperationTest extends AbstractCooperationTest {
-
-    private final static Log log = LogFactory.getLog(PlainHttpCooperationTest.class);
+public class HttpCooperationTest extends AbstractCooperationTest {
 
     private final static boolean SKIP_SOAP_ACTION = false;
     private final static boolean POST_SOAP_ACTION = true;
@@ -54,16 +49,6 @@ public class PlainHttpCooperationTest extends AbstractCooperationTest {
     @After
     public void destroyServer() {
         server.stop();
-    }
-
-    public String postRequest(String endpointUrl, String request) {
-        return postRequest(endpointUrl, request, null);
-    }
-
-    @Override
-    protected String postRequest(String endpointUrl, String request, String soapAction) {
-        SoapClient client = SoapClient.builder().endpointUrl("http://" + endpointUrl).build();
-        return client.post(soapAction, request);
     }
 
     @Test
@@ -222,13 +207,12 @@ public class PlainHttpCooperationTest extends AbstractCooperationTest {
         verifyServiceBehavior(25, POST_SOAP_ACTION);
     }
 
-
-        @Test
+    @Test
     public void testService26() throws Exception {
         verifyServiceBehavior(26);
     }
 
-//    TODO add WSDL validation
+    //    TODO add WSDL validation
 //    @Test
     public void testService27() throws Exception {
         verifyServiceBehavior(27);

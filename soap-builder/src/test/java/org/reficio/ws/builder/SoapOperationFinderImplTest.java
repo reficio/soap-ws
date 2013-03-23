@@ -20,7 +20,7 @@ package org.reficio.ws.builder;
 
 import org.junit.Test;
 import org.reficio.ws.SoapBuilderException;
-import org.reficio.ws.builder.core.WsdlParser;
+import org.reficio.ws.builder.core.Wsdl;
 import org.reficio.ws.common.ResourceUtils;
 
 import java.net.URL;
@@ -31,9 +31,9 @@ public class SoapOperationFinderImplTest {
 
     public SoapOperationFinder operation() {
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("wsdl", "TestService.wsdl");
-        WsdlParser parser = WsdlParser.parse(wsdlUrl);
+        Wsdl parser = Wsdl.parse(wsdlUrl);
         String binding = "{http://schemas.eviware.com/TestService/v1/}TestServiceSoap";
-        return parser.binding(binding).builder().operation();
+        return parser.binding().name(binding).find().operation();
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.reficio.ws.SoapContext;
 import org.reficio.ws.builder.SoapBuilder;
 import org.reficio.ws.builder.SoapOperation;
-import org.reficio.ws.builder.core.WsdlParser;
+import org.reficio.ws.builder.core.Wsdl;
 import org.reficio.ws.client.core.SoapClient;
 import org.reficio.ws.common.ResourceUtils;
 import org.reficio.ws.server.core.SoapServer;
@@ -71,8 +71,8 @@ public class SoapClientExamplesTest {
 
     public static AutoResponder getAutoResponderForTestService() throws WSDLException {
         SoapContext context = SoapContext.builder().exampleContent(false).build();
-        WsdlParser parser = WsdlParser.parse(wsdlUrl);
-        builder = parser.binding(bindingName).builder();
+        Wsdl parser = Wsdl.parse(wsdlUrl);
+        builder = parser.binding().name(bindingName).find();
 
         AutoResponder responder = new AutoResponder(builder, context);
         return responder;
@@ -86,11 +86,11 @@ public class SoapClientExamplesTest {
         // construct the client
         String url = String.format("http://localhost:%d%s", port, contextPath);
         SoapClient client = SoapClient.builder()
-                .endpointUrl(url)
+                .endpointUri(url)
                 .build();
 
-        WsdlParser parser = WsdlParser.parse(wsdlUrl);
-        SoapBuilder soapBuilder = parser.binding(bindingName).builder();
+        Wsdl parser = Wsdl.parse(wsdlUrl);
+        SoapBuilder soapBuilder = parser.binding().name(bindingName).find();
 
         // get the operation to invoked -> assumption our operation is the first operation in the WSDL's
         SoapOperation operation = soapBuilder.operation().name("GetLastTradePrice").find();
@@ -112,7 +112,7 @@ public class SoapClientExamplesTest {
     public void invoke_tradePriceRequest_hardcodedMessages() throws IOException, SAXException {
         String url = String.format("http://localhost:%d%s", port, contextPath);
         SoapClient client = SoapClient.builder()
-                .endpointUrl(url)
+                .endpointUri(url)
                 .build();
 
         String request =

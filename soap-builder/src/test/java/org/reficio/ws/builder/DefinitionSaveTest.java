@@ -21,7 +21,7 @@ package org.reficio.ws.builder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
-import org.reficio.ws.builder.core.WsdlParser;
+import org.reficio.ws.builder.core.Wsdl;
 
 import javax.wsdl.WSDLException;
 import java.io.File;
@@ -73,7 +73,8 @@ public class DefinitionSaveTest {
             throw new RuntimeException("cannot create tmp folder");
         }
         String fileName = FilenameUtils.getBaseName(wsdlUrl.toString());
-        WsdlParser.saveWsdl(wsdlUrl, fileName, tempFolder);
+        File rootWsdl = new File(tempFolder, fileName);
+        Wsdl.saveWsdl(wsdlUrl, rootWsdl);
         // builder.saveWsdl(fileName, tempFolder);
         tempFolder.deleteOnExit();
         return tempFolder;

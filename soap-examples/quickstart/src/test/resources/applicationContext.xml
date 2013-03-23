@@ -4,19 +4,19 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- wsdl-parser part (locally referenced wsdl) -->
-    <bean id="wsdl" class="org.springframework.core.io.ClassPathResource">
+    <bean id="wsdlResource" class="org.springframework.core.io.ClassPathResource">
         <constructor-arg><value>wsdl/currency-convertor.wsdl</value></constructor-arg>
     </bean>
 
-    <bean id="wsdlUrl" class="java.net.URL" factory-bean="wsdl" factory-method="getURL"/>
+    <bean id="wsdlUrl" class="java.net.URL" factory-bean="wsdlResource" factory-method="getURL"/>
 
     <!-- uncomment to use the local wsdl" -->
-    <!--<bean id="wsdlParser" class="org.reficio.ws.builder.core.WsdlParser" factory-method="parse">-->
+    <!--<bean id="wsdl" class="org.reficio.ws.builder.core.Wsdl" factory-method="parse">-->
         <!--<constructor-arg ref="wsdlUrl"/>-->
     <!--</bean>-->
 
     <!-- wsdl-parser part (remote wsdl) -->
-    <bean id="wsdlParser" class="org.reficio.ws.builder.core.WsdlParser" factory-method="parse">
+    <bean id="wsdl" class="org.reficio.ws.builder.core.Wsdl" factory-method="parse">
         <constructor-arg>
             <value>http://www.webservicex.net/CurrencyConvertor.asmx?WSDL</value>
         </constructor-arg>
@@ -32,7 +32,7 @@
         <constructor-arg name="valueComments" type="boolean" value="true"/>
     </bean>
 
-    <bean id="soapBuilder" class="org.reficio.ws.builder.SoapBuilder" factory-bean="wsdlParser" factory-method="getBuilder">
+    <bean id="soapBuilder" class="org.reficio.ws.builder.SoapBuilder" factory-bean="wsdl" factory-method="getBuilder">
         <constructor-arg name="bindingName">
             <value>{http://www.webserviceX.NET/}CurrencyConvertorSoap</value>
         </constructor-arg>

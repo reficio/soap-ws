@@ -35,7 +35,7 @@ public class SimpleClientTest {
     public void connectTimeout() {
         try {
             SoapClient client = SoapClient.builder()
-                    .endpointUrl("http://test.ch:9999")
+                    .endpointUri("http://test.ch:9999")
                     .connectTimeoutInMillis(1000)
                     .build();
             client.post("<xml/>");
