@@ -27,10 +27,22 @@ package org.reficio.ws.client;
 public class TransmissionException extends SoapClientException {
 
     private final String errorResponse;
-    private final int errorCode;
+    private final Integer errorCode;
 
-    public TransmissionException(String response, int errorCode) {
-        super(response + "; HTTP code = [" + errorCode + "]");
+    public TransmissionException(String message) {
+        super(message);
+        this.errorResponse = null;
+        this.errorCode = null;
+    }
+
+    public TransmissionException(String message, Throwable ex) {
+        super(message, ex);
+        this.errorResponse = null;
+        this.errorCode = null;
+    }
+
+    public TransmissionException(String response, Integer errorCode) {
+        super(String.format("HTTP response=[%s] code=[%d]", response, errorCode));
         this.errorResponse = response;
         this.errorCode = errorCode;
     }
@@ -39,7 +51,7 @@ public class TransmissionException extends SoapClientException {
         return errorResponse;
     }
 
-    public int getErrorCode() {
+    public Integer getErrorCode() {
         return errorCode;
     }
 }

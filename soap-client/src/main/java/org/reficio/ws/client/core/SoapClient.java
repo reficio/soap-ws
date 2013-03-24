@@ -26,6 +26,7 @@ import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.routing.HttpRoutePlanner;
@@ -126,6 +127,7 @@ public final class SoapClient {
         HttpParams httpParameters = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(httpParameters, connectTimeoutInMillis);
         HttpConnectionParams.setSoTimeout(httpParameters, readTimeoutInMillis);
+        client.setParams(httpParameters);
     }
 
     private void configureAuthentication() {
@@ -239,29 +241,27 @@ public final class SoapClient {
 
     private String transmit(String soapAction, String data) {
         HttpPost post = generatePost(soapAction, data);
-        try {
-            HttpResponse response = client.execute(post);
-            return handleResponse(response);
-        } catch (IOException ex) {
-            // In case of an IOException the connection will be released
-            // back to the connection manager automatically
-            throw new SoapClientException(ex);
-        } catch (SoapClientException ex) {
-            throw ex;
-        } catch (RuntimeException ex) {
-            post.abort();
-            throw new SoapClientException(ex);
-        }
+        return executePost(post);
     }
 
-    public String handleResponse(final HttpResponse response) throws IOException {
-        StatusLine statusLine = response.getStatusLine();
-        HttpEntity entity = response.getEntity();
-        if (statusLine.getStatusCode() >= 300) {
-            EntityUtils.consume(entity);
-            throw new TransmissionException(statusLine.getReasonPhrase(), statusLine.getStatusCode());
+    private String executePost(HttpPost post) {
+        try {
+            HttpResponse response = client.execute(post);
+            StatusLine statusLine = response.getStatusLine();
+            HttpEntity entity = response.getEntity();
+            if (statusLine.getStatusCode() >= 300) {
+                EntityUtils.consume(entity);
+                throw new TransmissionException(statusLine.getReasonPhrase(), statusLine.getStatusCode());
+            }
+            return entity == null ? null : EntityUtils.toString(entity);
+        } catch (ConnectTimeoutException ex) {
+            throw new TransmissionException("Connection timed out", ex);
+        } catch (IOException ex) {
+            throw new TransmissionException("Transmission failed", ex);
+        } catch (RuntimeException ex) {
+            post.abort();
+            throw new TransmissionException("Transmission aborted", ex);
         }
-        return entity == null ? null : EntityUtils.toString(entity);
     }
 
     // ----------------------------------------------------------------

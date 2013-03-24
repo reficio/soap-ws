@@ -18,12 +18,10 @@
  */
 package org.reficio.ws.client;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.reficio.ws.client.core.SoapClient;
-
-import java.net.SocketTimeoutException;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Tom Bujok
@@ -31,18 +29,20 @@ import static org.junit.Assert.assertTrue;
  */
 public class SimpleClientTest {
 
-    @Test(timeout = 5000, expected = TransmissionException.class)
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
+    @Test(timeout = 5000)
     public void connectTimeout() {
-        try {
-            SoapClient client = SoapClient.builder()
-                    .endpointUri("http://test.ch:9999")
-                    .connectTimeoutInMillis(1000)
-                    .build();
-            client.post("<xml/>");
-        } catch (TransmissionException ex) {
-            assertTrue(ex.getCause() instanceof SocketTimeoutException);
-            throw ex;
-        }
+
+        exception.expect(TransmissionException.class);
+        exception.expectMessage("Connection timed out");
+
+        SoapClient client = SoapClient.builder()
+                .endpointUri("http://test.ch:9999")
+                .connectTimeoutInMillis(1000)
+                .build();
+        client.post("<xml/>");
     }
 
 }
