@@ -32,8 +32,6 @@ import org.reficio.ws.client.core.SoapClient;
 import org.reficio.ws.it.util.ClientBuilder;
 import org.reficio.ws.server.core.SoapServer;
 
-import java.net.Proxy;
-
 /**
  * Test SoapServer<->SoapClient communication using HTTPS
  *

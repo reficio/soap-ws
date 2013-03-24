@@ -42,7 +42,7 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.reficio.ws.client.SoapClientException;
 import org.reficio.ws.client.TransmissionException;
-import org.reficio.ws.client.security.SSLUtils;
+import org.reficio.ws.client.ssl.SSLUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -173,7 +173,7 @@ public final class SoapClient {
     }
 
     private void registerTlsScheme(SchemeLayeredSocketFactory factory, int port) {
-        Scheme sch = new Scheme("https", port, factory);
+        Scheme sch = new Scheme(HTTPS, port, factory);
         client.getConnectionManager().getSchemeRegistry().register(sch);
     }
 
@@ -182,7 +182,7 @@ public final class SoapClient {
             return;
         }
         if (proxyTlsEnabled) {
-            final HttpHost proxy = new HttpHost(proxyUri.getHost(), proxyUri.getPort(), "https");
+            final HttpHost proxy = new HttpHost(proxyUri.getHost(), proxyUri.getPort(), HTTPS);
             // https://issues.apache.org/jira/browse/HTTPCLIENT-1318
             // http://stackoverflow.com/questions/15048102/httprouteplanner-how-does-it-work-with-an-https-proxy
             // To make the HttpClient talk to a HTTP End-site through an HTTPS Proxy, the route should be secure,
@@ -306,7 +306,7 @@ public final class SoapClient {
          */
         public Builder endpointUri(URI value) {
             endpointUri = checkNotNull(value);
-            endpointTlsEnabled = value.getScheme().equalsIgnoreCase("https");
+            endpointTlsEnabled = value.getScheme().equalsIgnoreCase(HTTPS);
             return this;
         }
 
@@ -330,7 +330,7 @@ public final class SoapClient {
          */
         public Builder proxyUri(URI value) {
             proxyUri = checkNotNull(value);
-            proxyTlsEnabled = value.getScheme().equalsIgnoreCase("https");
+            proxyTlsEnabled = value.getScheme().equalsIgnoreCase(HTTPS);
             return this;
         }
 

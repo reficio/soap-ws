@@ -5,14 +5,16 @@
 
     <!-- wsdl-parser part (locally referenced wsdl) -->
     <bean id="wsdlResource" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg><value>wsdl/currency-convertor.wsdl</value></constructor-arg>
+        <constructor-arg>
+            <value>wsdl/currency-convertor.wsdl</value>
+        </constructor-arg>
     </bean>
 
     <bean id="wsdlUrl" class="java.net.URL" factory-bean="wsdlResource" factory-method="getURL"/>
 
     <!-- uncomment to use the local wsdl" -->
     <!--<bean id="wsdl" class="org.reficio.ws.builder.core.Wsdl" factory-method="parse">-->
-        <!--<constructor-arg ref="wsdlUrl"/>-->
+    <!--<constructor-arg ref="wsdlUrl"/>-->
     <!--</bean>-->
 
     <!-- wsdl-parser part (remote wsdl) -->
@@ -39,10 +41,21 @@
         <constructor-arg name="context" ref="soapContext"/>
     </bean>
 
+    <!-- security part -->
+    <bean id="securityFactory" class="org.reficio.ws.client.core.SecurityFactory">
+        <property name="authUsername" value="tom"/>
+        <property name="authPassword" value="007"/>
+        <property name="authMethod" value="basic"/>
+        <property name="strictHostVerification" value="true"/>
+        <property name="sslContextProtocol" value="SSLv3"/>
+    </bean>
+
+    <bean id="security" class="org.reficio.ws.client.core.Security" factory-bean="securityFactory" factory-method="create"/>
 
     <!-- soap-client part -->
     <bean id="soapClientFactory" class="org.reficio.ws.client.core.SoapClientFactory">
-        <property name="endpointUrl" value="http://localhost:8778/currencyConverter/soap"/>
+        <property name="endpointUri" value="http://localhost:8778/currencyConverter/soap"/>
+        <property name="endpointSecurity" ref="security"/>
     </bean>
 
     <bean id="soapClient" class="org.reficio.ws.client.core.SoapClient" factory-bean="soapClientFactory" factory-method="create"/>
@@ -57,7 +70,7 @@
         <property name="httpPort" value="8778"/>
         <property name="responders">
             <map>
-                <entry key="/currencyConverter/soap" value-ref="autoResponder" />
+                <entry key="/currencyConverter/soap" value-ref="autoResponder"/>
             </map>
         </property>
     </bean>

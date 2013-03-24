@@ -26,7 +26,6 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.reficio.ws.client.SoapClientException;
-import org.reficio.ws.client.TransmissionException;
 import org.reficio.ws.client.core.Security;
 import org.reficio.ws.client.core.SoapClient;
 import org.reficio.ws.it.util.ClientBuilder;

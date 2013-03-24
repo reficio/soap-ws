@@ -1,3 +1,21 @@
+/**
+ * Copyright (c) 2012 Reficio (TM) - Reestablish your software!. All Rights Reserved.
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.reficio.ws.client.core;
 
 import org.reficio.ws.client.SoapClientException;
@@ -10,7 +28,6 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.reficio.ws.client.core.SoapClientConstants.JKS_KEYSTORE;
 
 /**
  * @author: Tom Bujok (tom.bujok@gmail.com)
@@ -138,12 +155,12 @@ public class Security {
 
         private KeyStore trustStore;
         private URL trustStoreUrl;
-        private String trustStoreType = JKS_KEYSTORE;
+        private String trustStoreType = "JKS";
         private char[] trustStorePassword;
 
         private KeyStore keyStore;
         private URL keyStoreUrl;
-        private String keyStoreType = JKS_KEYSTORE;
+        private String keyStoreType = "JKS";
         private char[] keyStorePassword;
 
         private String authUsername;
