@@ -3,6 +3,7 @@ package org.reficio.ws.client.core;
 import java.security.KeyStore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.reficio.ws.client.core.SoapConstants.*;
 
 /**
  * @author: Tom Bujok (tom.bujok@gmail.com)
@@ -11,10 +12,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * www.reficio.org
  */
 public class SecurityFactory {
-
-    private enum AuthMethods {
-        BASIC, DIGEST, NTLM, SPNEGO;
-    }
 
     private KeyStore trustStore;
     private String trustStoreUrl;
@@ -182,14 +179,14 @@ public class SecurityFactory {
 
     private void configureAuthentication(Security.Builder builder) {
         if(authMethod != null) {
-            AuthMethods method = AuthMethods.valueOf(authMethod);
-            if(method.equals(AuthMethods.BASIC)) {
+            AuthMethod method = AuthMethod.valueOf(authMethod);
+            if(method.equals(AuthMethod.BASIC)) {
                 builder.authBasic(authUsername, authPassword);
-            } else if(method.equals(AuthMethods.DIGEST)) {
+            } else if(method.equals(AuthMethod.DIGEST)) {
                 builder.authDigest(authUsername, authPassword);
-            } else if(method.equals(AuthMethods.NTLM)) {
+            } else if(method.equals(AuthMethod.NTLM)) {
                 builder.authNtlm(authUsername, authPassword, authWorkstation, authDomain);
-            } else if(method.equals(AuthMethods.SPNEGO)) {
+            } else if(method.equals(AuthMethod.SPNEGO)) {
                 builder.authSpnego();
             }
         }

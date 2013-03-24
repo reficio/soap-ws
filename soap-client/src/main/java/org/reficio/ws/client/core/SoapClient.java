@@ -52,7 +52,7 @@ import java.security.GeneralSecurityException;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.reficio.ws.client.core.SoapClientConstants.*;
+import static org.reficio.ws.client.core.SoapConstants.*;
 
 /**
  * SOAP client enables the user to communicate with a SOAP server on a purely XML level.

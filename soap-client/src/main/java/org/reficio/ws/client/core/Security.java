@@ -28,6 +28,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.reficio.ws.client.core.SoapConstants.*;
 
 /**
  * @author: Tom Bujok (tom.bujok@gmail.com)
@@ -111,23 +112,23 @@ public class Security {
     }
 
     public boolean isAuthEnabled() {
-        return !authMethod.equals("NONE");
+        return !authMethod.equals(AuthMethod.NONE.name());
     }
 
     public boolean isAuthBasic() {
-        return authMethod.equals("BASIC");
+        return authMethod.equals(AuthMethod.BASIC.name());
     }
 
     public boolean isAuthDigest() {
-        return authMethod.equals("DIGEST");
+        return authMethod.equals(AuthMethod.DIGEST.name());
     }
 
     public boolean isAuthNtlm() {
-        return authMethod.equals("NTLM");
+        return authMethod.equals(AuthMethod.NTLM.name());
     }
 
     public boolean isAuthSpnego() {
-        return authMethod.equals("SPNEGO");
+        return authMethod.equals(AuthMethod.SPNEGO.name());
     }
 
     public boolean isStrictHostVerification() {
@@ -155,12 +156,12 @@ public class Security {
 
         private KeyStore trustStore;
         private URL trustStoreUrl;
-        private String trustStoreType = "JKS";
+        private String trustStoreType = JKS_KEYSTORE;
         private char[] trustStorePassword;
 
         private KeyStore keyStore;
         private URL keyStoreUrl;
-        private String keyStoreType = "JKS";
+        private String keyStoreType = JKS_KEYSTORE;
         private char[] keyStorePassword;
 
         private String authUsername;
@@ -168,22 +169,22 @@ public class Security {
         private String authWorkstation;
         private String authDomain;
 
-        private String authMethod = "NONE";
+        private String authMethod = AuthMethod.NONE.name();
 
-        private String sslContextProtocol = "SSLv3";
+        private String sslContextProtocol = SSL_CONTEXT_PROTOCOL;
         private Boolean strictHostVerification = false;
 
         public Builder authBasic(String user, String password) {
             authUsername = checkNotNull(user);
             authPassword = checkNotNull(password);
-            authMethod = "BASIC";
+            authMethod = AuthMethod.BASIC.name();
             return this;
         }
 
         public Builder authDigest(String user, String password) {
             authUsername = checkNotNull(user);
             authPassword = checkNotNull(password);
-            authMethod = "DIGEST";
+            authMethod = AuthMethod.DIGEST.name();
             return this;
         }
 
@@ -192,12 +193,12 @@ public class Security {
             authPassword = checkNotNull(password);
             authWorkstation = checkNotNull(workstation);
             authDomain = checkNotNull(domain);
-            authMethod = "NTLM";
+            authMethod = AuthMethod.NTLM.name();
             return this;
         }
 
         public Builder authSpnego() {
-            authMethod = "SPNEGO";
+            authMethod = AuthMethod.SPNEGO.name();
             return this;
         }
 

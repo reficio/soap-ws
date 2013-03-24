@@ -22,9 +22,9 @@ package org.reficio.ws.client.core;
  * @author Tom Bujok
  * @since 1.0.0
  */
-final class SoapClientConstants {
+final class SoapConstants {
 
-    private SoapClientConstants() {
+    private SoapConstants() {
     }
 
     public final static String
@@ -70,5 +70,8 @@ final class SoapClientConstants {
     public final static int
             INFINITE_TIMEOUT = 0;
 
+    public static enum AuthMethod {
+        NONE, BASIC, DIGEST, NTLM, SPNEGO;
+    }
 
 }
