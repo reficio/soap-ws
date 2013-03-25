@@ -27,23 +27,25 @@ import org.reficio.ws.builder.SoapOperation;
 import org.reficio.ws.builder.core.Wsdl;
 import org.reficio.ws.client.core.SoapClient;
 
-// When a class is annotated with the @Server annotation an instance of the SoapServer is created for the lifespan of the test
-// The SOAP server provides a SOAP auto-responder for the specified binding
-// The generated responses are compliant with the WSDL and the schema type (including enumerations, etc.)
-// @Server annotation may be also used to annotate a method - it creates the SoapServer for the lifespan of the test method.
-// In order to enable the server exposition a @Rule or @ClassRule has to be defined (JUnit requirement)
+// @Server annotation spawns an instance of a SoapServer for the lifespan of the test / method.
+// The SOAP server provides a SOAP auto-responder for the specified binding -> messages are generated and send automatically.
+// Generated messages are compliant with the WSDL and the schema (including enumerations, etc.)
+// The @Server annotation may be also used to annotate a method -> it spawns a SoapServer for the lifespan of the test method.
+// In order to enable the @Server annotation a junit @Rule has to be defined (JUnit requirement):
+//   - org.junit.ClassRule in order to enable the @Server on a per-class basis
+//   - org.junit.Rule in order to enable the @Server on a per-class basis
 @Server(wsdl = "http://www.webservicex.net/CurrencyConvertor.asmx?WSDL", binding = "CurrencyConvertorSoap")
 public class SoapRuleTest {
 
     private final static Logger log = Logger.getLogger(SoapRuleTest.class);
     private static final String WSDL = "http://www.webservicex.net/CurrencyConvertor.asmx?WSDL";
 
-    // define an instance rule if the @Server is used per method
     @Rule
+    // define an instance rule if the @Server annotation is used per method
     public SoapRule rule = new SoapRule();
 
-    // define a class rule if the @Server is used per class
     @ClassRule
+    // define a class rule if the @Server annotation is used per class
     public static SoapRule classRule = new SoapRule();
 
     @Test

@@ -39,14 +39,16 @@ public class SoapRule implements TestRule {
             @Override
             public void evaluate() throws Throwable {
                 Server server = description.getAnnotation(Server.class);
+                ServerProcessor processor = null;
                 if (server != null) {
                     Class<?> testClass = description.getTestClass();
-                    ServerProcessor processor = new ServerProcessor(server, testClass);
+                    processor = new ServerProcessor(server, testClass);
                     processor.initServer();
-                    try {
-                        base.evaluate();
-                        return;
-                    } finally {
+                }
+                try {
+                    base.evaluate();
+                } finally {
+                    if (processor != null) {
                         processor.stopServer();
                     }
                 }

@@ -20,7 +20,6 @@ import javax.inject.Inject;
  * Reficio™ - Reestablish your software!
  * www.reficio.org
  */
-
 @RunWith(Arquillian.class)
 public class GreeterTest {
 
@@ -45,12 +44,18 @@ public class GreeterTest {
 
     @Test
     @Server(wsdl = "classpath:wsdl/currency-convertor.wsdl", binding = "CurrencyConvertorSoap")
+    // @Server annotation spawns an instance of a SoapServer for the lifespan of the test / method.
+    // The SOAP server provides a SOAP auto-responder for the specified binding -> messages are generated and sent automatically.
+    // Generated messages are compliant with the WSDL and the schema (including enumerations, etc.)
+    // The @Server annotation may be also used to annotate a method -> it spawns a SoapServer for the lifespan of the test method.
+    // In order to enable the @Server annotation a junit @Rule has to be defined (JUnit requirement):
+    //   - org.junit.ClassRule in order to enable the @Server on a per-class basis
+    //   - org.junit.Rule in order to enable the @Server on a per-class basis
     public void getConversionRateSoapTest() throws Exception {
         String rate = greeter.getConversionRate("USD", "EUR");
         Assert.assertNotNull(rate);
         Float rateFloat = Float.parseFloat(rate);
         Assert.assertTrue(rateFloat > 0.75);
     }
-
 
 }
