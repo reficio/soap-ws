@@ -194,7 +194,7 @@ public class HttpCooperationTest extends AbstractCooperationTest {
             expected = ex;
         }
         assertNotNull(expected);
-        assertEquals(expected.getErrorCode(), 500);
+        assertEquals(expected.getErrorCode(), Integer.valueOf(500));
     }
 
     @Test
