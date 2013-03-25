@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012 Reficio (TM) - Reestablish your software!. All Rights Reserved.
+ * Copyright (c) 2012-2013 Reficio (TM) - Reestablish your software!. All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

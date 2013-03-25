@@ -224,7 +224,7 @@
                     </mapping>
                     <useDefaultMapping>true</useDefaultMapping>
                     <properties>
-                        <year>${project.inceptionYear}</year>
+                        <year>${project.inceptionYear}-2013</year>
                         <company>Reficio (TM) - Reestablish your software!</company>
                     </properties>
                     <encoding>UTF-8</encoding>
