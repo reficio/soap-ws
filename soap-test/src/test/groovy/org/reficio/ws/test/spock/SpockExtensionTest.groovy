@@ -23,15 +23,16 @@ import org.reficio.ws.builder.SoapBuilder
 import org.reficio.ws.builder.SoapOperation
 import org.reficio.ws.builder.core.Wsdl
 import org.reficio.ws.client.core.SoapClient
+import org.reficio.ws.common.ResourceUtils
 import spock.lang.Specification
 
 @Log4j
-@Server(wsdl = "http://www.webservicex.net/CurrencyConvertor.asmx?WSDL", binding = "CurrencyConvertorSoap")
+@Server(wsdl = "classpath:wsdl/currency-convertor.wsdl", binding = "CurrencyConvertorSoap")
 class SpockExtensionTest extends Specification {
 
-    static final String WSDL = "http://www.webservicex.net/CurrencyConvertor.asmx?WSDL";
+    static final String WSDL = ResourceUtils.getResource("wsdl/currency-convertor.wsdl").toString();
 
-    @Server(wsdl = "http://www.webservicex.net/CurrencyConvertor.asmx?WSDL", binding = "CurrencyConvertorSoap", port = 41414)
+    @Server(wsdl = "classpath:wsdl/currency-convertor.wsdl", binding = "CurrencyConvertorSoap", port = 41414)
     def "method specific server"() {
         setup:
         SoapClient client = SoapClient.builder().endpointUri("http://localhost:41414/service").build();

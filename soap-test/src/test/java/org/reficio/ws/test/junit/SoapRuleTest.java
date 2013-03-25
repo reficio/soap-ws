@@ -26,6 +26,7 @@ import org.reficio.ws.builder.SoapBuilder;
 import org.reficio.ws.builder.SoapOperation;
 import org.reficio.ws.builder.core.Wsdl;
 import org.reficio.ws.client.core.SoapClient;
+import org.reficio.ws.common.ResourceUtils;
 
 // @Server annotation spawns an instance of a SoapServer for the lifespan of the test / method.
 // The SOAP server provides a SOAP auto-responder for the specified binding -> messages are generated and send automatically.
@@ -34,11 +35,11 @@ import org.reficio.ws.client.core.SoapClient;
 // In order to enable the @Server annotation a junit @Rule has to be defined (JUnit requirement):
 //   - org.junit.ClassRule in order to enable the @Server on a per-class basis
 //   - org.junit.Rule in order to enable the @Server on a per-class basis
-@Server(wsdl = "http://www.webservicex.net/CurrencyConvertor.asmx?WSDL", binding = "CurrencyConvertorSoap")
+@Server(wsdl = "classpath:wsdl/currency-convertor.wsdl", binding = "CurrencyConvertorSoap")
 public class SoapRuleTest {
 
     private final static Logger log = Logger.getLogger(SoapRuleTest.class);
-    private static final String WSDL = "http://www.webservicex.net/CurrencyConvertor.asmx?WSDL";
+    private static final String WSDL = ResourceUtils.getResource("wsdl/currency-convertor.wsdl").toString();
 
     @Rule
     // define an instance rule if the @Server annotation is used per method
@@ -49,7 +50,7 @@ public class SoapRuleTest {
     public static SoapRule classRule = new SoapRule();
 
     @Test
-    @Server(wsdl = WSDL, binding = "CurrencyConvertorSoap", port = 41414)
+    @Server(wsdl = "classpath:wsdl/currency-convertor.wsdl", binding = "CurrencyConvertorSoap", port = 41414)
     public void testSoapMock_perMethodServer() {
         SoapClient client = SoapClient.builder().endpointUri("http://localhost:41414/service").build();
         SoapBuilder builder = Wsdl.parse(WSDL).binding().localPart("CurrencyConvertorSoap").find();

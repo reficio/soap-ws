@@ -78,7 +78,7 @@ public class ServerProcessor {
         URL wsdlUrl = getWsdlUrl(testClass);
         Wsdl parser = Wsdl.parse(wsdlUrl);
         SoapBuilder builder = getBuilder(parser);
-        SoapServer server = construct();
+        server = construct();
         AutoResponder responder = getAutoResponder(builder);
         registerService(server, responder);
 
