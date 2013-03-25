@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.reficio.ws.examples;
+package org.reficio.ws.quickstart;
 
 import org.junit.Test;
 import org.reficio.ws.builder.SoapBuilder;

@@ -29,7 +29,7 @@ public class ServerProcessor {
     private final Class testClass;
 
     public ServerProcessor(org.reficio.ws.test.junit.Server server, Class testClass) {
-        this.wsdl = server.wsdl();
+        this.wsdl = processUrl(server.wsdl());
         this.binding = server.binding();
         this.path = server.path();
         this.port = server.port();
@@ -37,11 +37,22 @@ public class ServerProcessor {
     }
 
     public ServerProcessor(org.reficio.ws.test.spock.Server server, Class testClass) {
-        this.wsdl = server.wsdl();
+        this.wsdl = processUrl(server.wsdl());
         this.binding = server.binding();
         this.path = server.path();
         this.port = server.port();
         this.testClass = testClass;
+    }
+
+    private String processUrl(String wsdlUrl) {
+        if(wsdlUrl == null) {
+            return null;
+        }
+        if(wsdlUrl.startsWith("classpath:")) {
+            return ResourceUtils.getResource(wsdlUrl.replace("classpath:","")).toString();
+        } else {
+            return wsdlUrl;
+        }
     }
 
     public SoapServer initServer() {
