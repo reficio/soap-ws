@@ -18,20 +18,10 @@
  */
 package org.reficio.ws.test.junit;
 
-import com.google.common.base.Preconditions;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.reficio.ws.SoapContext;
-import org.reficio.ws.SoapException;
-import org.reficio.ws.builder.SoapBuilder;
-import org.reficio.ws.builder.core.Wsdl;
-import org.reficio.ws.common.ResourceUtils;
-import org.reficio.ws.server.core.SoapServer;
-import org.reficio.ws.server.responder.AutoResponder;
-
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.reficio.ws.test.ServerProcessor;
 
 /**
  * @author Tom Bujok
@@ -48,93 +38,21 @@ public class SoapRule implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                SoapServer server = initServer(description.getAnnotation(Server.class), description.getTestClass());
-                try {
-                    base.evaluate();
-                    return;
-                } finally {
-                    stopServer(server);
+                Server server = description.getAnnotation(Server.class);
+                if (server != null) {
+                    Class<?> testClass = description.getTestClass();
+                    ServerProcessor processor = new ServerProcessor(server, testClass);
+                    processor.initServer();
+                    try {
+                        base.evaluate();
+                        return;
+                    } finally {
+                        processor.stopServer();
+                    }
                 }
             }
         };
     }
 
-    private SoapServer initServer(Server annotation, Class testClass) {
-        if (annotation == null) {
-            return null;
-        }
-        validate(annotation);
-        URL wsdlUrl = getWsdlUrl(annotation, testClass);
-        Wsdl parser = Wsdl.parse(wsdlUrl);
-        SoapBuilder builder = getBuilder(annotation, parser);
-        SoapServer server = construct(annotation);
-        AutoResponder responder = getAutoResponder(builder);
-        registerService(server, annotation, responder);
-
-        server.start();
-        return server;
-    }
-
-    private SoapServer construct(Server annotation) {
-        return SoapServer.builder()
-                .httpPort(annotation.port())
-                .build();
-    }
-
-    private void stopServer(SoapServer server) {
-        if (server != null) {
-            server.stop();
-        }
-    }
-
-    private void registerService(SoapServer server, Server annotation, AutoResponder responder) {
-        server.registerRequestResponder(annotation.path(), responder);
-    }
-
-    private AutoResponder getAutoResponder(SoapBuilder builder) {
-        SoapContext context = SoapContext.builder()
-                .exampleContent(true)
-                .buildOptional(true)
-                .alwaysBuildHeaders(true)
-                .build();
-        return new AutoResponder(builder, context);
-    }
-
-    private SoapBuilder getBuilder(Server server, Wsdl parser) {
-        SoapBuilder builder = null;
-        try {
-            builder = parser.binding().name(server.binding()).find();
-        } catch (SoapException ex) {
-            // ignore
-        }
-        if (builder == null) {
-            builder = parser.binding().localPart(server.binding()).find();
-        }
-        Preconditions.checkNotNull(builder, "Binding not found");
-        return builder;
-    }
-
-    private URL getWsdlUrl(Server server, Class testClass) {
-        URL wsdlUrl = null;
-        try {
-            wsdlUrl = ResourceUtils.getResource(testClass, server.wsdl());
-        } catch (IllegalArgumentException ex) {
-            // ignore
-        }
-        if (wsdlUrl == null) {
-            try {
-                wsdlUrl = new URL(server.wsdl());
-            } catch (MalformedURLException e) {
-                throw new IllegalArgumentException("Wrong wsdl url", e);
-            }
-        }
-        return wsdlUrl;
-    }
-
-    private void validate(Server server) {
-        Preconditions.checkNotNull(server.wsdl(), "Wsdl url cannot be null");
-        Preconditions.checkNotNull(server.binding(), "Binding name cannot be null");
-        Preconditions.checkArgument(server.port() >= 0 && server.port() < 65535, "Port has to be in range [0, 655535]");
-    }
 
 }

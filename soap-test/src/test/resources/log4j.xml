@@ -33,6 +33,10 @@
         <level value="warn"/>
     </logger>
 
+    <!--<logger name="org.reficio.ws.test">-->
+        <!--<level value="info"/>-->
+    <!--</logger>-->
+
     <logger name="org.springframework">
         <level value="error"/>
     </logger>
