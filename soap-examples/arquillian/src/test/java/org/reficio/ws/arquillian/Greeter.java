@@ -1,15 +1,11 @@
 package org.reficio.ws.arquillian;
 
 import groovy.util.XmlSlurper;
-import groovy.util.slurpersupport.GPathResult;
 import org.reficio.ws.builder.core.Wsdl;
 import org.reficio.ws.client.core.SoapClient;
 import org.reficio.ws.common.ResourceUtils;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
 

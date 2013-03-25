@@ -18,10 +18,10 @@
  */
 package org.reficio.ws.quickstart
 
-import org.reficio.ws.builder.core.Wsdl
 import groovy.xml.StreamingMarkupBuilder
 import groovy.xml.XmlUtil
 import org.junit.Test
+import org.reficio.ws.builder.core.Wsdl
 import org.reficio.ws.client.core.SoapClient
 
 class QuickStart {

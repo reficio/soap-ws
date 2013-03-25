@@ -21,7 +21,7 @@ package org.reficio.ws.client.core;
 import java.security.KeyStore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.reficio.ws.client.core.SoapConstants.*;
+import static org.reficio.ws.client.core.SoapConstants.AuthMethod;
 
 /**
  * @author: Tom Bujok (tom.bujok@gmail.com)

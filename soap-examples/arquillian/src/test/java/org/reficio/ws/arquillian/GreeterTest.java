@@ -42,8 +42,6 @@ public class GreeterTest {
         greeter.greet(System.out, "Earthling");
     }
 
-    @Test
-    @Server(wsdl = "classpath:wsdl/currency-convertor.wsdl", binding = "CurrencyConvertorSoap")
     // @Server annotation spawns an instance of a SoapServer for the lifespan of the test / method.
     // The SOAP server provides a SOAP auto-responder for the specified binding -> messages are generated and sent automatically.
     // Generated messages are compliant with the WSDL and the schema (including enumerations, etc.)
@@ -51,6 +49,8 @@ public class GreeterTest {
     // In order to enable the @Server annotation a junit @Rule has to be defined (JUnit requirement):
     //   - org.junit.ClassRule in order to enable the @Server on a per-class basis
     //   - org.junit.Rule in order to enable the @Server on a per-class basis
+    @Test
+    @Server(wsdl = "classpath:wsdl/currency-convertor.wsdl", binding = "CurrencyConvertorSoap")
     public void getConversionRateSoapTest() throws Exception {
         String rate = greeter.getConversionRate("USD", "EUR");
         Assert.assertNotNull(rate);
