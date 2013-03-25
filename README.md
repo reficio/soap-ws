@@ -5,7 +5,7 @@
 ### Intro
 Welcome to soap-ws! This is a lightweight and easy-to-use Java library that enables handling SOAP message generation and transmission on a purely XML level. soap-ws is based on four main abstractions:
 
-* WsdlParser can easily parse your WSDL and produce SoapBuilders,
+* Wsdl can easily parse your WSDL and produce SoapBuilders,
 * SoapBuilder can generate SOAP messages directly in the XML format, 
 * SoapClient can be used to transmit a SOAP message over HTTP(s) to a web-service endpoint, 
 * SoapServer can be leveraged to process SOAP messages and and respond to them. 
@@ -34,6 +34,8 @@ Yes, that's what soap-ws can do for you. But it can do much more, just dive in a
 * supports SSL and basic-authentication
 * supports SOCKS and HTTP(s) proxies
 * supports SpringFramework
+* supports JUnit
+
 
 ### Main features
 
@@ -102,11 +104,11 @@ If you are a Gradle user you probably know how to do it :)
 Let's consume the CurrencyConverter Web-Service. Thanks to the fluent builders the API is straigtforward and intuitive. 
 Does it need any explanation? Welcome to soap-ws :)
 ```java
-	WsdlParser parser = WsdlParser.parse("http://www.webservicex.net/CurrencyConvertor.asmx?WSDL");
+	Wsdl wsdl = Wsdl.parse("http://www.webservicex.net/CurrencyConvertor.asmx?WSDL");
     
-    SoapBuilder builder = parser.binding()
+    SoapBuilder builder = wsdl.binding()
     	.localPart("CurrencyConvertorSoap")
-    	.builder();
+    	.find();
     SoapOperation operation = builder.operation()
     	.soapAction("http://www.webserviceX.NET/ConversionRate")
     	.find();
@@ -122,10 +124,10 @@ Does it need any explanation? Welcome to soap-ws :)
 #### Provide a Web-Service in 60 seconds
 Let's provide the CurrencyConverter Web-Service that returns random results (compliant with the schema!).
 ```java
-	WsdlParser parser = WsdlParser.parse("http://www.webservicex.net/CurrencyConvertor.asmx?WSDL");
-	SoapBuilder builder = parser.binding()
+	Wsdl wsdl = Wsdl.parse("http://www.webservicex.net/CurrencyConvertor.asmx?WSDL");
+	SoapBuilder builder = wsdl.binding()
     	.localPart("CurrencyConvertorSoap")
-    	.builder();
+    	.find();
     	
     SoapServer server = SoapServer.builder()
     	.httpPort(9090)
@@ -141,19 +143,19 @@ Let's have a closer look at the API and the main abstractions.
 
 #### SoapBuilder
 SoapBuilder interface describes the features of generation of XML SOAP messages. An instance of the SoapBuilder class is always bound to a specific wsdl file and one of its bindings. There can be more bindings in one WSDL file - in order to handle all of theme an instance of SoapBuilder is needed for every binding. 
-The simplest way to construct an instance of the WsdlParser is to call the static factory method "parse", passing the URL of the WSDL file (1). 
+The simplest way to construct an instance of the Wsdl is to call the static factory method "parse", passing the URL of the WSDL file (1).
 ```java
-    WsdlParser parser = WsdpParser.parse(wsdlUrl);  // (1)
+    Wsdl wsdl = Wsdl.parse(wsdlUrl);  // (1)
         
-	List<QName> bindings = parser.getBindings(); // (2)
-	SoapBuilder builder = parser.binding().localPart("CurrencyConvertorSoap").builder(); // (3)
-	parser.printBindings(); // (4)
+	List<QName> bindings = wsdl.getBindings(); // (2)
+	SoapBuilder builder = wsdl.binding().localPart("CurrencyConvertorSoap").find(); // (3)
+	wsdl.printBindings(); // (4)
     
     List<SoapOperation> operations = builder.getOperations(); // (5)
 	SoapOperation operation = builder.operation().name("ConversionRate").find();  // (6)
     
 ```
-SoapParser reads the specified WSDL file recursively, fetching all included WSDL and XSD files and constructs an underlying javax.wsdl.Definition object that is the Java-based representation of the WSDL (see WSDL4j to read more about the Definitoin object). 
+Wsdl.parse(wsdlUrl) reads the specified WSDL file recursively, fetching all included WSDL and XSD files and constructs an underlying javax.wsdl.Definition object that is the Java-based representation of the WSDL (see WSDL4j to read more about the Definitoin object).
 
 In order to generate a SOAP message you have to specify the Binding. To check what binding are defined in the WSDL invoke the getBindings() method (2). You can also use the binding finder, just call the binding() method and add additional parameters such as localPart(""), etc. Then invoke builder to get an instance of the SoapBuilder(). 
 Finally, you can invoke the printBindings() method that will print all the  binding to the stdout (just as a quick hack) (4).
@@ -181,7 +183,7 @@ Now you are all set. To generate a SOAP message in the XML format just invoke on
 	}
 ```
 
-Last, but not least. In most of the cases, you can relay on the default settings of the SoapContext that specifies how messages are generated, but if you would like to change it you have to populate the SoapContext object and pass it either to the WsdlParser (from that moment on, SoapBuilder will use this context as the default one), or to single methods, changing the context of the generation for the time span of a single method invocation. In order to populate a SoapContext object use the fluent builder presented below. 
+Last, but not least. In most of the cases, you can relay on the default settings of the SoapContext that specifies how messages are generated, but if you would like to change it you have to populate the SoapContext object and pass it either to the Wsdl (from that moment on, SoapBuilder will use this context as the default one), or to single methods, changing the context of the generation for the time span of a single method invocation. In order to populate a SoapContext object use the fluent builder presented below.
 ```java
     SoapContext context = SoapContext.builder()
         .alwaysBuildHeaders(true)
@@ -282,11 +284,11 @@ That's a lot of stuff. I hope you enjoyed it! Have a look at the examples locate
 
 #### Generate and post a SOAP message
 ```java
-	WsdlParser parser = WsdlParser.parse("http://www.webservicex.net/CurrencyConvertor.asmx?WSDL");
+	Wsdl wsdl = Wsdl.parse("http://www.webservicex.net/CurrencyConvertor.asmx?WSDL");
     
-    SoapBuilder builder = parser.binding()
+    SoapBuilder builder = wsdl.binding()
     	.localPart("CurrencyConvertorSoap")
-    	.builder();
+    	.find();
     SoapOperation operation = builder.operation()
     	.soapAction("http://www.webserviceX.NET/ConversionRate")
     	.find();
@@ -314,8 +316,8 @@ That's a lot of stuff. I hope you enjoyed it! Have a look at the examples locate
     server.start();
 
     URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "wsdl/stockquote-service.wsdl");
-    WsdlParser parser = WsdlParser.parse(wsdlUrl);
-    SoapBuilder builder = parser.binding().localPart("StockQuoteSoapBinding").builder();
+    Wsdl wsdl = Wsdl.parse(wsdlUrl);
+    SoapBuilder builder = wsdl.binding().localPart("StockQuoteSoapBinding").find();
     AutoResponder responder = new AutoResponder(builder);
 
     server.registerRequestResponder("/service", responder);
@@ -330,8 +332,8 @@ That's a lot of stuff. I hope you enjoyed it! Have a look at the examples locate
     server.start();
 
     URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "wsdl/stockquote-service.wsdl");
-    WsdlParser parser = WsdlParser.parse(wsdlUrl);
-    final SoapBuilder builder = parser.binding().localPart("StockQuoteSoapBinding").builder();
+    Wsdl wsdl = Wsdl.parse(wsdlUrl);
+    final SoapBuilder builder = wsdl.binding().localPart("StockQuoteSoapBinding").find();
     
     AbstractResponder customResponder = new AbstractResponder(builder) {
         @Override
@@ -357,26 +359,27 @@ You can find all these working examples in the soap-examples project. Enjoy!
 #### Spring example
 Spring configuration:
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
+    <?xml version="1.0" encoding="UTF-8"?>
     <beans xmlns="http://www.springframework.org/schema/beans"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans.xsd">
+           xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-        <!-- wsdl-parser part (locally referenced wsdl) -->
-        <bean id="wsdl" class="org.springframework.core.io.ClassPathResource">
-            <constructor-arg><value>wsdl/currency-convertor.wsdl</value></constructor-arg>
+        <!-- wsdl part (locally referenced wsdl) -->
+        <bean id="wsdlResource" class="org.springframework.core.io.ClassPathResource">
+            <constructor-arg>
+                <value>wsdl/currency-convertor.wsdl</value>
+            </constructor-arg>
         </bean>
 
-        <bean id="wsdlUrl" class="java.net.URL" factory-bean="wsdl" factory-method="getURL"/>
+        <bean id="wsdlUrl" class="java.net.URL" factory-bean="wsdlResource" factory-method="getURL"/>
 
         <!-- uncomment to use the local wsdl" -->
-        <!--<bean id="wsdlParser" class="org.reficio.ws.builder.core.WsdlParser" factory-method="parse">-->
-            <!--<constructor-arg ref="wsdlUrl"/>-->
+        <!--<bean id="wsdl" class="org.reficio.ws.builder.core.Wsdl" factory-method="parse">-->
+        <!--<constructor-arg ref="wsdlUrl"/>-->
         <!--</bean>-->
 
-        <!-- wsdl-parser part (remote wsdl) -->
-        <bean id="wsdlParser" class="org.reficio.ws.builder.core.WsdlParser" factory-method="parse">
+        <!-- wsdl part (remote wsdl) -->
+        <bean id="wsdl" class="org.reficio.ws.builder.core.Wsdl" factory-method="parse">
             <constructor-arg>
                 <value>http://www.webservicex.net/CurrencyConvertor.asmx?WSDL</value>
             </constructor-arg>
@@ -392,22 +395,31 @@ Spring configuration:
             <constructor-arg name="valueComments" type="boolean" value="true"/>
         </bean>
 
-        <bean id="soapBuilder" class="org.reficio.ws.builder.SoapBuilder"
-            factory-bean="wsdlParser" factory-method="getBuilder">
+        <bean id="soapBuilder" class="org.reficio.ws.builder.SoapBuilder" factory-bean="wsdl" factory-method="getBuilder">
             <constructor-arg name="bindingName">
                 <value>{http://www.webserviceX.NET/}CurrencyConvertorSoap</value>
             </constructor-arg>
             <constructor-arg name="context" ref="soapContext"/>
         </bean>
 
+        <!-- security part -->
+        <bean id="securityFactory" class="org.reficio.ws.client.core.SecurityFactory">
+            <property name="authUsername" value="tom"/>
+            <property name="authPassword" value="007"/>
+            <property name="authMethod" value="basic"/>
+            <property name="strictHostVerification" value="true"/>
+            <property name="sslContextProtocol" value="SSLv3"/>
+        </bean>
+
+        <bean id="security" class="org.reficio.ws.client.core.Security" factory-bean="securityFactory" factory-method="create"/>
 
         <!-- soap-client part -->
         <bean id="soapClientFactory" class="org.reficio.ws.client.core.SoapClientFactory">
-            <property name="endpointUrl" value="http://localhost:8778/currencyConverter/soap"/>
+            <property name="endpointUri" value="http://localhost:8778/currencyConverter/soap"/>
+            <property name="endpointSecurity" ref="security"/>
         </bean>
 
-        <bean id="soapClient" class="org.reficio.ws.client.core.SoapClient"
-            factory-bean="soapClientFactory" factory-method="create"/>
+        <bean id="soapClient" class="org.reficio.ws.client.core.SoapClient" factory-bean="soapClientFactory" factory-method="create"/>
 
 
         <!-- soap-server part -->
@@ -419,13 +431,12 @@ Spring configuration:
             <property name="httpPort" value="8778"/>
             <property name="responders">
                 <map>
-                    <entry key="/currencyConverter/soap" value-ref="autoResponder" />
+                    <entry key="/currencyConverter/soap" value-ref="autoResponder"/>
                 </map>
             </property>
         </bean>
 
         <bean id="soapServer" factory-bean="soapServerFactory" factory-method="create" init-method="start"/>
-
     </beans>
 ```
 
