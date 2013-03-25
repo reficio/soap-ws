@@ -41,6 +41,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.reficio.ws.SoapException;
 import org.reficio.ws.client.SoapClientException;
 import org.reficio.ws.client.TransmissionException;
 import org.reficio.ws.client.ssl.SSLUtils;
@@ -254,6 +255,8 @@ public final class SoapClient {
                 throw new TransmissionException(statusLine.getReasonPhrase(), statusLine.getStatusCode());
             }
             return entity == null ? null : EntityUtils.toString(entity);
+        } catch(SoapException ex) {
+            throw ex;
         } catch (ConnectTimeoutException ex) {
             throw new TransmissionException("Connection timed out", ex);
         } catch (IOException ex) {

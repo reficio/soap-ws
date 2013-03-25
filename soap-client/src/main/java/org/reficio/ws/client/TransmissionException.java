@@ -36,7 +36,7 @@ public class TransmissionException extends SoapClientException {
     }
 
     public TransmissionException(String message, Throwable ex) {
-        super(message, ex);
+        super(String.format("%s; %s", message, ex.getMessage()), ex);
         this.errorResponse = null;
         this.errorCode = null;
     }

@@ -130,7 +130,7 @@ public class HttpCooperationTest extends AbstractCooperationTest {
             expected = ex;
         }
         assertNotNull(expected);
-        assertEquals(expected.getErrorCode(), Integer.valueOf(500));
+        assertEquals(Integer.valueOf(500), expected.getErrorCode());
     }
 
     @Test
@@ -182,7 +182,7 @@ public class HttpCooperationTest extends AbstractCooperationTest {
             expected = ex;
         }
         assertNotNull(expected);
-        assertEquals(expected.getErrorCode(), Integer.valueOf(500));
+        assertEquals(Integer.valueOf(500), expected.getErrorCode());
     }
 
     @Test
@@ -194,7 +194,7 @@ public class HttpCooperationTest extends AbstractCooperationTest {
             expected = ex;
         }
         assertNotNull(expected);
-        assertEquals(expected.getErrorCode(), Integer.valueOf(500));
+        assertEquals(Integer.valueOf(500), expected.getErrorCode());
     }
 
     @Test
