@@ -17,6 +17,7 @@
     <modules>
         <module>quickstart</module>
         <module>arquillian</module>
+        <module>testing</module>
     </modules>
 
 </project>

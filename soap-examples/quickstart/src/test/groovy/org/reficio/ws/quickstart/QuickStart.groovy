@@ -41,7 +41,10 @@ class QuickStart {
         input = toPrettyXml(slurper)
 
         // construct the soap client and post the message
-        SoapClient client = SoapClient.builder().endpointUri("http://www.webservicex.net/CurrencyConvertor.asmx").build();
+        SoapClient client = SoapClient.builder()
+                .endpointUri("http://www.webservicex.net/CurrencyConvertor.asmx")
+                .build();
+
         String output = client.post("http://www.webserviceX.NET/ConversionRate", input);
         def response = new XmlSlurper().parseText(output)
 

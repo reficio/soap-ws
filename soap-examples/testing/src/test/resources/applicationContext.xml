@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- wsdl-parser part (locally referenced wsdl) -->
+    <bean id="wsdlResource" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg>
+            <value>wsdl/currency-convertor.wsdl</value>
+        </constructor-arg>
+    </bean>
+
+    <bean id="wsdlUrl" class="java.net.URL" factory-bean="wsdlResource" factory-method="getURL"/>
+
+    <!-- wsdl-parser part  -->
+    <bean id="wsdl" class="org.reficio.ws.builder.core.Wsdl" factory-method="parse">
+        <constructor-arg>
+            <!--<value>http://www.webservicex.net/CurrencyConvertor.asmx?WSDL</value>-->
+            <ref bean="wsdlUrl"/>
+        </constructor-arg>
+    </bean>
+
+    <!-- soap-builder part -->
+    <bean id="soapContext" class="org.reficio.ws.SoapContext">
+        <constructor-arg name="exampleContent" type="boolean" value="true"/>
+        <constructor-arg name="typeComments" type="boolean" value="true"/>
+        <constructor-arg name="buildOptional" type="boolean" value="true"/>
+        <constructor-arg name="alwaysBuildHeaders" type="boolean" value="true"/>
+        <constructor-arg name="valueComments" type="boolean" value="true"/>
+    </bean>
+
+    <bean id="soapBuilder" class="org.reficio.ws.builder.SoapBuilder" factory-bean="wsdl" factory-method="getBuilder">
+        <constructor-arg name="bindingName">
+            <value>{http://www.webserviceX.NET/}CurrencyConvertorSoap</value>
+        </constructor-arg>
+        <constructor-arg name="context" ref="soapContext"/>
+    </bean>
+
+    <!-- soap-client part -->
+    <bean id="soapClientFactory" class="org.reficio.ws.client.core.SoapClientFactory">
+        <property name="endpointUri" value="http://localhost:9090/service"/>
+    </bean>
+
+    <bean id="soapClient" class="org.reficio.ws.client.core.SoapClient" factory-bean="soapClientFactory" factory-method="create"/>
+
+    <!-- soap-server part -->
+    <bean id="autoResponder" class="org.reficio.ws.server.responder.AutoResponder">
+        <constructor-arg ref="soapBuilder"/>
+    </bean>
+
+    <bean id="soapServerFactory" class="org.reficio.ws.server.core.SoapServerFactory">
+        <property name="httpPort" value="9090"/>
+        <property name="responders">
+            <map>
+                <entry key="/service1" value-ref="autoResponder"/>
+                <entry key="/service2" value-ref="autoResponder"/>
+                <entry key="/service3" value-ref="autoResponder"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="soapServer" factory-bean="soapServerFactory" factory-method="create" init-method="start"/>
+
+    <bean id="balanceService" class="org.reficio.sample.BankServiceImpl">
+        <constructor-arg name="client" ref="soapClient"/>
+    </bean>
+
+</beans>

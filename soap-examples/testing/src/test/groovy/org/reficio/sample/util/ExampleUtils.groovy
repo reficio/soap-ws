@@ -16,38 +16,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.reficio.ws.client;
+package org.reficio.sample.util
 
-import org.hamcrest.core.AnyOf;
-import org.hamcrest.core.StringContains;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.reficio.ws.client.core.SoapClient;
+import groovy.xml.StreamingMarkupBuilder
+import groovy.xml.XmlUtil
 
 /**
- * @author Tom Bujok
- * @since 1.0.0
+ * @author: Tom Bujok (tom.bujok@gmail.com)
+ *
+ * Reficio™ - Reestablish your software!
+ * www.reficio.org
  */
-public class SimpleClientTest {
-
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
-    @Test(timeout = 5000)
-    public void connectTimeout() {
-
-        exception.expect(TransmissionException.class);
-        exception.expectMessage(AnyOf.anyOf(
-                StringContains.containsString("failed"),
-                StringContains.containsString("timed out"))
-        );
-
-        SoapClient client = SoapClient.builder()
-                .endpointUri("http://test.ch:9999")
-                .connectTimeoutInMillis(1000)
-                .build();
-        client.post("<xml/>");
+class ExampleUtils {
+    def static toPrettyXml(xml) {
+        XmlUtil.serialize(new StreamingMarkupBuilder().bind { mkp.yield xml })
     }
-
 }

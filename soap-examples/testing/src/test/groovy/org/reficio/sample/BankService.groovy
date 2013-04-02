@@ -16,38 +16,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.reficio.ws.client;
-
-import org.hamcrest.core.AnyOf;
-import org.hamcrest.core.StringContains;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.reficio.ws.client.core.SoapClient;
+package org.reficio.sample
 
 /**
- * @author Tom Bujok
- * @since 1.0.0
+ * @author: Tom Bujok (tom.bujok@gmail.com)
+ *
+ * Reficio™ - Reestablish your software!
+ * www.reficio.org
  */
-public class SimpleClientTest {
+interface BankService {
 
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
+    Double getExpenses(String account, String category);
 
-    @Test(timeout = 5000)
-    public void connectTimeout() {
+    Double getExpenses(String account, String category, String currency);
 
-        exception.expect(TransmissionException.class);
-        exception.expectMessage(AnyOf.anyOf(
-                StringContains.containsString("failed"),
-                StringContains.containsString("timed out"))
-        );
-
-        SoapClient client = SoapClient.builder()
-                .endpointUri("http://test.ch:9999")
-                .connectTimeoutInMillis(1000)
-                .build();
-        client.post("<xml/>");
-    }
+    String getCurrency();
 
 }

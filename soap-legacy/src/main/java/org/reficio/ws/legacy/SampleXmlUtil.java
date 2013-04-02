@@ -280,9 +280,11 @@ class SampleXmlUtil {
                 return formatToLength("notation", sType);
 
             case SchemaType.BTC_FLOAT:
-                return "1.5E2";
+                return "1.25";
+//                return Float.valueOf(new Random().nextFloat()).toString();
             case SchemaType.BTC_DOUBLE:
-                return "1.051732E7";
+                return "1.30";
+//                return Double.valueOf(new Random().nextDouble()).toString();
             case SchemaType.BTC_DECIMAL:
                 switch (closestBuiltin(sType).getBuiltinTypeCode()) {
                     case SchemaType.BTC_SHORT:
