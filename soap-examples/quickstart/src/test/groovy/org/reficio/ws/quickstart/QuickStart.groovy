@@ -20,19 +20,28 @@ package org.reficio.ws.quickstart
 
 import groovy.xml.StreamingMarkupBuilder
 import groovy.xml.XmlUtil
+import org.junit.Rule
 import org.junit.Test
 import org.reficio.ws.builder.core.Wsdl
 import org.reficio.ws.client.core.SoapClient
+import org.reficio.ws.test.junit.Server
+import org.reficio.ws.test.junit.SoapRule
 
 class QuickStart {
 
+    @Rule
+    public SoapRule rule = new SoapRule();
+
     @Test
+    @Server(wsdl = "classpath:wsdl/currency-convertor.wsdl",
+            binding = "CurrencyConvertorSoap",
+            port = 9090)
     void invokeConversionRate() {
         // generate the message (the quickest way)
         String input = Wsdl.parse("http://www.webservicex.net/CurrencyConvertor.asmx?WSDL")
-            .binding().name("{http://www.webserviceX.NET/}CurrencyConvertorSoap").find()
-            .operation().soapAction("http://www.webserviceX.NET/ConversionRate").find()
-            .buildInputMessage()
+                .binding().name("{http://www.webserviceX.NET/}CurrencyConvertorSoap").find()
+                .operation().soapAction("http://www.webserviceX.NET/ConversionRate").find()
+                .buildInputMessage()
 
         // modify the request providing real data
         def slurper = new XmlSlurper().parseText(input)
@@ -44,7 +53,8 @@ class QuickStart {
 
         // construct the soap client and post the message
         SoapClient client = SoapClient.builder()
-                .endpointUri("http://www.webservicex.net/CurrencyConvertor.asmx")
+        //.endpointUri("http://www.webservicex.net/CurrencyConvertor.asmx")
+                .endpointUri("http://localhost:9090/service")
                 .build();
 
         String output = client.post("http://www.webserviceX.NET/ConversionRate", input);
