@@ -183,16 +183,16 @@
                 </dependencies>
             </plugin>
             <!--<plugin>-->
-                <!--<groupId>org.spockframework</groupId>-->
-                <!--<artifactId>spock-maven</artifactId>-->
-                <!--<version>0.7-groovy-2.0</version>-->
-                <!--&lt;!&ndash;<executions>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<execution>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<goals>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<goal>find-specs</goal>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</goals>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</execution>&ndash;&gt;-->
-                <!--&lt;!&ndash;</executions>&ndash;&gt;-->
+            <!--<groupId>org.spockframework</groupId>-->
+            <!--<artifactId>spock-maven</artifactId>-->
+            <!--<version>0.7-groovy-2.0</version>-->
+            <!--&lt;!&ndash;<executions>&ndash;&gt;-->
+            <!--&lt;!&ndash;<execution>&ndash;&gt;-->
+            <!--&lt;!&ndash;<goals>&ndash;&gt;-->
+            <!--&lt;!&ndash;<goal>find-specs</goal>&ndash;&gt;-->
+            <!--&lt;!&ndash;</goals>&ndash;&gt;-->
+            <!--&lt;!&ndash;</execution>&ndash;&gt;-->
+            <!--&lt;!&ndash;</executions>&ndash;&gt;-->
             <!--</plugin>-->
 
 
@@ -398,6 +398,11 @@
             <id>jboss</id>
             <url>https://repository.jboss.org/nexus/content/repositories/deprecated/</url>
         </repository>
+        <repository>
+            <id>servicemix</id>
+            <url>http://svn.apache.org/repos/asf/servicemix/m2-repo/</url>
+        </repository>
+
     </repositories>
 
     <profiles>
