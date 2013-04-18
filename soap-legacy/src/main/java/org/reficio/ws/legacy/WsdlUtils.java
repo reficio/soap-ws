@@ -143,7 +143,7 @@ class WsdlUtils {
             return soap12Body.getUse() != null
                     && soap12Body.getUse().equalsIgnoreCase("encoded")
                     && (soap12Body.getEncodingStyle() == null || soap12Body.getEncodingStyle().equals(
-                    "http://schemas.xmlsoap.org/soap/encoding/"));
+                    "http://www.w3.org/2001/12/soap-encoding"));
         }
 
         return false;
@@ -216,6 +216,10 @@ class WsdlUtils {
             return "rpc".equalsIgnoreCase(soap12Binding.getStyle());
 
         return false;
+    }
+
+    public static boolean isOneWay(BindingOperation operation) {
+        return operation.getOperation().getStyle().equals(OperationType.ONE_WAY);
     }
 
     /**

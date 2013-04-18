@@ -18,6 +18,7 @@
  */
 package org.reficio.ws.legacy;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -97,6 +98,179 @@ final class XmlUtils {
         }
     }
 
+    public static NodeList getChildElements(Element elm) {
+        List<Element> list = new ArrayList<Element>();
+
+        NodeList nl = elm.getChildNodes();
+        for (int c = 0; c < nl.getLength(); c++) {
+            Node item = nl.item(c);
+            if (item.getParentNode() == elm && item.getNodeType() == Node.ELEMENT_NODE)
+                list.add((Element) item);
+        }
+
+        return new ElementNodeList(list);
+    }
+
+    private final static class ElementNodeList implements NodeList {
+        private final List<Element> list;
+
+        public ElementNodeList(List<Element> list) {
+            this.list = list;
+        }
+
+        public int getLength() {
+            return list.size();
+        }
+
+        public Node item(int index) {
+            return list.get(index);
+        }
+    }
+
+    public static String getChildElementText(Element elm, String name) {
+        Element child = getFirstChildElement(elm, name);
+        return child == null ? null : getElementText(child);
+    }
+
+    public static Element getFirstChildElement(Element elm) {
+        return getFirstChildElement(elm, null);
+    }
+
+    static public String getElementText(Element elm) {
+        Node node = elm.getFirstChild();
+        if (node != null && node.getNodeType() == Node.TEXT_NODE)
+            return node.getNodeValue();
+
+        return null;
+    }
+
+    static public String getFragmentText(DocumentFragment elm) {
+        Node node = elm.getFirstChild();
+        if (node != null && node.getNodeType() == Node.TEXT_NODE)
+            return node.getNodeValue();
+
+        return null;
+    }
+
+    public static String getChildElementText(Element elm, String name, String defaultValue) {
+        String result = getChildElementText(elm, name);
+        return result == null ? defaultValue : result;
+    }
+
+    static public String getNodeValue(Node node) {
+        if (node == null)
+            return null;
+
+        if (node.getNodeType() == Node.ELEMENT_NODE)
+            return getElementText((Element) node);
+        else if (node.getNodeType() == Node.DOCUMENT_FRAGMENT_NODE)
+            return getFragmentText((DocumentFragment) node);
+        else
+            return node.getNodeValue();
+    }
+
+    public static Element getFirstChildElement(Element elm, String name) {
+        if (elm == null)
+            return null;
+
+        NodeList nl = elm.getChildNodes();
+        for (int c = 0; c < nl.getLength(); c++) {
+            Node node = nl.item(c);
+            if (node.getNodeType() == Node.ELEMENT_NODE && (name == null || node.getNodeName().equals(name)))
+                return (Element) node;
+        }
+
+        return null;
+    }
+
+    public static Element getFirstChildElementIgnoreCase(Element elm, String name) {
+        if (elm == null)
+            return null;
+
+        NodeList nl = elm.getChildNodes();
+        for (int c = 0; c < nl.getLength(); c++) {
+            Node node = nl.item(c);
+            if (node.getNodeType() == Node.ELEMENT_NODE && (name == null || node.getNodeName().equalsIgnoreCase(name)))
+                return (Element) node;
+        }
+
+        return null;
+    }
+
+    public static Element getFirstChildElementNS(Element elm, String tns, String localName) {
+        if (tns == null && localName == null)
+            return getFirstChildElement(elm);
+
+        if (tns == null || tns.length() == 0)
+            return getFirstChildElement(elm, localName);
+
+        NodeList nl = elm.getChildNodes();
+        for (int c = 0; c < nl.getLength(); c++) {
+            Node node = nl.item(c);
+            if (node.getNodeType() != Node.ELEMENT_NODE)
+                continue;
+
+            if (localName == null && tns.equals(node.getNamespaceURI()))
+                return (Element) node;
+
+            if (localName != null && tns.equals(node.getNamespaceURI()) && localName.equals(node.getLocalName()))
+                return (Element) node;
+        }
+
+        return null;
+    }
+
+    public static String removeUnneccessaryNamespaces(String xml) {
+        if (StringUtils.isBlank(xml)) {
+            return xml;
+        }
+
+        XmlObject xmlObject = null;
+        XmlCursor cursor = null;
+        try {
+            xmlObject = XmlObject.Factory.parse(xml);
+
+            cursor = xmlObject.newCursor();
+            while (cursor.currentTokenType() != XmlCursor.TokenType.START && cursor.currentTokenType() != XmlCursor.TokenType.ENDDOC) {
+                cursor.toNextToken();
+            }
+
+            if (cursor.currentTokenType() == XmlCursor.TokenType.START) {
+                Map<?, ?> nsMap = new HashMap<Object, Object>();
+
+                cursor.getAllNamespaces(nsMap);
+                nsMap.remove(cursor.getDomNode().getPrefix());
+
+                NamedNodeMap attributes = cursor.getDomNode().getAttributes();
+                for (int c = 0; attributes != null && c < attributes.getLength(); c++) {
+                    nsMap.remove(attributes.item(c).getPrefix());
+                }
+
+                if (cursor.toFirstChild()) {
+                    while (cursor.getDomNode() != xmlObject.getDomNode()) {
+                        attributes = cursor.getDomNode().getAttributes();
+                        for (int c = 0; attributes != null && c < attributes.getLength(); c++) {
+                            nsMap.remove(attributes.item(c).getPrefix());
+                        }
+
+                        nsMap.remove(cursor.getDomNode().getPrefix());
+                        cursor.toNextToken();
+                    }
+                }
+
+                xml = xmlObject.xmlText(new XmlOptions().setSaveOuter().setSavePrettyPrint()
+                        .setSaveImplicitNamespaces(nsMap));
+            }
+        } catch (XmlException e) {
+
+        } finally {
+            if (cursor != null)
+                cursor.dispose();
+        }
+
+        return xml;
+    }
+
     private static DocumentBuilder ensureDocumentBuilder() {
         if (documentBuilder == null) {
             try {
@@ -155,28 +329,22 @@ final class XmlUtils {
         }
     }
 
+    public static QName getQName(XmlObject contentElement) {
+        return contentElement == null ? null : getQName(contentElement.getDomNode());
+    }
+
+    public static QName getQName(Node node) {
+        if (node == null)
+            return null;
+        else if (node.getNamespaceURI() == null)
+            return new QName(node.getNodeName());
+        else
+            return new QName(node.getNamespaceURI(), node.getLocalName());
+    }
 
     public static Document parseXml(String xmlString) throws IOException {
         return parse(new InputSource(new StringReader(xmlString)));
     }
-
-
-    /**
-     * Returns absolute xpath for specified element, ignores namespaces
-     *
-     * @param element the element to create for
-     * @return the elements path in its containing document
-     */
-
-
-    /**
-     * Gets the index of the specified element amongst elements with the same
-     * name
-     *
-     * @param element the element to get for
-     * @return the index of the element, will be >= 1
-     */
-
 
     public static boolean setNodeValue(Node domNode, String string) {
         if (domNode == null)

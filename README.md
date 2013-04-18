@@ -1,3 +1,4 @@
+
 # soap-ws [![Build Status](https://secure.travis-ci.org/reficio/soap-ws.png)](http://travis-ci.org/reficio/soap-ws)
 
 ## A lightweight and easy-to-use Java library to handle SOAP on a purely XML level.
@@ -32,23 +33,23 @@ Yes, that's what soap-ws can do for you. But it can do much more, just dive in a
 * supports SOAP 1.1 and 1.2
 * supports all four WS flavors: rpc-encoded, rpc-literal, document-literal and document-encoded
 * supports SSL and basic-authentication
-* supports SOCKS and HTTP(s) proxies
+* supports SOCKS, HTTP and HTTPS proxies
 * supports SpringFramework
-* supports JUnit
+* supports JUnit, Spock and Arquillian
 
 
 ### Main features
 
 soap-builder:
 
-* fetch, parse and store WSDL (hierarchical WSDL and hierarchical XSD supported)
-* soap message generation in the XML format on the basis of imported WSDL 
+* fetch, parse and store WSDL (hierarchical WSDLs and XSDs supported)
+* generate a soap XML message on the basis of the imported WSDL 
 
 soap-client:
 
 * communication and message handling purely in the XML format
 * basic authentication and SSL support
-* HTTP and SOCKS proxy support, with/without basic authentication 
+* HTTP(s) and SOCKS proxy support, with/without basic authentication 
 
 soap-server:
 

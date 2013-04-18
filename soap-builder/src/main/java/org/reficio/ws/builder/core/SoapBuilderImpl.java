@@ -175,4 +175,43 @@ class SoapBuilderImpl implements SoapBuilder {
         return new ArrayList<String>(serviceUrls);
     }
 
+    @Override
+    public void validateInputMessage(SoapOperation operation, String message) {
+        BindingOperation bindingOperation = getBindingOperation(operation);
+        soapFacade.validateSoapRequestMessage(binding, bindingOperation, message, false);
+    }
+
+    @Override
+    public void validateInputMessage(SoapOperation operation, String message, boolean strict) {
+        BindingOperation bindingOperation = getBindingOperation(operation);
+        soapFacade.validateSoapRequestMessage(binding, bindingOperation, message, strict);
+    }
+
+    @Override
+    public void validateOutputMessage(SoapOperation operation, String message) {
+        BindingOperation bindingOperation = getBindingOperation(operation);
+        soapFacade.validateSoapResponseMessage(binding, bindingOperation, message, false);
+    }
+
+    @Override
+    public void validateOutputMessage(SoapOperation operation, String message, boolean strict) {
+        BindingOperation bindingOperation = getBindingOperation(operation);
+        soapFacade.validateSoapResponseMessage(binding, bindingOperation, message, strict);
+    }
+
+    @Override
+    public boolean isRpc() {
+        return SoapLegacyFacade.isRpc(binding);
+    }
+
+    @Override
+    public boolean isInputSoapEncoded(SoapOperation operation) {
+        return soapFacade.isInputSoapEncoded(getBindingOperation(operation));
+    }
+
+    @Override
+    public boolean isOutputSoapEncoded(SoapOperation operation) {
+        return soapFacade.isOutputSoapEncoded(getBindingOperation(operation));
+    }
+
 }

@@ -64,4 +64,18 @@ public interface SoapBuilder {
 
     List<String> getServiceUrls();
 
+    void validateInputMessage(SoapOperation operation, String message);
+
+    void validateInputMessage(SoapOperation operation, String message, boolean strict);
+
+    void validateOutputMessage(SoapOperation operation, String message);
+
+    void validateOutputMessage(SoapOperation operation, String message, boolean strict);
+
+    boolean isRpc();
+
+    boolean isInputSoapEncoded(SoapOperation operation);
+
+    boolean isOutputSoapEncoded(SoapOperation operation);
+
 }

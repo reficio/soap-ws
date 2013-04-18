@@ -49,5 +49,13 @@ public interface SoapOperationBuilder extends SoapOperation {
     String buildEmptyMessage();
 
     String buildEmptyMessage(SoapContext context);
-    
+
+    void validateInputMessage(String message);
+
+    void validateInputMessage(String message, boolean strict);
+
+    void validateOutputMessage(String message);
+
+    void validateOutputMessage(String message, boolean strict);
+
 }

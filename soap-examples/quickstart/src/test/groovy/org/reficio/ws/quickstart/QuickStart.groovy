@@ -40,6 +40,8 @@ class QuickStart {
         slurper.Body.ConversionRate.ToCurrency = "PLN"
         input = toPrettyXml(slurper)
 
+        println input;
+
         // construct the soap client and post the message
         SoapClient client = SoapClient.builder()
                 .endpointUri("http://www.webservicex.net/CurrencyConvertor.asmx")

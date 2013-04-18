@@ -26,6 +26,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.reficio.ws.SoapBuilderException;
 import org.reficio.ws.SoapContext;
+import org.reficio.ws.annotation.ThreadSafe;
 import org.reficio.ws.common.Wsdl11Writer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -72,12 +73,16 @@ import java.util.List;
  *
  * @author Ole.Matzura
  */
+@ThreadSafe
 @SuppressWarnings("unchecked")
 class SoapMessageBuilder {
 
     private final static Logger log = Logger.getLogger(SoapMessageBuilder.class);
 
+    // should be thread safe it not modified after it has been initialized
     private Definition definition;
+
+    // should be thread safe it not modified after it has been initialized
     private SchemaDefinitionWrapper definitionWrapper;
 
     // ----------------------------------------------------------
@@ -353,10 +358,7 @@ class SoapMessageBuilder {
         return new ArrayList<QName>(definition.getAllBindings().keySet());
     }
 
-    // --------------------------------------------------------------------------
-    // Internal methods - END OF PUBLIC API
-    // --------------------------------------------------------------------------
-    private static SoapVersion getSoapVersion(Binding binding) {
+    public static SoapVersion getSoapVersion(Binding binding) {
         List<?> list = binding.getExtensibilityElements();
 
         SOAPBinding soapBinding = WsdlUtils.getExtensiblityElement(list, SOAPBinding.class);
@@ -378,6 +380,9 @@ class SoapMessageBuilder {
         throw new SoapBuilderException("SOAP binding not recognized");
     }
 
+    // --------------------------------------------------------------------------
+    // Internal methods - END OF PUBLIC API
+    // --------------------------------------------------------------------------
     private void addHeaders(List<WsdlUtils.SoapHeader> headers, SoapVersion soapVersion, XmlCursor cursor, SampleXmlUtil xmlGenerator) throws Exception {
         // reposition
         cursor.toStartDoc();

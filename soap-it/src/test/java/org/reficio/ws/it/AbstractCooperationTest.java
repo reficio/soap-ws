@@ -93,7 +93,6 @@ public abstract class AbstractCooperationTest {
         Wsdl parser = TestUtils.createParserForService(testServiceId);
         registerHandler(server, testServiceId, parser);
 
-        boolean a = false;
         for (QName bindingName : parser.getBindings()) {
             SoapBuilder builder = parser.binding().name(bindingName).find();
             String contextPath = TestUtils.formatContextPath(testServiceId, builder.getBindingName());
@@ -118,6 +117,10 @@ public abstract class AbstractCooperationTest {
     private void testOperation(ClientBuilder clientBuilder, SoapBuilder soapBuilder, SoapOperation operation, String endpointUrl, Boolean postSoapAction) throws Exception {
         log.info("Testing operation: " + operation);
         String request = soapBuilder.buildInputMessage(operation);
+
+        if (!operation.isInputSoapEncoded()) {
+//            soapBuilder.validateInputMessage(operation, request);
+        }
         assertTrue("Generated request is empty!", request.length() > 0);
 
         Binding binding = soapBuilder.getBinding();
@@ -133,9 +136,13 @@ public abstract class AbstractCooperationTest {
             response = postRequest(client, request);
         }
 
-        SoapContext context = SoapContext.builder().exampleContent(false).build();
+        SoapContext context = SoapContext.builder().exampleContent(true).build();
         if (op.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
             String expectedResponse = soapBuilder.buildOutputMessage(operation, context);
+            if (!operation.isOutputSoapEncoded()) {
+//                soapBuilder.validateOutputMessage(operation, response);
+            }
+
             assertTrue("Generated expectedResponse is empty!", expectedResponse.length() > 0);
             boolean identical = XmlUtils.isIdenticalNormalizedWithoutValues(expectedResponse, response);
             assertTrue("Error during validation of service " + endpointUrl, identical);

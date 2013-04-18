@@ -20,6 +20,7 @@ package org.reficio.ws.legacy;
 
 import org.reficio.ws.SoapBuilderException;
 import org.reficio.ws.SoapContext;
+import org.reficio.ws.SoapValidationException;
 
 import javax.wsdl.*;
 import javax.wsdl.extensions.soap.SOAPBinding;
@@ -37,6 +38,8 @@ import java.util.List;
 public class SoapLegacyFacade {
 
     public static enum Soap {SOAP_1_1, SOAP_1_2}
+
+    private static final String RPC = "rpc";
 
     private SoapMessageBuilder messageBuilder;
 
@@ -57,6 +60,22 @@ public class SoapLegacyFacade {
             return messageBuilder.buildSoapMessageFromOutput(binding, bindingOperation, context);
         } catch (Exception e) {
             throw new SoapBuilderException(e);
+        }
+    }
+
+    public void validateSoapRequestMessage(Binding binding, BindingOperation operation, String message, boolean strict) {
+        WsdlValidator validator = new WsdlValidator(messageBuilder, binding);
+        List<AssertionError> result = validator.assertRequest(operation, message, strict);
+        if (!result.isEmpty()) {
+            throw new SoapValidationException(result);
+        }
+    }
+
+    public void validateSoapResponseMessage(Binding binding, BindingOperation operation, String message, boolean strict) {
+        WsdlValidator validator = new WsdlValidator(messageBuilder, binding);
+        List<AssertionError> result = validator.assertResponse(operation, message, strict);
+        if (!result.isEmpty()) {
+            throw new SoapValidationException(result);
         }
     }
 
@@ -129,13 +148,13 @@ public class SoapLegacyFacade {
                 .getExtensiblityElement(binding.getExtensibilityElements(), SOAPBinding.class);
 
         if (soapBinding != null)
-            return "rpc".equalsIgnoreCase(soapBinding.getStyle());
+            return RPC.equalsIgnoreCase(soapBinding.getStyle());
 
         SOAP12Binding soap12Binding = WsdlUtils.getExtensiblityElement(binding.getExtensibilityElements(),
                 SOAP12Binding.class);
 
         if (soap12Binding != null)
-            return "rpc".equalsIgnoreCase(soap12Binding.getStyle());
+            return RPC.equalsIgnoreCase(soap12Binding.getStyle());
 
         return false;
     }
@@ -147,6 +166,14 @@ public class SoapLegacyFacade {
     @SuppressWarnings("unchecked")
     public Collection<Service> getServices() {
         return (Collection<Service>) messageBuilder.getDefinition().getServices().values();
+    }
+
+    public boolean isOutputSoapEncoded(BindingOperation operation) {
+        return WsdlUtils.isOutputSoapEncoded(operation);
+    }
+
+    public boolean isInputSoapEncoded(BindingOperation operation) {
+        return WsdlUtils.isInputSoapEncoded(operation);
     }
 
 }

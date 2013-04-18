@@ -25,6 +25,7 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.security.SslSelectChannelConnector;
 import org.mortbay.jetty.servlet.Context;
+import org.reficio.ws.annotation.ThreadSafe;
 import org.reficio.ws.server.ServiceRegistrationException;
 import org.reficio.ws.server.SoapServerException;
 import org.reficio.ws.server.endpoint.GenericContextDomEndpoint;
@@ -54,6 +55,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Tom Bujok
  * @since 1.0.0
  */
+@ThreadSafe
 public final class SoapServer {
 
     private final static Logger log = Logger.getLogger(SoapServer.class);

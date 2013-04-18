@@ -16,32 +16,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.reficio.ws.builder;
+package org.reficio.ws;
 
-import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Wrapper object that represents one operation from a WSDL's binding
+ * Default exception thrown by the SoapBuilder.
  *
  * @author Tom Bujok
  * @since 1.0.0
  */
-public interface SoapOperation {
+public class SoapValidationException extends SoapException {
 
-    QName getBindingName();
+    private final List<AssertionError> errors;
 
-    String getOperationName();
+    public SoapValidationException(List<AssertionError> errors) {
+        super("Message validation failed with " + errors.size() + " error(s)\n" + errors);
+        this.errors = errors;
+    }
 
-    String getOperationInputName();
-
-    String getOperationOutputName();
-
-    String getSoapAction();
-
-    boolean isRpc();
-
-    boolean isInputSoapEncoded();
-
-    boolean isOutputSoapEncoded();
+    public List<AssertionError> getErrors() {
+        return new ArrayList<AssertionError>(errors);
+    }
 
 }

@@ -77,7 +77,7 @@ public class TestUtils {
         for (QName bindingName : parser.getBindings()) {
             String contextPath = TestUtils.formatContextPath(testServiceId, bindingName);
             log.info(String.format("Registering auto responder for service [%d] undex context path [%s]", testServiceId, contextPath));
-            SoapContext context = SoapContext.builder().exampleContent(false).build();
+            SoapContext context = SoapContext.builder().exampleContent(true).build();
             SoapBuilder builder = parser.binding().name(bindingName).find();
             server.registerRequestResponder(contextPath, new AutoResponder(builder, context));
         }

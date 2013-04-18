@@ -39,7 +39,7 @@
     </portType>
 
     <binding name="HelloWorldSoap" type="tns:HelloWorldSoap">
-        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
         <operation name="SayHelloWorld">
             <soap:operation soapAction="http://tempuri.org/SayHelloWorld" style="rpc"/>
             <input>
@@ -54,7 +54,7 @@
     </binding>
 
     <binding name="HelloWorldSoap12" type="tns:HelloWorldSoap">
-        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
         <operation name="SayHelloWorld">
             <soap12:operation soapAction="http://tempuri.org/SayHelloWorld" soapActionRequired="true" style="rpc"/>
             <input>

@@ -42,6 +42,7 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.reficio.ws.SoapException;
+import org.reficio.ws.annotation.ThreadSafe;
 import org.reficio.ws.client.SoapClientException;
 import org.reficio.ws.client.TransmissionException;
 import org.reficio.ws.client.ssl.SSLUtils;
@@ -67,6 +68,7 @@ import static org.reficio.ws.client.core.SoapConstants.*;
  * @author Tom Bujok
  * @since 1.0.0
  */
+@ThreadSafe
 public final class SoapClient {
 
     private final static Log log = LogFactory.getLog(SoapClient.class);
@@ -111,19 +113,87 @@ public final class SoapClient {
     public String post(String soapAction, String requestEnvelope) {
         log.debug(String.format("Sending request to host=[%s] action=[%s] request:%n%s", endpointUri.toString(),
                 soapAction, requestEnvelope));
-        initializeClient();
-        configureAuthentication();
-        configureTls();
-        configureProxy();
         String response = transmit(soapAction, requestEnvelope);
         log.debug("Received response:\n" + requestEnvelope);
         return response;
     }
 
+    /**
+     * Disconnects from the SOAP server
+     * Underlying connection is a persistent connection by default:
+     *
+     * @link http://docs.oracle.com/javase/1.5.0/docs/guide/net/http-keepalive.html
+     */
+    public void disconnect() {
+        if (client != null) {
+            client.getConnectionManager().shutdown();
+        }
+    }
+
     // ----------------------------------------------------------------
-    // INTERNAL API
+    // TRANSMISSION API
     // ----------------------------------------------------------------
-    private void initializeClient() {
+    private HttpPost generatePost(String soapAction, String requestEnvelope) {
+        try {
+            HttpPost post = new HttpPost(endpointUri.toString());
+            StringEntity contentEntity = new StringEntity(requestEnvelope);
+            post.setEntity(contentEntity);
+            if (requestEnvelope.contains(SOAP_1_1_NAMESPACE)) {
+                soapAction = soapAction != null ? "\"" + soapAction + "\"" : "";
+                post.addHeader(PROP_SOAP_ACTION_11, soapAction);
+                post.addHeader(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
+                client.getParams().setParameter(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
+            } else if (requestEnvelope.contains(SOAP_1_2_NAMESPACE)) {
+                String contentType = MIMETYPE_APPLICATION_XML;
+                if (soapAction != null) {
+                    contentType = contentType + PROP_DELIMITER + PROP_SOAP_ACTION_12 + "\"" + soapAction + "\"";
+                }
+                post.addHeader(PROP_CONTENT_TYPE, contentType);
+            }
+            return post;
+        } catch (UnsupportedEncodingException ex) {
+            throw new SoapClientException(ex);
+        }
+    }
+
+    private String transmit(String soapAction, String data) {
+        HttpPost post = generatePost(soapAction, data);
+        return executePost(post);
+    }
+
+    private String executePost(HttpPost post) {
+        try {
+            HttpResponse response = client.execute(post);
+            StatusLine statusLine = response.getStatusLine();
+            HttpEntity entity = response.getEntity();
+            if (statusLine.getStatusCode() >= 300) {
+                EntityUtils.consume(entity);
+                throw new TransmissionException(statusLine.getReasonPhrase(), statusLine.getStatusCode());
+            }
+            return entity == null ? null : EntityUtils.toString(entity);
+        } catch (SoapException ex) {
+            throw ex;
+        } catch (ConnectTimeoutException ex) {
+            throw new TransmissionException("Connection timed out", ex);
+        } catch (IOException ex) {
+            throw new TransmissionException("Transmission failed", ex);
+        } catch (RuntimeException ex) {
+            post.abort();
+            throw new TransmissionException("Transmission aborted", ex);
+        }
+    }
+
+    // ----------------------------------------------------------------
+    // INITIALIZATION API
+    // ----------------------------------------------------------------
+    private void initialize() {
+        configureClient();
+        configureAuthentication();
+        configureTls();
+        configureProxy();
+    }
+
+    private void configureClient() {
         client = new DefaultHttpClient();
         HttpParams httpParameters = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(httpParameters, connectTimeoutInMillis);
@@ -205,67 +275,6 @@ public final class SoapClient {
         }
     }
 
-    /**
-     * Disconnects from the SOAP server
-     * Underlying connection is a persistent connection by default:
-     *
-     * @link http://docs.oracle.com/javase/1.5.0/docs/guide/net/http-keepalive.html
-     */
-    public void disconnect() {
-        if (client != null) {
-            client.getConnectionManager().shutdown();
-        }
-    }
-
-    private HttpPost generatePost(String soapAction, String requestEnvelope) {
-        try {
-            HttpPost post = new HttpPost(endpointUri.toString());
-            StringEntity contentEntity = new StringEntity(requestEnvelope);
-            post.setEntity(contentEntity);
-            if (requestEnvelope.contains(SOAP_1_1_NAMESPACE)) {
-                soapAction = soapAction != null ? "\"" + soapAction + "\"" : "";
-                post.addHeader(PROP_SOAP_ACTION_11, soapAction);
-                post.addHeader(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
-                client.getParams().setParameter(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
-            } else if (requestEnvelope.contains(SOAP_1_2_NAMESPACE)) {
-                String contentType = MIMETYPE_APPLICATION_XML;
-                if (soapAction != null) {
-                    contentType = contentType + PROP_DELIMITER + PROP_SOAP_ACTION_12 + "\"" + soapAction + "\"";
-                }
-                post.addHeader(PROP_CONTENT_TYPE, contentType);
-            }
-            return post;
-        } catch (UnsupportedEncodingException ex) {
-            throw new SoapClientException(ex);
-        }
-    }
-
-    private String transmit(String soapAction, String data) {
-        HttpPost post = generatePost(soapAction, data);
-        return executePost(post);
-    }
-
-    private String executePost(HttpPost post) {
-        try {
-            HttpResponse response = client.execute(post);
-            StatusLine statusLine = response.getStatusLine();
-            HttpEntity entity = response.getEntity();
-            if (statusLine.getStatusCode() >= 300) {
-                EntityUtils.consume(entity);
-                throw new TransmissionException(statusLine.getReasonPhrase(), statusLine.getStatusCode());
-            }
-            return entity == null ? null : EntityUtils.toString(entity);
-        } catch(SoapException ex) {
-            throw ex;
-        } catch (ConnectTimeoutException ex) {
-            throw new TransmissionException("Connection timed out", ex);
-        } catch (IOException ex) {
-            throw new TransmissionException("Transmission failed", ex);
-        } catch (RuntimeException ex) {
-            post.abort();
-            throw new TransmissionException("Transmission aborted", ex);
-        }
-    }
 
     // ----------------------------------------------------------------
     // BUILDER API
@@ -394,6 +403,8 @@ public final class SoapClient {
 
             client.readTimeoutInMillis = readTimeoutInMillis;
             client.connectTimeoutInMillis = connectTimeoutInMillis;
+
+            client.initialize();
             return client;
         }
     }

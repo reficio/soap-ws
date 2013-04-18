@@ -73,6 +73,21 @@ class SoapOperationImpl implements SoapOperation, SoapOperationBuilder {
         return soapAction;
     }
 
+    @Override
+    public boolean isRpc() {
+        return builder.isRpc();
+    }
+
+    @Override
+    public boolean isInputSoapEncoded() {
+        return builder.isInputSoapEncoded(this);
+    }
+
+    @Override
+    public boolean isOutputSoapEncoded() {
+        return builder.isOutputSoapEncoded(this);
+    }
+
     static SoapOperationBuilder create(SoapBuilder builder, Binding binding, BindingOperation operation) {
         String soapAction = SoapUtils.getSOAPActionUri(operation);
         return create(builder, binding, operation, soapAction);
@@ -150,5 +165,24 @@ class SoapOperationImpl implements SoapOperation, SoapOperationBuilder {
         return builder.buildEmptyMessage(context);
     }
 
+    @Override
+    public void validateInputMessage(String message) {
+        builder.validateInputMessage(this, message);
+    }
+
+    @Override
+    public void validateInputMessage(String message, boolean strict) {
+        builder.validateInputMessage(this, message, strict);
+    }
+
+    @Override
+    public void validateOutputMessage(String message) {
+        builder.validateOutputMessage(this, message);
+    }
+
+    @Override
+    public void validateOutputMessage(String message, boolean strict) {
+        builder.validateOutputMessage(this, message, strict);
+    }
 
 }
