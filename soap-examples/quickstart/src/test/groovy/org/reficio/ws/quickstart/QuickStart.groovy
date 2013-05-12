@@ -33,9 +33,6 @@ class QuickStart {
     public SoapRule rule = new SoapRule();
 
     @Test
-    @Server(wsdl = "classpath:wsdl/currency-convertor.wsdl",
-            binding = "CurrencyConvertorSoap",
-            port = 9090)
     void invokeConversionRate() {
         // generate the message (the quickest way)
         String input = Wsdl.parse("http://www.webservicex.net/CurrencyConvertor.asmx?WSDL")
@@ -53,8 +50,7 @@ class QuickStart {
 
         // construct the soap client and post the message
         SoapClient client = SoapClient.builder()
-        //.endpointUri("http://www.webservicex.net/CurrencyConvertor.asmx")
-                .endpointUri("http://localhost:9090/service")
+        .endpointUri("http://www.webservicex.net/CurrencyConvertor.asmx")
                 .build();
 
         String output = client.post("http://www.webserviceX.NET/ConversionRate", input);
