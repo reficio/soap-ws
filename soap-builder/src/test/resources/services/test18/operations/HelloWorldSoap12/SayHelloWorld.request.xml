@@ -1,6 +1,6 @@
-<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tem="http://tempuri.org/">
+<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tem="http://tempuri.org/">
    <soap:Header/>
    <soap:Body>
-      <tem:SayHelloWorld/>
+      <tem:SayHelloWorld soap:encodingStyle="http://www.w3.org/2003/05/soap-encoding"/>
    </soap:Body>
 </soap:Envelope>

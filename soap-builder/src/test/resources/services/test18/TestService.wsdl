@@ -38,20 +38,20 @@
         </operation>
     </portType>
 
-    <!--<binding name="HelloWorldSoap" type="tns:HelloWorldSoap">-->
-        <!--<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>-->
-        <!--<operation name="SayHelloWorld">-->
-            <!--<soap:operation soapAction="http://tempuri.org/SayHelloWorld" style="rpc"/>-->
-            <!--<input>-->
-                <!--<soap:body use="encoded" namespace="http://tempuri.org/"-->
-                           <!--encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>-->
-            <!--</input>-->
-            <!--<output>-->
-                <!--<soap:body use="encoded" namespace="http://tempuri.org/"-->
-                           <!--encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>-->
-            <!--</output>-->
-        <!--</operation>-->
-    <!--</binding>-->
+    <binding name="HelloWorldSoap" type="tns:HelloWorldSoap">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
+        <operation name="SayHelloWorld">
+            <soap:operation soapAction="http://tempuri.org/SayHelloWorld" style="rpc"/>
+            <input>
+                <soap:body use="encoded" namespace="http://tempuri.org/"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </input>
+            <output>
+                <soap:body use="encoded" namespace="http://tempuri.org/"
+                           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </output>
+        </operation>
+    </binding>
 
     <binding name="HelloWorldSoap12" type="tns:HelloWorldSoap">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>

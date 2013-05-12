@@ -85,7 +85,7 @@ class SoapVersion12 extends AbstractSoapVersion {
     }
 
     public String getEncodingNamespace() {
-        return "http://www.w3.org/2003/05/test-encoding";
+        return "http://www.w3.org/2003/05/soap-encoding";
     }
 
     public XmlObject getSoapEncodingSchema() throws XmlException, IOException {

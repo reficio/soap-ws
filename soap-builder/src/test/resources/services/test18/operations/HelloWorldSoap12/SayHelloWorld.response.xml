@@ -1,8 +1,15 @@
-<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tem="http://tempuri.org/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
-   <soap:Header/>
-   <soap:Body>
-      <tem:SayHelloWorldResponse>
-         <SayHelloWorldResult soapenc:arrayType="?" soapenc:offset="?" id="?" href="?"/>
-      </tem:SayHelloWorldResponse>
-   </soap:Body>
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+               xmlns:tem="http://tempuri.org/"
+               xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+               xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> 
+   <soap:Header> </soap:Header> 
+   <soap:Body> 
+      <tem:SayHelloWorldResponse soap:encodingStyle="http://www.w3.org/2003/05/soap-encoding"> 
+         <SayHelloWorldResult xmlns:enc="http://tempuri.org/encodedTypes" soapenc:arrayType="enc:Test[]"
+                              soapenc:offset="?"
+                              xsi:type="enc:ArrayOfTest"> </SayHelloWorldResult> 
+      </tem:SayHelloWorldResponse> 
+   </soap:Body> 
 </soap:Envelope>
