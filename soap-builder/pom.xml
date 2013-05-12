@@ -29,7 +29,7 @@
             <artifactId>soap-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.reficio</groupId>
             <artifactId>soap-legacy</artifactId>
             <version>${project.version}</version>

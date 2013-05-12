@@ -164,11 +164,6 @@ public class HttpCooperationTest extends AbstractCooperationTest {
     }
 
     @Test
-    public void testService21() throws Exception {
-        verifyServiceBehavior(21);
-    }
-
-    @Test
     public void testService22() throws Exception {
         verifyServiceBehavior(22);
     }
@@ -186,23 +181,6 @@ public class HttpCooperationTest extends AbstractCooperationTest {
     }
 
     @Test
-    public void testService24_noSoapAction_soap11() throws Exception {
-        TransmissionException expected = null;
-        try {
-            verifyServiceBehavior(24, SKIP_SOAP_ACTION);
-        } catch (TransmissionException ex) {
-            expected = ex;
-        }
-        assertNotNull(expected);
-        assertEquals(Integer.valueOf(500), expected.getErrorCode());
-    }
-
-    @Test
-    public void testService24_withSoapAction_soap11() throws Exception {
-        verifyServiceBehavior(24, POST_SOAP_ACTION);
-    }
-
-    @Test
     public void testService25() throws Exception {
         verifyServiceBehavior(25, POST_SOAP_ACTION);
     }
@@ -214,6 +192,7 @@ public class HttpCooperationTest extends AbstractCooperationTest {
 
     //    TODO add WSDL validation
 //    @Test
+    // not a valid WSDL test
     public void testService27() throws Exception {
         verifyServiceBehavior(27);
     }

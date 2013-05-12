@@ -119,7 +119,7 @@ public abstract class AbstractCooperationTest {
         String request = soapBuilder.buildInputMessage(operation);
 
         if (!operation.isInputSoapEncoded()) {
-//            soapBuilder.validateInputMessage(operation, request);
+            soapBuilder.validateInputMessage(operation, request);
         }
         assertTrue("Generated request is empty!", request.length() > 0);
 
@@ -140,9 +140,8 @@ public abstract class AbstractCooperationTest {
         if (op.getOperation().getStyle().equals(OperationType.REQUEST_RESPONSE)) {
             String expectedResponse = soapBuilder.buildOutputMessage(operation, context);
             if (!operation.isOutputSoapEncoded()) {
-//                soapBuilder.validateOutputMessage(operation, response);
+                soapBuilder.validateOutputMessage(operation, response);
             }
-
             assertTrue("Generated expectedResponse is empty!", expectedResponse.length() > 0);
             boolean identical = XmlUtils.isIdenticalNormalizedWithoutValues(expectedResponse, response);
             assertTrue("Error during validation of service " + endpointUrl, identical);
