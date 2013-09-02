@@ -490,3 +490,7 @@ source code under a free and open-source license. centeractive ag extracted and
 modified some parts of the soapUI's code in good faith, making every effort not
 to impair any existing functionality and to supplement it according to our
 requirements, applying best practices of software design.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/reficio/soap-ws/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
