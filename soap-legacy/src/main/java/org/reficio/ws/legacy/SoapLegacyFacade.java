@@ -18,18 +18,23 @@
  */
 package org.reficio.ws.legacy;
 
-import org.reficio.ws.SoapBuilderException;
-import org.reficio.ws.SoapContext;
-import org.reficio.ws.SoapValidationException;
-
-import javax.wsdl.*;
-import javax.wsdl.extensions.soap.SOAPBinding;
-import javax.wsdl.extensions.soap12.SOAP12Binding;
-import javax.xml.namespace.QName;
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+
+import javax.wsdl.Binding;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.soap.SOAPBinding;
+import javax.wsdl.extensions.soap12.SOAP12Binding;
+import javax.xml.namespace.QName;
+
+import org.reficio.ws.SoapBuilderException;
+import org.reficio.ws.SoapContext;
+import org.reficio.ws.SoapValidationException;
 
 /**
  * @author Tom Bujok
@@ -161,6 +166,10 @@ public class SoapLegacyFacade {
 
     public static String getSoapEndpoint(Port port) {
         return WsdlUtils.getSoapEndpoint(port);
+    }
+
+    public SoapVersion getSoapVersion(Binding binding) {
+        return SoapMessageBuilder.getSoapVersion(binding);
     }
 
     @SuppressWarnings("unchecked")

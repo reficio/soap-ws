@@ -18,12 +18,17 @@
  */
 package org.reficio.ws.legacy;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.xmlbeans.*;
-
-import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.XmlError;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlValidationError;
 
 /**
  * This class was extracted from the soapUI code base by centeractive ag in October 2011.
@@ -51,7 +56,7 @@ import java.util.List;
  *
  * @author ole.matzura
  */
-interface SoapVersion {
+public interface SoapVersion {
     public static final SoapVersion11 Soap11 = SoapVersion11.instance;
     public static final SoapVersion12 Soap12 = SoapVersion12.instance;
 
