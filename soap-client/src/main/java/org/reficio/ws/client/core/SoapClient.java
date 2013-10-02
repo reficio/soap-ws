@@ -43,6 +43,7 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.reficio.ws.SoapException;
 import org.reficio.ws.annotation.ThreadSafe;
+import org.reficio.ws.client.InternalServerException;
 import org.reficio.ws.client.SoapClientException;
 import org.reficio.ws.client.TransmissionException;
 import org.reficio.ws.client.ssl.SSLUtils;
@@ -167,8 +168,12 @@ public final class SoapClient {
             StatusLine statusLine = response.getStatusLine();
             HttpEntity entity = response.getEntity();
             if (statusLine.getStatusCode() >= 300) {
-                EntityUtils.consume(entity);
-                throw new TransmissionException(statusLine.getReasonPhrase(), statusLine.getStatusCode());
+                if (statusLine.getStatusCode() == 500){
+                    throw new InternalServerException(statusLine.getReasonPhrase(), entity == null ? null : EntityUtils.toString(entity));
+                } else {
+                    EntityUtils.consume(entity);
+                    throw new TransmissionException(statusLine.getReasonPhrase(), statusLine.getStatusCode());
+                }
             }
             return entity == null ? null : EntityUtils.toString(entity);
         } catch (SoapException ex) {
