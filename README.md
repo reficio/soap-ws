@@ -1,17 +1,16 @@
-
 # soap-ws [![Build Status](https://secure.travis-ci.org/reficio/soap-ws.png)](http://travis-ci.org/reficio/soap-ws)
 
 ## A lightweight and easy-to-use Java library to handle SOAP on a purely XML level.
 
 ### Intro
-Welcome to soap-ws! This is a lightweight and easy-to-use Java library that enables handling SOAP message generation and transmission on a purely XML level. soap-ws is based on four main abstractions:
+Welcome to soap-ws! This is a lightweight and easy-to-use Java library that wraps Spring-WS and enables handling SOAP on a purely XML level. soap-ws is based on four main abstractions:
 
-* Wsdl can easily parse your WSDL and produce SoapBuilders,
+* WsdlParser can easily parse your WSDL and produce SoapBuilders,
 * SoapBuilder can generate SOAP messages directly in the XML format, 
 * SoapClient can be used to transmit a SOAP message over HTTP(s) to a web-service endpoint, 
 * SoapServer can be leveraged to process SOAP messages and and respond to them. 
 
-All of that requires no generation of stubs - everything happens directly in XML.
+All of that requires no generation of stubs - everything happens directly in XML having -  is the provider.
 
 
 ### Why should you use soap-ws?
