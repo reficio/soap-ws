@@ -136,7 +136,10 @@ public final class SoapClient {
     private HttpPost generatePost(String soapAction, String requestEnvelope) {
         try {
             HttpPost post = new HttpPost(endpointUri.toString());
-            StringEntity contentEntity = new StringEntity(requestEnvelope);
+            // ----------------------------------------------------------------
+            // This is the changed code to avoid using ISO characterset.
+            StringEntity contentEntity = new StringEntity(requestEnvelope, "UTF-8");
+            // ----------------------------------------------------------------   
             post.setEntity(contentEntity);
             if (requestEnvelope.contains(SOAP_1_1_NAMESPACE)) {
                 soapAction = soapAction != null ? "\"" + soapAction + "\"" : "";
