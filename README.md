@@ -1,4 +1,4 @@
-# soap-ws [![Build Status](https://secure.travis-ci.org/reficio/soap-ws.png)](http://travis-ci.org/reficio/soap-ws)
+# soap-ws [![Build Status](http://img.shields.io/travis/reficio/soap-ws.svg)](http://travis-ci.org/reficio/soap-ws)
 
 ## A lightweight and easy-to-use Java library to handle SOAP on a purely XML level.
 
