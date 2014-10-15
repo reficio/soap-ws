@@ -18,11 +18,13 @@
  */
 package org.reficio.ws.builder;
 
-import org.reficio.ws.SoapContext;
+import java.util.List;
 
 import javax.wsdl.Binding;
 import javax.xml.namespace.QName;
-import java.util.List;
+
+import org.reficio.ws.SoapContext;
+import org.reficio.ws.legacy.SoapVersion;
 
 /**
  * @author Tom Bujok
@@ -61,6 +63,8 @@ public interface SoapBuilder {
     QName getBindingName();
 
     Binding getBinding();
+
+    SoapVersion getSoapVersion();
 
     List<String> getServiceUrls();
 

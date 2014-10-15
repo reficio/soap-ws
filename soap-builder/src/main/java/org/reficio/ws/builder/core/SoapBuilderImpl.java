@@ -19,6 +19,16 @@
 package org.reficio.ws.builder.core;
 
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.wsdl.Binding;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import javax.xml.namespace.QName;
+
 import org.reficio.ws.SoapBuilderException;
 import org.reficio.ws.SoapContext;
 import org.reficio.ws.builder.SoapBuilder;
@@ -26,15 +36,7 @@ import org.reficio.ws.builder.SoapOperation;
 import org.reficio.ws.builder.SoapOperationBuilder;
 import org.reficio.ws.builder.SoapOperationFinder;
 import org.reficio.ws.legacy.SoapLegacyFacade;
-
-import javax.wsdl.Binding;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.Port;
-import javax.wsdl.Service;
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import org.reficio.ws.legacy.SoapVersion;
 
 /**
  * @author Tom Bujok
@@ -168,6 +170,11 @@ class SoapBuilderImpl implements SoapBuilder {
     @Override
     public Binding getBinding() {
         return binding;
+    }
+
+    @Override
+    public SoapVersion getSoapVersion() {
+        return soapFacade.getSoapVersion(binding);
     }
 
     @Override
