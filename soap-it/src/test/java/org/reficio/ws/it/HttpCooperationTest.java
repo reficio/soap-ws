@@ -21,10 +21,9 @@ package org.reficio.ws.it;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.reficio.ws.client.TransmissionException;
+import org.reficio.ws.client.InternalServerException;
 import org.reficio.ws.server.core.SoapServer;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 /**
@@ -123,14 +122,13 @@ public class HttpCooperationTest extends AbstractCooperationTest {
 
     @Test
     public void testService15_noSoapAction() throws Exception {
-        TransmissionException expected = null;
+        InternalServerException expected = null;
         try {
             verifyServiceBehavior(15, SKIP_SOAP_ACTION);
-        } catch (TransmissionException ex) {
+        } catch (InternalServerException ex) {
             expected = ex;
         }
         assertNotNull(expected);
-        assertEquals(Integer.valueOf(500), expected.getErrorCode());
     }
 
     @Test
@@ -170,14 +168,13 @@ public class HttpCooperationTest extends AbstractCooperationTest {
 
     @Test
     public void testService23() throws Exception {
-        TransmissionException expected = null;
+        InternalServerException expected = null;
         try {
             verifyServiceBehavior(23);
-        } catch (TransmissionException ex) {
+        } catch (InternalServerException ex) {
             expected = ex;
         }
         assertNotNull(expected);
-        assertEquals(Integer.valueOf(500), expected.getErrorCode());
     }
 
     @Test
