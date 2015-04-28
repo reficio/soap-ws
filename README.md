@@ -112,10 +112,10 @@ Does it need any explanation? Welcome to soap-ws :)
     SoapOperation operation = builder.operation()
     	.soapAction("http://www.webserviceX.NET/ConversionRate")
     	.find();
-    Request request = builder.buildInputMessage(operation)
+    String request = builder.buildInputMessage(operation)
     
     SoapClient client = SoapClient.builder()
-    	.endpointUrl("http://www.webservicex.net/CurrencyConvertor.asmx")
+    	.endpointUri("http://www.webservicex.net/CurrencyConvertor.asmx")
     	.build();
     String response = client.post(request);
 ```
