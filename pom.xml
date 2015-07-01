@@ -205,7 +205,7 @@
                     <basedir>${basedir}</basedir>
                     <header>src/main/resources/license.txt</header>
                     <quiet>false</quiet>
-                    <failIfMissing>true</failIfMissing>
+                    <failIfMissing>false</failIfMissing>
                     <aggregate>false</aggregate>
                     <includes>
                         <include>src/**</include>

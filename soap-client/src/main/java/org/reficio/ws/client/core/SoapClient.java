@@ -1,15 +1,15 @@
 /**
  * Copyright (c) 2012-2013 Reficio (TM) - Reestablish your software!. All Rights Reserved.
- *
+ * <p>
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,7 +51,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -86,6 +89,9 @@ public final class SoapClient {
     private Security proxyProperties;
     private boolean proxyTlsEnabled;
 
+    private List<Header> headers;
+    private Charset charset;
+
     private DefaultHttpClient client;
 
 
@@ -102,18 +108,7 @@ public final class SoapClient {
     public String post(String requestEnvelope) {
         return post(NULL_SOAP_ACTION, requestEnvelope);
     }
-    
-    /**
-     * Post the SOAP message to the SOAP server without specifying the SOAPAction
-     *
-     * @param requestEnvelope SOAP message envelope
-     * @param headers         Arbitrary headers to pass with the request
-     * @return The result returned by the SOAP server
-     */
-    public String post(String requestEnvelope, Iterable<Header> headers) {
-        return post(NULL_SOAP_ACTION, requestEnvelope, headers);
-    }
-    
+
     /**
      * Post the SOAP message to the SOAP server specifying the SOAPAction
      *
@@ -128,21 +123,7 @@ public final class SoapClient {
         log.debug("Received response:\n" + requestEnvelope);
         return response;
     }
-  /**
-     * Post the SOAP message to the SOAP server specifying the SOAPAction
-     *
-     * @param soapAction      SOAPAction attribute
-     * @param requestEnvelope SOAP message envelope
-     * @param headers         Arbitrary headers to pass with the request
-     * @return The result returned by the SOAP server
-     */
-    public String post(String soapAction, String requestEnvelope, Iterable<Header> headers) {
-        log.debug(String.format("Sending request to host=[%s] action=[%s] request:%n%s", endpointUri.toString(),
-                soapAction, requestEnvelope));
-        String response = transmit(soapAction, requestEnvelope, headers);
-        log.debug("Received response:\n" + requestEnvelope);
-        return response;
-    }
+
     /**
      * Disconnects from the SOAP server
      * Underlying connection is a persistent connection by default:
@@ -158,55 +139,49 @@ public final class SoapClient {
     // ----------------------------------------------------------------
     // TRANSMISSION API
     // ----------------------------------------------------------------
-    private HttpPost generatePost(String soapAction, String requestEnvelope, Iterable<Header> headers) {
-        try {
-            HttpPost post = new HttpPost(endpointUri.toString());
-            StringEntity contentEntity = new StringEntity(requestEnvelope);
-            post.setEntity(contentEntity);
-            if(headers != null) {
-                for (Header header : headers) {
-                    post.addHeader(header);
-                }
-            }
-            if (requestEnvelope.contains(SOAP_1_1_NAMESPACE)) {
-                soapAction = soapAction != null ? "\"" + soapAction + "\"" : "";
-                if (post.getFirstHeader(PROP_SOAP_ACTION_11) == null) {
-                    post.addHeader(PROP_SOAP_ACTION_11, soapAction);
-                }
-                if (post.getFirstHeader(PROP_CONTENT_TYPE) == null) {
-                    post.addHeader(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
-                }
-                client.getParams().setParameter(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
-            } else if (requestEnvelope.contains(SOAP_1_2_NAMESPACE)) {
-                if (post.getFirstHeader(PROP_CONTENT_TYPE) == null) {
-                    String contentType = MIMETYPE_APPLICATION_XML;
-                    if (soapAction != null) {
-                        contentType = contentType + PROP_DELIMITER + PROP_SOAP_ACTION_12 + "\"" + soapAction + "\"";
-                    }
-                    post.addHeader(PROP_CONTENT_TYPE, contentType);
-                } else {
-                    Header header = post.getFirstHeader(PROP_CONTENT_TYPE);
-                    String sHeader = header.getValue() + PROP_DELIMITER + PROP_SOAP_ACTION_12 + "\"" + soapAction + "\"";
-                    post.removeHeader(header);
-                    post.addHeader(PROP_CONTENT_TYPE, sHeader);
-                }
-            }
-            return post;
-        } catch (UnsupportedEncodingException ex) {
-            throw new SoapClientException(ex);
+    private HttpPost generatePost(String soapAction, String requestEnvelope) {
+        HttpPost post = new HttpPost(endpointUri.toString());
+        if (charset == null) {
+            charset = Charset.forName("UTF-8");
         }
+        StringEntity contentEntity = new StringEntity(requestEnvelope, charset);
+        post.setEntity(contentEntity);
+        if (headers != null) {
+            for (Header header : headers) {
+                post.addHeader(header);
+            }
+        }
+        if (requestEnvelope.contains(SOAP_1_1_NAMESPACE)) {
+            soapAction = soapAction != null ? "\"" + soapAction + "\"" : "";
+            if (post.getFirstHeader(PROP_SOAP_ACTION_11) == null) {
+                post.addHeader(PROP_SOAP_ACTION_11, soapAction);
+            }
+            if (post.getFirstHeader(PROP_CONTENT_TYPE) == null) {
+                post.addHeader(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
+            }
+            client.getParams().setParameter(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
+        } else if (requestEnvelope.contains(SOAP_1_2_NAMESPACE)) {
+            if (post.getFirstHeader(PROP_CONTENT_TYPE) == null) {
+                String contentType = MIMETYPE_APPLICATION_XML;
+                if (soapAction != null) {
+                    contentType = contentType + PROP_DELIMITER + PROP_SOAP_ACTION_12 + "\"" + soapAction + "\"";
+                }
+                post.addHeader(PROP_CONTENT_TYPE, contentType);
+            } else {
+                Header header = post.getFirstHeader(PROP_CONTENT_TYPE);
+                String sHeader = header.getValue() + PROP_DELIMITER + PROP_SOAP_ACTION_12 + "\"" + soapAction + "\"";
+                post.removeHeader(header);
+                post.addHeader(PROP_CONTENT_TYPE, sHeader);
+            }
+        }
+        return post;
     }
 
     private String transmit(String soapAction, String data) {
-        HttpPost post = generatePost(soapAction, data, null);
+        HttpPost post = generatePost(soapAction, data);
         return executePost(post);
     }
 
-    private String transmit(String soapAction, String data, Iterable<Header> headers) {
-        HttpPost post = generatePost(soapAction, data, headers);
-        return executePost(post);
-    }
-    
     private String executePost(HttpPost post) {
         try {
             HttpResponse response = client.execute(post);
@@ -344,6 +319,54 @@ public final class SoapClient {
         private Security proxyProperties;
         private boolean proxyTlsEnabled;
 
+        private List<Header> headers;
+        private Charset charset;
+
+        /**
+         * @param header Header to add to request. Null is not accepted.
+         * @return builder
+         */
+        public Builder header(Header header) {
+            checkNotNull(header);
+            if (this.headers == null) {
+                this.headers = new ArrayList<Header>();
+            }
+            this.headers.add(header);
+            return this;
+        }
+
+        /**
+         * @param headers List<Header> of headers to add to request. Null is not accepted.
+         * @return builder
+         */
+        public Builder headers(List<Header> headers) {
+            checkNotNull(headers);
+            if (this.headers == null) {
+                this.headers = new ArrayList<Header>();
+            }
+            this.headers.addAll(headers);
+            return this;
+        }
+
+        /**
+         * @param value String representation of the charset of the request. Null is not accepted.
+         * @return builder
+         */
+        public Builder charset(String value) {
+            checkNotNull(value);
+            return charset(Charset.forName(value));
+        }
+
+        /**
+         * @param value Charset of the request. Null is not accepted.
+         * @return builder
+         */
+        public Builder charset(Charset value) {
+            checkNotNull(value);
+            this.charset = value;
+            return this;
+        }
+
         /**
          * @param value URL of the SOAP endpoint to whom the client should send messages. Null is not accepted.
          * @return builder
@@ -449,6 +472,13 @@ public final class SoapClient {
 
             client.readTimeoutInMillis = readTimeoutInMillis;
             client.connectTimeoutInMillis = connectTimeoutInMillis;
+
+            if (headers != null) {
+                client.headers = headers;
+            }
+            if (charset != null) {
+                client.charset = charset;
+            }
 
             client.initialize();
             return client;
