@@ -102,7 +102,18 @@ public final class SoapClient {
     public String post(String requestEnvelope) {
         return post(NULL_SOAP_ACTION, requestEnvelope);
     }
-
+    
+    /**
+     * Post the SOAP message to the SOAP server without specifying the SOAPAction
+     *
+     * @param requestEnvelope SOAP message envelope
+     * @param headers         Arbitrary headers to pass with the request
+     * @return The result returned by the SOAP server
+     */
+    public String post(String requestEnvelope, Iterable<Header> headers) {
+        return post(NULL_SOAP_ACTION, requestEnvelope, headers);
+    }
+    
     /**
      * Post the SOAP message to the SOAP server specifying the SOAPAction
      *
@@ -117,7 +128,21 @@ public final class SoapClient {
         log.debug("Received response:\n" + requestEnvelope);
         return response;
     }
-
+  /**
+     * Post the SOAP message to the SOAP server specifying the SOAPAction
+     *
+     * @param soapAction      SOAPAction attribute
+     * @param requestEnvelope SOAP message envelope
+     * @param headers         Arbitrary headers to pass with the request
+     * @return The result returned by the SOAP server
+     */
+    public String post(String soapAction, String requestEnvelope, Iterable<Header> headers) {
+        log.debug(String.format("Sending request to host=[%s] action=[%s] request:%n%s", endpointUri.toString(),
+                soapAction, requestEnvelope));
+        String response = transmit(soapAction, requestEnvelope, headers);
+        log.debug("Received response:\n" + requestEnvelope);
+        return response;
+    }
     /**
      * Disconnects from the SOAP server
      * Underlying connection is a persistent connection by default:
@@ -133,22 +158,38 @@ public final class SoapClient {
     // ----------------------------------------------------------------
     // TRANSMISSION API
     // ----------------------------------------------------------------
-    private HttpPost generatePost(String soapAction, String requestEnvelope) {
+    private HttpPost generatePost(String soapAction, String requestEnvelope, Iterable<Header> headers) {
         try {
             HttpPost post = new HttpPost(endpointUri.toString());
             StringEntity contentEntity = new StringEntity(requestEnvelope);
             post.setEntity(contentEntity);
+            if(headers != null) {
+                for (Header header : headers) {
+                    post.addHeader(header);
+                }
+            }
             if (requestEnvelope.contains(SOAP_1_1_NAMESPACE)) {
                 soapAction = soapAction != null ? "\"" + soapAction + "\"" : "";
-                post.addHeader(PROP_SOAP_ACTION_11, soapAction);
-                post.addHeader(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
+                if (post.getFirstHeader(PROP_SOAP_ACTION_11) == null) {
+                    post.addHeader(PROP_SOAP_ACTION_11, soapAction);
+                }
+                if (post.getFirstHeader(PROP_CONTENT_TYPE) == null) {
+                    post.addHeader(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
+                }
                 client.getParams().setParameter(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
             } else if (requestEnvelope.contains(SOAP_1_2_NAMESPACE)) {
-                String contentType = MIMETYPE_APPLICATION_XML;
-                if (soapAction != null) {
-                    contentType = contentType + PROP_DELIMITER + PROP_SOAP_ACTION_12 + "\"" + soapAction + "\"";
+                if (post.getFirstHeader(PROP_CONTENT_TYPE) == null) {
+                    String contentType = MIMETYPE_APPLICATION_XML;
+                    if (soapAction != null) {
+                        contentType = contentType + PROP_DELIMITER + PROP_SOAP_ACTION_12 + "\"" + soapAction + "\"";
+                    }
+                    post.addHeader(PROP_CONTENT_TYPE, contentType);
+                } else {
+                    Header header = post.getFirstHeader(PROP_CONTENT_TYPE);
+                    String sHeader = header.getValue() + PROP_DELIMITER + PROP_SOAP_ACTION_12 + "\"" + soapAction + "\"";
+                    post.removeHeader(header);
+                    post.addHeader(PROP_CONTENT_TYPE, sHeader);
                 }
-                post.addHeader(PROP_CONTENT_TYPE, contentType);
             }
             return post;
         } catch (UnsupportedEncodingException ex) {
@@ -157,10 +198,15 @@ public final class SoapClient {
     }
 
     private String transmit(String soapAction, String data) {
-        HttpPost post = generatePost(soapAction, data);
+        HttpPost post = generatePost(soapAction, data, null);
         return executePost(post);
     }
 
+    private String transmit(String soapAction, String data, Iterable<Header> headers) {
+        HttpPost post = generatePost(soapAction, data, headers);
+        return executePost(post);
+    }
+    
     private String executePost(HttpPost post) {
         try {
             HttpResponse response = client.execute(post);
