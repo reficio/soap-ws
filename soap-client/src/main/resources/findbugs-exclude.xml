@@ -1,0 +1,11 @@
+<FindBugsFilter>
+	<Match>
+		<Class name="~.*\.*Test.*" />
+	</Match>
+	<Match>
+      <Package name="~.*\.test.*" />
+    </Match>
+	<Match>
+      <Package name="~.*\.spikes.*" />
+    </Match>
+</FindBugsFilter>

@@ -25,21 +25,27 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.conn.routing.RouteInfo;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeLayeredSocketFactory;
-import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
+import org.apache.http.impl.conn.DefaultSchemePortResolver;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpProcessorBuilder;
 import org.apache.http.util.EntityUtils;
 import org.reficio.ws.SoapException;
 import org.reficio.ws.annotation.ThreadSafe;
@@ -47,8 +53,8 @@ import org.reficio.ws.client.SoapClientException;
 import org.reficio.ws.client.TransmissionException;
 import org.reficio.ws.client.ssl.SSLUtils;
 
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -92,8 +98,8 @@ public final class SoapClient {
     private List<Header> headers;
     private Charset charset;
 
-    private DefaultHttpClient client;
-
+    private CloseableHttpClient client;
+    private RegistryBuilder<ConnectionSocketFactory> socketFactoryRegistry;
 
     // ----------------------------------------------------------------
     // PUBLIC API
@@ -159,7 +165,8 @@ public final class SoapClient {
             if (post.getFirstHeader(PROP_CONTENT_TYPE) == null) {
                 post.addHeader(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
             }
-            client.getParams().setParameter(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
+            post.addHeader(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
+//            client.getParams().setParameter(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
         } else if (requestEnvelope.contains(SOAP_1_2_NAMESPACE)) {
             if (post.getFirstHeader(PROP_CONTENT_TYPE) == null) {
                 String contentType = MIMETYPE_APPLICATION_XML;
@@ -208,26 +215,63 @@ public final class SoapClient {
     // INITIALIZATION API
     // ----------------------------------------------------------------
     private void initialize() {
+        configureClientContext();
         configureClient();
+        configureRequestConfig();
         configureAuthentication();
-        configureTls();
+        SSLConnectionSocketFactory factory = configureTls();
+        clientContext.setRequestConfig(requestConfig.build());
         configureProxy();
+        if (factory != null) {
+            socketFactoryRegistry = RegistryBuilder.create();
+            socketFactoryRegistry.register(HTTPS, factory);
+
+            connectionManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry.build());
+        } else {
+            connectionManager = new PoolingHttpClientConnectionManager();
+        }
+        builder.setConnectionManager(connectionManager);
+        client = builder.build();
     }
 
-    private void configureClient() {
-        client = new DefaultHttpClient();
-        HttpParams httpParameters = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParameters, connectTimeoutInMillis);
-        HttpConnectionParams.setSoTimeout(httpParameters, readTimeoutInMillis);
-        client.setParams(httpParameters);
+    HttpClientConnectionManager connectionManager;
+
+    HttpClientContext clientContext;
+
+    private HttpClientContext configureClientContext() {
+        clientContext = HttpClientContext.create();
+        return clientContext;
     }
 
-    private void configureAuthentication() {
+    RequestConfig.Builder requestConfig;
+
+    private RequestConfig.Builder configureRequestConfig() {
+        if (requestConfig == null) {
+            requestConfig = RequestConfig.custom();
+        }
+        return requestConfig.setConnectionRequestTimeout(connectTimeoutInMillis)
+                .setSocketTimeout(readTimeoutInMillis);
+    }
+
+    HttpClientBuilder builder;
+
+    private HttpClientBuilder configureClient() {
+        if (this.builder == null) {
+            builder = HttpClientBuilder.create();
+        }
+        return builder;
+    }
+
+    private HttpClientBuilder configureAuthentication() {
         configureAuthentication(endpointUri, endpointProperties);
         configureAuthentication(proxyUri, proxyProperties);
+        return builder;
     }
 
-    private void configureAuthentication(URI uri, Security security) {
+    private HttpClientBuilder configureAuthentication(URI uri, Security security) {
+        if (this.builder == null) {
+            builder = HttpClientBuilder.create();
+        }
         if (security.isAuthEnabled()) {
             AuthScope scope = new AuthScope(uri.getHost(), uri.getPort());
             Credentials credentials = null;
@@ -241,12 +285,16 @@ public final class SoapClient {
             } else if (security.isAuthSpnego()) {
                 // TODO
             }
-            client.getCredentialsProvider().setCredentials(scope, credentials);
+            CredentialsProvider provider = new SystemDefaultCredentialsProvider();
+            provider.setCredentials(scope, credentials);
+            builder.setDefaultCredentialsProvider(provider);
         }
+        return builder;
     }
 
-    private void configureTls() {
-        SSLSocketFactory factory;
+    private SSLConnectionSocketFactory configureTls() {
+//        SSLSocketFactory factory;
+        SSLConnectionSocketFactory factory = null;
         int port;
         try {
             if (endpointTlsEnabled && proxyTlsEnabled) {
@@ -264,11 +312,15 @@ public final class SoapClient {
         } catch (GeneralSecurityException ex) {
             throw new SoapClientException(ex);
         }
+        return factory;
     }
 
-    private void registerTlsScheme(SchemeLayeredSocketFactory factory, int port) {
-        Scheme sch = new Scheme(HTTPS, port, factory);
-        client.getConnectionManager().getSchemeRegistry().register(sch);
+
+    private void registerTlsScheme(LayeredConnectionSocketFactory factory, int port) {
+        builder.setSchemePortResolver(DefaultSchemePortResolver.INSTANCE);
+//        Scheme sch = new Scheme(HTTPS, port, factory);
+//        client.getConnectionManager().getSchemeRegistry().register(sch);
+        builder.setSSLSocketFactory(factory);
     }
 
     private void configureProxy() {
@@ -282,17 +334,18 @@ public final class SoapClient {
             // To make the HttpClient talk to a HTTP End-site through an HTTPS Proxy, the route should be secure,
             //  but there should not be any Tunnelling or Layering.
             if (!endpointTlsEnabled) {
-                client.setRoutePlanner(new HttpRoutePlanner() {
+                builder.setRoutePlanner(new HttpRoutePlanner() {
                     @Override
                     public HttpRoute determineRoute(HttpHost target, HttpRequest request, HttpContext context) {
                         return new HttpRoute(target, null, proxy, true, RouteInfo.TunnelType.PLAIN, RouteInfo.LayerType.PLAIN);
                     }
                 });
             }
-            client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+
+            requestConfig.setProxy(proxy);
         } else {
             HttpHost proxy = new HttpHost(proxyUri.getHost(), proxyUri.getPort());
-            client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+            requestConfig.setProxy(proxy);
         }
     }
 
