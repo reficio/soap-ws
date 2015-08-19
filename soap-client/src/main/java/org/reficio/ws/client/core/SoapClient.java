@@ -25,20 +25,24 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.conn.routing.RouteInfo;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeLayeredSocketFactory;
-import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.DefaultSchemePortResolver;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.reficio.ws.SoapException;
@@ -48,10 +52,12 @@ import org.reficio.ws.client.TransmissionException;
 import org.reficio.ws.client.ssl.SSLUtils;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -77,6 +83,8 @@ public final class SoapClient {
 
     private int readTimeoutInMillis;
     private int connectTimeoutInMillis;
+    private Integer maxConnectionsPerRoute;
+    private Integer maxConnectionsTotal;
 
     private URI endpointUri;
     private Security endpointProperties;
@@ -86,8 +94,8 @@ public final class SoapClient {
     private Security proxyProperties;
     private boolean proxyTlsEnabled;
 
-    private DefaultHttpClient client;
-
+    private List<Header> headers;
+    private Charset charset;
 
     // ----------------------------------------------------------------
     // PUBLIC API
@@ -134,26 +142,42 @@ public final class SoapClient {
     // TRANSMISSION API
     // ----------------------------------------------------------------
     private HttpPost generatePost(String soapAction, String requestEnvelope) {
-        try {
-            HttpPost post = new HttpPost(endpointUri.toString());
-            StringEntity contentEntity = new StringEntity(requestEnvelope);
-            post.setEntity(contentEntity);
-            if (requestEnvelope.contains(SOAP_1_1_NAMESPACE)) {
-                soapAction = soapAction != null ? "\"" + soapAction + "\"" : "";
+        HttpPost post = new HttpPost(endpointUri.toString());
+        if (charset == null) {
+            charset = Charset.forName("UTF-8");
+        }
+        StringEntity contentEntity = new StringEntity(requestEnvelope, charset);
+        post.setEntity(contentEntity);
+        if (headers != null) {
+            for (Header header : headers) {
+                post.addHeader(header);
+            }
+        }
+        if (requestEnvelope.contains(SOAP_1_1_NAMESPACE)) {
+            soapAction = soapAction != null ? "\"" + soapAction + "\"" : "";
+            if (post.getFirstHeader(PROP_SOAP_ACTION_11) == null) {
                 post.addHeader(PROP_SOAP_ACTION_11, soapAction);
+            }
+            if (post.getFirstHeader(PROP_CONTENT_TYPE) == null) {
                 post.addHeader(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
-                client.getParams().setParameter(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
-            } else if (requestEnvelope.contains(SOAP_1_2_NAMESPACE)) {
+            }
+            post.addHeader(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
+//            client.getParams().setParameter(PROP_CONTENT_TYPE, MIMETYPE_TEXT_XML);
+        } else if (requestEnvelope.contains(SOAP_1_2_NAMESPACE)) {
+            if (post.getFirstHeader(PROP_CONTENT_TYPE) == null) {
                 String contentType = MIMETYPE_APPLICATION_XML;
                 if (soapAction != null) {
                     contentType = contentType + PROP_DELIMITER + PROP_SOAP_ACTION_12 + "\"" + soapAction + "\"";
                 }
                 post.addHeader(PROP_CONTENT_TYPE, contentType);
+            } else {
+                Header header = post.getFirstHeader(PROP_CONTENT_TYPE);
+                String sHeader = header.getValue() + PROP_DELIMITER + PROP_SOAP_ACTION_12 + "\"" + soapAction + "\"";
+                post.removeHeader(header);
+                post.addHeader(PROP_CONTENT_TYPE, sHeader);
             }
-            return post;
-        } catch (UnsupportedEncodingException ex) {
-            throw new SoapClientException(ex);
         }
+        return post;
     }
 
     private String transmit(String soapAction, String data) {
@@ -186,29 +210,66 @@ public final class SoapClient {
     // ----------------------------------------------------------------
     // INITIALIZATION API
     // ----------------------------------------------------------------
+    private HttpClientConnectionManager connectionManager;
+    private HttpClientContext clientContext;
+    private RegistryBuilder<ConnectionSocketFactory> socketFactoryRegistry;
+    private RequestConfig.Builder requestConfig;
+    private HttpClientBuilder builder;
+    private CloseableHttpClient client;
+
     private void initialize() {
-        configureClient();
-        configureAuthentication();
-        configureTls();
-        configureProxy();
-    }
+        clientContext = HttpClientContext.create();
+        requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(connectTimeoutInMillis)
+                .setSocketTimeout(readTimeoutInMillis);
 
-    private void configureClient() {
-        client = new DefaultHttpClient();
-        HttpParams httpParameters = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParameters, connectTimeoutInMillis);
-        HttpConnectionParams.setSoTimeout(httpParameters, readTimeoutInMillis);
-        client.setParams(httpParameters);
-    }
-
-    private void configureAuthentication() {
+        builder = HttpClientBuilder.create();
         configureAuthentication(endpointUri, endpointProperties);
         configureAuthentication(proxyUri, proxyProperties);
+
+        SSLConnectionSocketFactory factory = null;
+        int port;
+        try {
+
+            if (endpointTlsEnabled || proxyTlsEnabled) {
+                builder.setSchemePortResolver(DefaultSchemePortResolver.INSTANCE);
+                if (endpointTlsEnabled && proxyTlsEnabled) {
+                    factory = SSLUtils.getMergedSocketFactory(endpointProperties, proxyProperties);
+                } else if (endpointTlsEnabled) {
+                    factory = SSLUtils.getFactory(endpointProperties);
+                    port = endpointUri.getPort();
+                } else if (proxyTlsEnabled) {
+                    factory = SSLUtils.getFactory(proxyProperties);
+                    port = proxyUri.getPort();
+                }
+            }
+            if (factory != null) {
+                builder.setSSLSocketFactory(factory);
+                socketFactoryRegistry = RegistryBuilder.create();
+                socketFactoryRegistry.register(HTTPS, factory);
+
+                connectionManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry.build());
+            } else {
+                connectionManager = new PoolingHttpClientConnectionManager();
+            }
+            ((PoolingHttpClientConnectionManager)connectionManager).setDefaultMaxPerRoute(maxConnectionsPerRoute);
+            ((PoolingHttpClientConnectionManager)connectionManager).setMaxTotal(maxConnectionsTotal);
+        } catch (GeneralSecurityException ex) {
+            throw new SoapClientException(ex);
+        }
+
+        configureProxy(this.requestConfig);
+        clientContext.setRequestConfig(this.requestConfig.build());
+        builder.setConnectionManager(connectionManager);
+        client = builder.build();
     }
 
-    private void configureAuthentication(URI uri, Security security) {
+    private HttpClientBuilder configureAuthentication(URI uri, Security security) {
+        if (this.builder == null) {
+            builder = HttpClientBuilder.create();
+        }
         if (security.isAuthEnabled()) {
-            AuthScope scope = new AuthScope(uri.getHost(), uri.getPort());
+            AuthScope scope = new AuthScope(uri.getHost(), uri.getPort(), AuthScope.ANY_REALM);
             Credentials credentials = null;
             if (security.isAuthBasic()) {
                 credentials = new UsernamePasswordCredentials(security.getAuthUsername(), security.getAuthPassword());
@@ -220,37 +281,14 @@ public final class SoapClient {
             } else if (security.isAuthSpnego()) {
                 // TODO
             }
-            client.getCredentialsProvider().setCredentials(scope, credentials);
+            CredentialsProvider provider = new BasicCredentialsProvider();
+            provider.setCredentials(scope, credentials);
+            builder.setDefaultCredentialsProvider(provider);
         }
+        return builder;
     }
 
-    private void configureTls() {
-        SSLSocketFactory factory;
-        int port;
-        try {
-            if (endpointTlsEnabled && proxyTlsEnabled) {
-                factory = SSLUtils.getMergedSocketFactory(endpointProperties, proxyProperties);
-                registerTlsScheme(factory, proxyUri.getPort());
-            } else if (endpointTlsEnabled) {
-                factory = SSLUtils.getFactory(endpointProperties);
-                port = endpointUri.getPort();
-                registerTlsScheme(factory, port);
-            } else if (proxyTlsEnabled) {
-                factory = SSLUtils.getFactory(proxyProperties);
-                port = proxyUri.getPort();
-                registerTlsScheme(factory, port);
-            }
-        } catch (GeneralSecurityException ex) {
-            throw new SoapClientException(ex);
-        }
-    }
-
-    private void registerTlsScheme(SchemeLayeredSocketFactory factory, int port) {
-        Scheme sch = new Scheme(HTTPS, port, factory);
-        client.getConnectionManager().getSchemeRegistry().register(sch);
-    }
-
-    private void configureProxy() {
+    private void configureProxy(RequestConfig.Builder requestConfig) {
         if (proxyUri == null) {
             return;
         }
@@ -261,17 +299,18 @@ public final class SoapClient {
             // To make the HttpClient talk to a HTTP End-site through an HTTPS Proxy, the route should be secure,
             //  but there should not be any Tunnelling or Layering.
             if (!endpointTlsEnabled) {
-                client.setRoutePlanner(new HttpRoutePlanner() {
+                builder.setRoutePlanner(new HttpRoutePlanner() {
                     @Override
                     public HttpRoute determineRoute(HttpHost target, HttpRequest request, HttpContext context) {
                         return new HttpRoute(target, null, proxy, true, RouteInfo.TunnelType.PLAIN, RouteInfo.LayerType.PLAIN);
                     }
                 });
             }
-            client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+
+            requestConfig.setProxy(proxy);
         } else {
             HttpHost proxy = new HttpHost(proxyUri.getHost(), proxyUri.getPort());
-            client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+            requestConfig.setProxy(proxy);
         }
     }
 
@@ -289,6 +328,8 @@ public final class SoapClient {
 
         private Integer readTimeoutInMillis = INFINITE_TIMEOUT;
         private Integer connectTimeoutInMillis = INFINITE_TIMEOUT;
+        private Integer maxConnectionsPerRoute = Runtime.getRuntime().availableProcessors() / 2;
+        private Integer maxConnectionsTotal = 20;
 
         private URI endpointUri;
         private Security endpointProperties;
@@ -297,6 +338,54 @@ public final class SoapClient {
         private URI proxyUri;
         private Security proxyProperties;
         private boolean proxyTlsEnabled;
+
+        private List<Header> headers;
+        private Charset charset;
+
+        /**
+         * @param header Header to add to request. Null is not accepted.
+         * @return builder
+         */
+        public Builder header(Header header) {
+            checkNotNull(header);
+            if (this.headers == null) {
+                this.headers = new ArrayList<Header>();
+            }
+            this.headers.add(header);
+            return this;
+        }
+
+        /**
+         * @param headers List<Header> of headers to add to request. Null is not accepted.
+         * @return builder
+         */
+        public Builder headers(List<Header> headers) {
+            checkNotNull(headers);
+            if (this.headers == null) {
+                this.headers = new ArrayList<Header>();
+            }
+            this.headers.addAll(headers);
+            return this;
+        }
+
+        /**
+         * @param value String representation of the charset of the request. Null is not accepted.
+         * @return builder
+         */
+        public Builder charset(String value) {
+            checkNotNull(value);
+            return charset(Charset.forName(value));
+        }
+
+        /**
+         * @param value Charset of the request. Null is not accepted.
+         * @return builder
+         */
+        public Builder charset(Charset value) {
+            checkNotNull(value);
+            this.charset = value;
+            return this;
+        }
 
         /**
          * @param value URL of the SOAP endpoint to whom the client should send messages. Null is not accepted.
@@ -346,11 +435,20 @@ public final class SoapClient {
             return this;
         }
 
+
+        /**
+         * @param value {@link Security} object to be applied to requests. Null is not accepted.
+         * @return builder
+         */
         public Builder endpointSecurity(Security value) {
             this.endpointProperties = checkNotNull(value);
             return this;
         }
 
+        /**
+         * @param value {@link Security} object to be applied to request's proxies. Null is not accepted.
+         * @return builder
+         */
         public Builder proxySecurity(Security value) {
             this.proxyProperties = checkNotNull(value);
             return this;
@@ -373,6 +471,24 @@ public final class SoapClient {
         public Builder connectTimeoutInMillis(int value) {
             checkArgument(value >= 0);
             connectTimeoutInMillis = value;
+            return this;
+        }
+        /**
+         * @param value Specifies the maximum number of connections per route. Has to be greater than 0.
+         * @return builder
+         */
+        public Builder maxConnectionsPerRoute(int value) {
+            checkArgument(value > 0);
+            maxConnectionsPerRoute = value;
+            return this;
+        }
+        /**
+         * @param value Specifies the maximum number of connections. Has to be greater than 0.
+         * @return builder
+         */
+        public Builder maxConnectionsTotal(int value) {
+            checkArgument(value > 0);
+            maxConnectionsTotal = value;
             return this;
         }
 
@@ -403,6 +519,16 @@ public final class SoapClient {
 
             client.readTimeoutInMillis = readTimeoutInMillis;
             client.connectTimeoutInMillis = connectTimeoutInMillis;
+
+            client.maxConnectionsPerRoute = maxConnectionsPerRoute;
+            client.maxConnectionsTotal = maxConnectionsTotal;
+
+            if (headers != null) {
+                client.headers = headers;
+            }
+            if (charset != null) {
+                client.charset = charset;
+            }
 
             client.initialize();
             return client;

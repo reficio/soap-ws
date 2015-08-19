@@ -18,8 +18,10 @@
  */
 package org.reficio.ws.client.ssl;
 
+import org.apache.http.conn.ssl.*;
 import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
+import org.apache.http.ssl.*;
+import org.apache.http.ssl.SSLContexts;
 import org.reficio.ws.client.core.Security;
 
 import javax.net.ssl.*;
@@ -55,7 +57,7 @@ public class SSLUtils {
         return new MultiX509TrustManager(managersList);
     }
 
-    public static SSLSocketFactory getMergedSocketFactory(org.reficio.ws.client.core.Security securityOne, Security securityTwo) throws GeneralSecurityException {
+    public static SSLConnectionSocketFactory getMergedSocketFactory(Security securityOne, Security securityTwo) throws GeneralSecurityException {
         X509KeyManager keyManagerOne = getKeyManager(securityOne.getKeyStore(), securityOne.getKeyStorePassword());
         X509KeyManager keyManagerTwo = getKeyManager(securityTwo.getKeyStore(), securityTwo.getKeyStorePassword());
 
@@ -68,18 +70,24 @@ public class SSLUtils {
         boolean strictHostVerification = securityOne.isStrictHostVerification() && securityTwo.isStrictHostVerification();
 
         context.init(new KeyManager[]{keyManagerOne, keyManagerTwo}, new TrustManager[]{trustManager}, new SecureRandom());
-        X509HostnameVerifier verifier = strictHostVerification ?
-                SSLSocketFactory.STRICT_HOSTNAME_VERIFIER : SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
-        return new SSLSocketFactory(context, verifier);
+        HostnameVerifier verifier = strictHostVerification ?
+                new DefaultHostnameVerifier() : new NoopHostnameVerifier();
+        return new SSLConnectionSocketFactory(context, verifier);
     }
 
-    public static SSLSocketFactory getFactory(Security security) throws GeneralSecurityException {
-        X509HostnameVerifier verifier = security.isStrictHostVerification() ?
-                SSLSocketFactory.STRICT_HOSTNAME_VERIFIER : SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
-        SSLSocketFactory socketFactory = new SSLSocketFactory(security.getSslContextProtocol(),
-                security.getKeyStore(), security.getKeyStorePasswordAsString(),
-                security.getTrustStore(), new SecureRandom(), null, verifier);
-        return socketFactory;
+    public static SSLConnectionSocketFactory getFactory(Security security) throws GeneralSecurityException {
+        HostnameVerifier verifier = security.isStrictHostVerification() ?
+                new DefaultHostnameVerifier() : new NoopHostnameVerifier();
+
+        SSLContext context = SSLContexts.custom()
+                        .useProtocol(security.getSslContextProtocol())
+                        .setSecureRandom(new SecureRandom())
+                        .loadKeyMaterial(security.getKeyStore(),security.getKeyStorePassword() != null ? security.getKeyStorePassword() : null)
+                        .loadTrustMaterial(security.getTrustStore(), null)
+                        .build();
+
+        SSLConnectionSocketFactory factory = new SSLConnectionSocketFactory(context, verifier);
+        return factory;
     }
 
 

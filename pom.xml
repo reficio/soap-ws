@@ -301,6 +301,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <failOnError>false</failOnError>
                     <quiet>true</quiet>
                 </configuration>
             </plugin>
@@ -541,10 +542,23 @@
 
     <distributionManagement>
         <repository>
-            <id>reficio</id>
-            <name>Reficio Maven Repository</name>
-            <url>scp://${reficio.server}/var/www/repo/maven</url>
+            <id>solinfo.repository</id>
+			<url>http://172.30.10.103/nexus/content/repositories/3rdp-releases</url>
         </repository>
+        <snapshotRepository>
+            <id>solinfo.repository</id>
+			<url>http://172.30.10.103/nexus/content/repositories/3rdp-snapshots</url>
+        </snapshotRepository>
+        <!-- <repository> -->
+        <!--     <id>reficio</id> -->
+        <!--     <name>Reficio Maven Repository</name> -->
+        <!--     <url>scp://${reficio.server}/var/www/repo/maven</url> -->
+        <!-- </repository> -->
+        <!-- <snapshotRepository> -->
+        <!--     <id>solinfo.repository</id> -->
+        <!--     <name>SolinfoNexus</name> -->
+        <!--     <url>http://172.30.10.103/nexus/content/repositories/contint&#45;snapshots</url> -->
+        <!-- </snapshotRepository> -->
     </distributionManagement>
 
 </project>
