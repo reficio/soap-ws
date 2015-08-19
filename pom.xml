@@ -543,11 +543,11 @@
     <distributionManagement>
         <repository>
             <id>solinfo.repository</id>
-            <url>http://172.30.10.103/nexus/content/groups/solinfo.repository</url>
+			<url>http://172.30.10.103/nexus/content/repositories/3rdp-releases</url>
         </repository>
         <snapshotRepository>
             <id>solinfo.repository</id>
-            <url>http://172.30.10.103/nexus/content/groups/solinfo.repository</url>
+			<url>http://172.30.10.103/nexus/content/repositories/3rdp-snapshots</url>
         </snapshotRepository>
         <!-- <repository> -->
         <!--     <id>reficio</id> -->
