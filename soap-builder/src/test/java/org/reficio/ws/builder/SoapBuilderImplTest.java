@@ -38,4 +38,25 @@ public class SoapBuilderImplTest {
         }
     }
 
+
+    //Playground...more to refine
+    @Test
+    public void testAutotask() throws WSDLException {
+        String url = "https://webservices2.autotask.net/atservices/1.5/atws.wsdl";
+
+        Wsdl  wsdl = Wsdl.parse(url);
+        SoapBuilder builder = wsdl.binding().name("{http://autotask.net/ATWS/v1_5/}ATWSSoap").find();
+        for (SoapOperation op : builder.getOperations()) {
+            assertNotNull(op);
+            if(op.getOperationName().equals("create")) {
+                boolean isInputAbstract = false;
+                if(!builder.isInputSoapEncoded(op) && builder.isInputMessageAbstract(op)) {
+                    isInputAbstract = true;
+                }
+
+                String inputMessage = builder.buildInputMessage(op);
+                System.out.println(inputMessage);
+            }
+        }
+    }
 }

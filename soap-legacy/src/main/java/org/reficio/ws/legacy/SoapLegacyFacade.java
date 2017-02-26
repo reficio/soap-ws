@@ -176,4 +176,12 @@ public class SoapLegacyFacade {
         return WsdlUtils.isInputSoapEncoded(operation);
     }
 
+    public boolean isInputMessageAbstract(Binding binding, BindingOperation bindingOperation, SoapContext context) {
+        try {
+            return messageBuilder.isInputMessageAbstract(binding, bindingOperation, context);
+        } catch (Exception e) {
+            throw new SoapBuilderException(e);
+        }
+    }
+
 }

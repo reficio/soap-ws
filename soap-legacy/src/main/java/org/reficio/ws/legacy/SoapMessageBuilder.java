@@ -223,6 +223,51 @@ class SoapMessageBuilder {
         return emptyResponse;
     }
 
+
+    public boolean isInputMessageAbstract(Binding binding, BindingOperation bindingOperation, SoapContext context) throws
+            Exception {
+        SampleXmlUtil xmlUtil = new SampleXmlUtil(WsdlUtils.isInputSoapEncoded(bindingOperation), context);
+
+        boolean isAbstract = false;
+        Part[] parts = WsdlUtils.getInputParts(bindingOperation);
+        for (int i = 0; i < parts.length; i++) {
+            Part part = parts[i];
+            if (!WsdlUtils.isAttachmentInputPart(part, bindingOperation)
+                    && (part.getElementName() != null || part.getTypeName() != null)) {
+
+                isAbstract = isAbstract || isElementForPartAbstract(part, xmlUtil);
+            }
+        }
+        return isAbstract;
+    }
+
+    private boolean isElementForPartAbstract(Part part, SampleXmlUtil xmlUtil) throws Exception {
+        QName elementName = part.getElementName();
+        QName typeName = part.getTypeName();
+        boolean isAbstract = false;
+        if (elementName != null) {
+            if (definitionWrapper.hasSchemaTypes()) {
+                SchemaGlobalElement elm = definitionWrapper.getSchemaTypeLoader().findElement(elementName);
+                if (elm != null) {
+                    isAbstract = xmlUtil.isTypeAbstract(elm.getType());
+                } else
+                    log.error("Could not find element [" + elementName + "] specified in part [" + part.getName() + "]");
+            }
+        } else {
+            if (typeName != null && definitionWrapper.hasSchemaTypes()) {
+                SchemaType type = definitionWrapper.getSchemaTypeLoader().findType(typeName);
+
+                if (type != null) {
+                    isAbstract = xmlUtil.isTypeAbstract(type);
+                } else
+                    log.error("Could not find type [" + typeName + "] specified in part [" + part.getName() + "]");
+            }
+        }
+
+        return isAbstract;
+    }
+
+
     // ----------------------------------------------------------
     // INPUT MESSAGE GENERATORS
     // ----------------------------------------------------------

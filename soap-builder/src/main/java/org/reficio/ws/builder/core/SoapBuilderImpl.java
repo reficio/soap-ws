@@ -214,4 +214,9 @@ class SoapBuilderImpl implements SoapBuilder {
         return soapFacade.isOutputSoapEncoded(getBindingOperation(operation));
     }
 
+
+    @Override
+    public boolean isInputMessageAbstract(SoapOperation operation) {
+        return soapFacade.isInputMessageAbstract(binding, getBindingOperation(operation), context);
+    }
 }

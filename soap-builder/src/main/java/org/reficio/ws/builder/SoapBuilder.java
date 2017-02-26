@@ -78,4 +78,5 @@ public interface SoapBuilder {
 
     boolean isOutputSoapEncoded(SoapOperation operation);
 
+    boolean isInputMessageAbstract(SoapOperation operation);
 }

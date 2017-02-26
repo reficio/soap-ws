@@ -118,6 +118,124 @@ class SampleXmlUtil {
         return result;
     }
 
+    public boolean isTypeAbstract(SchemaType stype) {
+
+        boolean isAbstract = false;
+        if (stype.isAbstract()) {
+            return true;
+        }
+
+        if (typeStack.contains(stype)) {
+            return false; //TODO LVR will decide when and what
+        }
+
+        typeStack.add(stype);
+
+        // complex Type
+        // <theElement>^</theElement>
+        //isAbstract = isAbstract || isAttributesAbstract(stype); //TODO LVR Not sure if we need this
+
+        // <theElement attri1="string">^</theElement>
+        switch (stype.getContentType()) {
+            case SchemaType.NOT_COMPLEX_TYPE:
+            case SchemaType.EMPTY_CONTENT:
+            case SchemaType.SIMPLE_CONTENT:
+                // noop
+                break;
+            case SchemaType.MIXED_CONTENT:
+            case SchemaType.ELEMENT_CONTENT:
+                if (stype.getContentModel() != null) {
+                    isAbstract = isAbstract || isParticleAbstract(stype.getContentModel());
+                }
+                break;
+        }
+
+        return isAbstract;
+    }
+
+    private boolean isParticleAbstract(SchemaParticle sp) {
+        int loop = determineMinMaxForSampleParticle(sp);
+        boolean isAbstract = false;
+
+        while (loop-- > 0) {
+            switch (sp.getParticleType()) {
+                case (SchemaParticle.ELEMENT):
+                    isAbstract = isAbstract || isElementAbstract(sp);
+                    break;
+                case (SchemaParticle.SEQUENCE):
+                    isAbstract = isAbstract || isSequenceAbstract(sp);
+                    break;
+                case (SchemaParticle.CHOICE):
+                    isAbstract = isAbstract || isChoiceAbstract(sp);
+                    break;
+                case (SchemaParticle.ALL):
+                    isAbstract = isAbstract || isAllParticleAbstract(sp);
+                    break;
+                case (SchemaParticle.WILDCARD):
+                default:
+                    break;
+            }
+
+            if(isAbstract) {
+                break;
+            }
+        }
+
+        return isAbstract;
+    }
+
+    private boolean isSequenceAbstract(SchemaParticle sp) {
+        SchemaParticle[] spc = sp.getParticleChildren();
+        boolean isAbstract = false;
+        for (int i = 0; i < spc.length; i++) {
+            // / <parent>maybestuff^</parent>
+            isAbstract = isAbstract || isParticleAbstract(spc[i]);
+
+            if(isAbstract) {
+                break;
+            }
+        }
+
+        return isAbstract;
+    }
+
+
+    private boolean isChoiceAbstract(SchemaParticle sp) {
+        SchemaParticle[] spc = sp.getParticleChildren();
+        boolean isAbstract = false;
+        for (int i = 0; i < spc.length; i++) {
+            isAbstract = isAbstract || isParticleAbstract(spc[i]);
+
+            if(isAbstract) {
+                break;
+            }
+        }
+        return isAbstract;
+    }
+
+    private boolean isAllParticleAbstract(SchemaParticle sp) {
+        SchemaParticle[] spc = sp.getParticleChildren();
+        boolean isAbstract = false;
+        for (int i = 0; i < spc.length; i++) {
+            isAbstract = isAbstract || isParticleAbstract(spc[i]);
+
+            if(isAbstract) {
+                break;
+            }
+        }
+        return isAbstract;
+    }
+
+    private boolean isElementAbstract(SchemaParticle sp) {
+        // cast as schema local element
+        SchemaLocalElement element = (SchemaLocalElement) sp;
+        if(element.isAbstract()) {
+            return true;
+        }
+
+        return isTypeAbstract(element.getType());
+    }
+
 
     /**
      * Cursor position Before: <theElement>^</theElement> After:
@@ -961,6 +1079,27 @@ class SampleXmlUtil {
                 xmlc.insertComment("Optional:");
             }
         }
+
+        return result;
+    }
+
+
+    private int determineMinMaxForSampleParticle(SchemaParticle sp) {
+        int minOccurs = sp.getIntMinOccurs();
+        int maxOccurs = sp.getIntMaxOccurs();
+
+        if (minOccurs == maxOccurs)
+            return minOccurs;
+
+        if (minOccurs == 0 && ignoreOptional)
+            return 0;
+
+        int result = minOccurs;
+        if (result == 0)
+            result = 1;
+
+        if (sp.getParticleType() != SchemaParticle.ELEMENT)
+            return result;
 
         return result;
     }
