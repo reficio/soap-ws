@@ -70,7 +70,6 @@ import java.util.List;
 
 /**
  * Builds SOAP requests according to WSDL/XSD definitions
- *
  * @author Ole.Matzura
  */
 @ThreadSafe
@@ -88,6 +87,7 @@ class SoapMessageBuilder {
     // ----------------------------------------------------------
     // Constructors and factory methods
     // ----------------------------------------------------------
+
     /**
      * @param wsdlUrl url of the wsdl to import
      * @throws WSDLException thrown in case of import errors
@@ -105,14 +105,15 @@ class SoapMessageBuilder {
      * the top-level wsdl the specified baseName and setting the documentBaseUri to the newly
      * saved wsdl uri. If the import is not successful an exception will be thrown and files
      * will not be saved. Method expects that the targetFolder already exists.
-     *
-     * @param wsdlUrl      url of the wsdl to import
-     * @param targetFolder folder in which all the files are be stored - folder has to exist, no subfolders are created,
+     * @param wsdlUrl url of the wsdl to import
+     * @param targetFolder folder in which all the files are be stored - folder has to exist, no subfolders are
+     * created,
      * @param fileBaseName name of the top level file, without extension -> wsdl will be added by default
      * @return instance of the soap-builder which documentBaseUri is set to the url of the locally saved wsdl
      * @throws WSDLException thrown in case of import errors
      */
-    public static SoapMessageBuilder createAndSave(URL wsdlUrl, File targetFolder, String fileBaseName) throws WSDLException {
+    public static SoapMessageBuilder createAndSave(URL wsdlUrl, File targetFolder, String fileBaseName) throws
+            WSDLException {
         SoapMessageBuilder soapBuilder = new SoapMessageBuilder(wsdlUrl);
         URL url = soapBuilder.saveWsdl(fileBaseName, targetFolder);
         soapBuilder.getDefinition().setDocumentBaseURI(url.toString());
@@ -124,7 +125,8 @@ class SoapMessageBuilder {
     // ----------------------------------------------------------
     private static void saveDefinition(String fileBaseName, Definition definition, File targetFolder) {
         if (targetFolder.exists() == false || targetFolder.isDirectory() == false) {
-            throw new IllegalArgumentException("Target folder does not exist or is not a folder [" + targetFolder.getPath() + "]");
+            throw new IllegalArgumentException("Target folder does not exist or is not a folder [" + targetFolder
+                    .getPath() + "]");
         }
         Wsdl11Writer writer = new Wsdl11Writer(targetFolder);
         writer.writeWSDL(fileBaseName, definition);
@@ -141,7 +143,6 @@ class SoapMessageBuilder {
 
     /**
      * Saves wsdl recursively fetching all referenced wsdls and schemas fixing their location tags
-     *
      * @param fileBaseName name of the top level file, without extension -> wsdl will be added by default
      * @param targetFolder folder in which all the files are stored - folder has to exist, no subfolders are created,
      */
@@ -152,10 +153,10 @@ class SoapMessageBuilder {
 
     /**
      * Saves wsdl recursively fetching all referenced wsdls and schemas fixing their location tags
-     *
      * @param fileBaseName name of the top level file, without extension -> wsdl will be added by default
-     * @param wsdlUrl      url of the wsdl to save
-     * @param targetFolder folder in which all the files are be stored - folder has to exist, no subfolders are created,
+     * @param wsdlUrl url of the wsdl to save
+     * @param targetFolder folder in which all the files are be stored - folder has to exist, no subfolders are
+     * created,
      * @throws WSDLException thrown in case of import errors
      */
     public static URL saveWsdl(String fileBaseName, URL wsdlUrl, File targetFolder) throws WSDLException {
@@ -185,7 +186,8 @@ class SoapMessageBuilder {
     // ----------------------------------------------------------
     // FAULT MESSAGE GENERATORS
     // ----------------------------------------------------------
-    public static String buildFault(String faultcode, String faultstring, SoapVersion soapVersion, SoapContext context) {
+    public static String buildFault(String faultcode, String faultstring, SoapVersion soapVersion, SoapContext
+            context) {
         SampleXmlUtil generator = new SampleXmlUtil(false, context);
         generator.setTypeComment(false);
         generator.setIgnoreOptional(true);
@@ -223,8 +225,75 @@ class SoapMessageBuilder {
         return emptyResponse;
     }
 
+    /**
+     * Get children SchemaType for abstract SchemaType
+     * @param abstractType SchemaType
+     * @return list of child schematypes
+     */
+    public List<SchemaType> getChildrenForType(SchemaType abstractType) {
+        if (abstractType == null) {
+            return null;
+        }
+        return this.definitionWrapper.getAbstractSchemaTypes().get(abstractType.getName().getLocalPart());
+    }
 
-    public boolean isInputMessageAbstract(Binding binding, BindingOperation bindingOperation, SoapContext context) throws
+    /**
+     * Get the abstract schematype if present for the binding operation
+     * @param bindingOperation binding operation
+     * @param context soap contect
+     * @return SchemaType Abstract schematype
+     * @throws Exception
+     */
+    public SchemaType getAbstractSchemaTypeFromOperation(BindingOperation bindingOperation, SoapContext context) throws
+            Exception {
+        SampleXmlUtil xmlUtil = new SampleXmlUtil(WsdlUtils.isInputSoapEncoded(bindingOperation), context);
+
+        SchemaType abstractSchemaType = null;
+        Part[] parts = WsdlUtils.getInputParts(bindingOperation);
+        for (int i = 0; i < parts.length; i++) {
+            Part part = parts[i];
+            if (!WsdlUtils.isAttachmentInputPart(part, bindingOperation)
+                    && (part.getElementName() != null || part.getTypeName() != null)) {
+
+                abstractSchemaType = getElementSchemaTypeForPartAbstract(part, xmlUtil);
+            }
+            if (abstractSchemaType != null) {
+                break;
+            }
+        }
+        return abstractSchemaType;
+    }
+
+    private SchemaType getElementSchemaTypeForPartAbstract(Part part, SampleXmlUtil xmlUtil) throws Exception {
+        QName elementName = part.getElementName();
+        QName typeName = part.getTypeName();
+        SchemaType abstractSchemaType = null;
+        if (elementName != null) {
+            if (definitionWrapper.hasSchemaTypes()) {
+                SchemaGlobalElement elm = definitionWrapper.getSchemaTypeLoader().findElement(elementName);
+                if (elm != null) {
+                    abstractSchemaType = xmlUtil.getSchemaTypeAbstract(elm.getType());
+                } else {
+                    log.error("Could not find element [" + elementName + "] specified in part [" + part.getName() +
+                            "]");
+                }
+            }
+        } else {
+            if (typeName != null && definitionWrapper.hasSchemaTypes()) {
+                SchemaType type = definitionWrapper.getSchemaTypeLoader().findType(typeName);
+
+                if (type != null) {
+                    abstractSchemaType = xmlUtil.getSchemaTypeAbstract(type);
+                } else {
+                    log.error("Could not find type [" + typeName + "] specified in part [" + part.getName() + "]");
+                }
+            }
+        }
+
+        return abstractSchemaType;
+    }
+
+    public boolean isInputMessageAbstract(BindingOperation bindingOperation, SoapContext context) throws
             Exception {
         SampleXmlUtil xmlUtil = new SampleXmlUtil(WsdlUtils.isInputSoapEncoded(bindingOperation), context);
 
@@ -250,8 +319,10 @@ class SoapMessageBuilder {
                 SchemaGlobalElement elm = definitionWrapper.getSchemaTypeLoader().findElement(elementName);
                 if (elm != null) {
                     isAbstract = xmlUtil.isTypeAbstract(elm.getType());
-                } else
-                    log.error("Could not find element [" + elementName + "] specified in part [" + part.getName() + "]");
+                } else {
+                    log.error("Could not find element [" + elementName + "] specified in part [" + part.getName() +
+                            "]");
+                }
             }
         } else {
             if (typeName != null && definitionWrapper.hasSchemaTypes()) {
@@ -259,19 +330,77 @@ class SoapMessageBuilder {
 
                 if (type != null) {
                     isAbstract = xmlUtil.isTypeAbstract(type);
-                } else
+                } else {
                     log.error("Could not find type [" + typeName + "] specified in part [" + part.getName() + "]");
+                }
             }
         }
 
         return isAbstract;
     }
 
+    // ----------------------------------------------------------
+    // INPUT MESSAGE GENERATORS for abstract
+    // ----------------------------------------------------------
 
-    // ----------------------------------------------------------
-    // INPUT MESSAGE GENERATORS
-    // ----------------------------------------------------------
-    public String buildSoapMessageFromInput(Binding binding, BindingOperation bindingOperation, SoapContext context) throws Exception {
+    private void buildDocumentRequest(BindingOperation bindingOperation, XmlCursor cursor, SampleXmlUtil xmlUtil,
+                                      SchemaType abstractSchemaType, SchemaType childSchemaType)
+            throws Exception {
+        Part[] parts = WsdlUtils.getInputParts(bindingOperation);
+
+        for (int i = 0; i < parts.length; i++) {
+            Part part = parts[i];
+            if (!WsdlUtils.isAttachmentInputPart(part, bindingOperation)
+                    && (part.getElementName() != null || part.getTypeName() != null)) {
+                XmlCursor c = cursor.newCursor();
+                c.toLastChild();
+                createElementForPart(part, c, xmlUtil, abstractSchemaType, childSchemaType);
+                c.dispose();
+            }
+        }
+    }
+
+    private void createElementForPart(Part part, XmlCursor cursor, SampleXmlUtil xmlUtil, SchemaType
+            abstractSchemaType, SchemaType childSchemaType) throws Exception {
+        QName elementName = part.getElementName();
+        QName typeName = part.getTypeName();
+
+        if (elementName != null) {
+            cursor.beginElement(elementName);
+
+            if (definitionWrapper.hasSchemaTypes()) {
+                SchemaGlobalElement elm = definitionWrapper.getSchemaTypeLoader().findElement(elementName);
+                if (elm != null) {
+                    cursor.toFirstChild();
+                    xmlUtil.createSampleForType(elm.getType(), cursor, abstractSchemaType, childSchemaType);
+                } else {
+                    log.error("Could not find element [" + elementName + "] specified in part [" + part.getName() +
+                            "]");
+                }
+            }
+
+            cursor.toParent();
+        } else {
+            cursor.beginElement(part.getName());
+            if (typeName != null && definitionWrapper.hasSchemaTypes()) {
+                SchemaType type = definitionWrapper.getSchemaTypeLoader().findType(typeName);
+
+                if (type != null) {
+                    cursor.toFirstChild();
+                    xmlUtil.createSampleForType(type, cursor, abstractSchemaType, childSchemaType);
+                } else {
+                    log.error("Could not find type [" + typeName + "] specified in part [" + part.getName() + "]");
+                }
+            }
+
+            cursor.toParent();
+        }
+    }
+
+    public String buildSoapMessageFromInput(Binding binding, BindingOperation bindingOperation, SoapContext context,
+                                            SchemaType abstractSchemaType, SchemaType childSchemaType) throws
+            Exception {
+
         SoapVersion soapVersion = getSoapVersion(binding);
         boolean inputSoapEncoded = WsdlUtils.isInputSoapEncoded(bindingOperation);
         SampleXmlUtil xmlGenerator = new SampleXmlUtil(inputSoapEncoded, context);
@@ -291,9 +420,10 @@ class SoapMessageBuilder {
         cursor.toFirstChild();
 
         if (WsdlUtils.isRpc(definition, bindingOperation)) {
-            buildRpcRequest(bindingOperation, soapVersion, cursor, xmlGenerator);
+            buildRpcRequest(bindingOperation, soapVersion, cursor, xmlGenerator); //TODO LVR Not sure if RPC needs
+            // abstract
         } else {
-            buildDocumentRequest(bindingOperation, cursor, xmlGenerator);
+            buildDocumentRequest(bindingOperation, cursor, xmlGenerator, abstractSchemaType, childSchemaType);
         }
 
         if (context.isAlwaysBuildHeaders()) {
@@ -319,11 +449,11 @@ class SoapMessageBuilder {
     // ----------------------------------------------------------
     // OUTPUT MESSAGE GENERATORS
     // ----------------------------------------------------------
-    public String buildSoapMessageFromOutput(Binding binding, BindingOperation bindingOperation, SoapContext context) throws Exception {
+    public String buildSoapMessageFromOutput(Binding binding, BindingOperation bindingOperation, SoapContext context)
+            throws Exception {
         boolean inputSoapEncoded = WsdlUtils.isInputSoapEncoded(bindingOperation);
         SampleXmlUtil xmlGenerator = new SampleXmlUtil(inputSoapEncoded, context);
         SoapVersion soapVersion = getSoapVersion(binding);
-
 
         XmlObject object = XmlObject.Factory.newInstance();
         XmlCursor cursor = object.newCursor();
@@ -379,12 +509,14 @@ class SoapMessageBuilder {
         return definitionWrapper;
     }
 
-    public BindingOperation getOperationByName(QName bindingName, String operationName, String operationInputName, String operationOutputName) {
+    public BindingOperation getOperationByName(QName bindingName, String operationName, String operationInputName,
+                                               String operationOutputName) {
         Binding binding = getBindingByName(bindingName);
         if (binding == null) {
             return null;
         }
-        BindingOperation operation = binding.getBindingOperation(operationName, operationInputName, operationOutputName);
+        BindingOperation operation = binding.getBindingOperation(operationName, operationInputName,
+                operationOutputName);
         if (operation == null) {
             throw new SoapBuilderException("Operation not found");
         }
@@ -428,7 +560,8 @@ class SoapMessageBuilder {
     // --------------------------------------------------------------------------
     // Internal methods - END OF PUBLIC API
     // --------------------------------------------------------------------------
-    private void addHeaders(List<WsdlUtils.SoapHeader> headers, SoapVersion soapVersion, XmlCursor cursor, SampleXmlUtil xmlGenerator) throws Exception {
+    private void addHeaders(List<WsdlUtils.SoapHeader> headers, SoapVersion soapVersion, XmlCursor cursor,
+                            SampleXmlUtil xmlGenerator) throws Exception {
         // reposition
         cursor.toStartDoc();
         cursor.toChild(soapVersion.getEnvelopeQName());
@@ -448,10 +581,9 @@ class SoapMessageBuilder {
 
             Part part = message.getPart(header.getPart());
 
-            if (part != null)
-                createElementForPart(part, cursor, xmlGenerator);
-            else
+            if (part != null) { createElementForPart(part, cursor, xmlGenerator); } else {
                 log.error("Missing part for header; " + header.getPart());
+            }
         }
     }
 
@@ -489,55 +621,26 @@ class SoapMessageBuilder {
     }
 
     private void createElementForPart(Part part, XmlCursor cursor, SampleXmlUtil xmlGenerator) throws Exception {
-        QName elementName = part.getElementName();
-        QName typeName = part.getTypeName();
-
-        if (elementName != null) {
-            cursor.beginElement(elementName);
-
-            if (definitionWrapper.hasSchemaTypes()) {
-                SchemaGlobalElement elm = definitionWrapper.getSchemaTypeLoader().findElement(elementName);
-                if (elm != null) {
-                    cursor.toFirstChild();
-                    xmlGenerator.createSampleForType(elm.getType(), cursor);
-                } else
-                    log.error("Could not find element [" + elementName + "] specified in part [" + part.getName() + "]");
-            }
-
-            cursor.toParent();
-        } else {
-            // cursor.beginElement( new QName(
-            // wsdlContext.getWsdlDefinition().getTargetNamespace(), part.getName()
-            // ));
-            cursor.beginElement(part.getName());
-            if (typeName != null && definitionWrapper.hasSchemaTypes()) {
-                SchemaType type = definitionWrapper.getSchemaTypeLoader().findType(typeName);
-
-                if (type != null) {
-                    cursor.toFirstChild();
-                    xmlGenerator.createSampleForType(type, cursor);
-                } else
-                    log.error("Could not find type [" + typeName + "] specified in part [" + part.getName() + "]");
-            }
-
-            cursor.toParent();
-        }
+        createElementForPart(part, cursor, xmlGenerator, null, null);
     }
 
-    private void buildRpcRequest(BindingOperation bindingOperation, SoapVersion soapVersion, XmlCursor cursor, SampleXmlUtil xmlGenerator)
+    private void buildRpcRequest(BindingOperation bindingOperation, SoapVersion soapVersion, XmlCursor cursor,
+                                 SampleXmlUtil xmlGenerator)
             throws Exception {
         // rpc requests use the operation name as root element
         String ns = WsdlUtils.getSoapBodyNamespace(bindingOperation.getBindingInput().getExtensibilityElements());
         if (ns == null) {
             ns = WsdlUtils.getTargetNamespace(definition);
-            log.warn("missing namespace on soapbind:body for RPC request, using targetNamespace instead (BP violation)");
+            log.warn("missing namespace on soapbind:body for RPC request, using targetNamespace instead (BP " +
+                    "violation)");
         }
 
         cursor.beginElement(new QName(ns, bindingOperation.getName()));
         // TODO
-        if (xmlGenerator.isSoapEnc())
+        if (xmlGenerator.isSoapEnc()) {
             cursor.insertAttributeWithValue(new QName(soapVersion.getEnvelopeNamespace(),
                     "encodingStyle"), soapVersion.getEncodingNamespace());
+        }
 
         Part[] inputParts = WsdlUtils.getInputParts(bindingOperation);
         for (int i = 0; i < inputParts.length; i++) {
@@ -568,10 +671,10 @@ class SoapMessageBuilder {
 
                             xmlGenerator.createSampleForType(type, c);
                             c.dispose();
-                        } else
-                            log.warn("Failed to find type [" + typeName + "]");
+                        } else { log.warn("Failed to find type [" + typeName + "]"); }
                     } else {
-                        SchemaGlobalElement element = definitionWrapper.getSchemaTypeLoader().findElement(part.getElementName());
+                        SchemaGlobalElement element = definitionWrapper.getSchemaTypeLoader().findElement(part
+                                .getElementName());
                         if (element != null) {
                             XmlCursor c = cursor.newCursor();
                             c.toLastChild();
@@ -580,15 +683,15 @@ class SoapMessageBuilder {
 
                             xmlGenerator.createSampleForType(element.getType(), c);
                             c.dispose();
-                        } else
-                            log.warn("Failed to find element [" + part.getElementName() + "]");
+                        } else { log.warn("Failed to find element [" + part.getElementName() + "]"); }
                     }
                 }
             }
         }
     }
 
-    private void buildRpcResponse(BindingOperation bindingOperation, SoapVersion soapVersion, XmlCursor cursor, SampleXmlUtil xmlGenerator)
+    private void buildRpcResponse(BindingOperation bindingOperation, SoapVersion soapVersion, XmlCursor cursor,
+                                  SampleXmlUtil xmlGenerator)
             throws Exception {
         // rpc requests use the operation name as root element
         BindingOutput bindingOutput = bindingOperation.getBindingOutput();
@@ -597,13 +700,15 @@ class SoapMessageBuilder {
 
         if (ns == null) {
             ns = WsdlUtils.getTargetNamespace(definition);
-            log.warn("missing namespace on soapbind:body for RPC response, using targetNamespace instead (BP violation)");
+            log.warn("missing namespace on soapbind:body for RPC response, using targetNamespace instead (BP " +
+                    "violation)");
         }
 
         cursor.beginElement(new QName(ns, bindingOperation.getName() + "Response"));
-        if (xmlGenerator.isSoapEnc())
+        if (xmlGenerator.isSoapEnc()) {
             cursor.insertAttributeWithValue(new QName(soapVersion.getEnvelopeNamespace(),
                     "encodingStyle"), soapVersion.getEncodingNamespace());
+        }
 
         Part[] inputParts = WsdlUtils.getOutputParts(bindingOperation);
         for (int i = 0; i < inputParts.length; i++) {
@@ -631,10 +736,10 @@ class SoapMessageBuilder {
 
                             xmlGenerator.createSampleForType(type, c);
                             c.dispose();
-                        } else
-                            log.warn("Failed to find type [" + typeName + "]");
+                        } else { log.warn("Failed to find type [" + typeName + "]"); }
                     } else {
-                        SchemaGlobalElement element = definitionWrapper.getSchemaTypeLoader().findElement(part.getElementName());
+                        SchemaGlobalElement element = definitionWrapper.getSchemaTypeLoader().findElement(part
+                                .getElementName());
                         if (element != null) {
                             XmlCursor c = cursor.newCursor();
                             c.toLastChild();
@@ -643,8 +748,7 @@ class SoapMessageBuilder {
 
                             xmlGenerator.createSampleForType(element.getType(), c);
                             c.dispose();
-                        } else
-                            log.warn("Failed to find element [" + part.getElementName() + "]");
+                        } else { log.warn("Failed to find element [" + part.getElementName() + "]"); }
                     }
                 }
             }

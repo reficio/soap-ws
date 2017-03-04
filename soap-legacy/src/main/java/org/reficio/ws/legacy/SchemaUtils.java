@@ -532,4 +532,42 @@ class SchemaUtils {
         }
     }
 
+    /**
+     * Constructs a Map for all the Abstracttype as keys and the globaltypes which are children as list.
+     * This will help in identify all the child schematypes for an abstract schematype
+     *
+     * @param schemaTypeSystem
+     * @return Map<String, List<SchemaType>> of abstract and child schematypes
+     */
+    public static Map<String, List<SchemaType>> buildAbstractComplexTypes(SchemaTypeSystem schemaTypeSystem) {
+        SchemaType[] gt = schemaTypeSystem.globalTypes();
+        if (gt == null || gt.length == 0) {
+            return null;
+        }
+
+        Map abstractTypes = new HashMap();
+        List<SchemaType> globalTypes = Arrays.asList(gt);
+        for (SchemaType st : globalTypes) {
+            addToAbstractTypes(abstractTypes, st);
+        }
+
+        return abstractTypes;
+    }
+
+    //Ignore the standard namespaces
+    private static void addToAbstractTypes(Map<String, List<SchemaType>> abstractTypes, SchemaType st) {
+        if (st == null || st.getBaseType() == null || st.getBaseType().getBuiltinTypeCode() ==
+                SchemaType.BTC_ANY_TYPE || st.isSimpleType() == true
+                || StringUtils.contains(st.getName().getNamespaceURI(), "www.w3.org")
+                || StringUtils.contains(st.getName().getNamespaceURI(), "xmlsoap.org")) {
+            return;
+        }
+
+        List<SchemaType> children = abstractTypes.get(st.getBaseType().getName().getLocalPart());
+        if (children == null) {
+            children = new ArrayList();
+        }
+        children.add(st);
+        abstractTypes.put(st.getBaseType().getName().getLocalPart(), children);
+    }
 }

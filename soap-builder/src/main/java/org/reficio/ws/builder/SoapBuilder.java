@@ -18,6 +18,7 @@
  */
 package org.reficio.ws.builder;
 
+import org.apache.xmlbeans.SchemaType;
 import org.reficio.ws.SoapContext;
 
 import javax.wsdl.Binding;
@@ -41,6 +42,9 @@ public interface SoapBuilder {
     String buildInputMessage(SoapOperation operation);
 
     String buildInputMessage(SoapOperation operation, SoapContext context);
+
+    String buildInputMessage(SoapOperation operation, SchemaType abstractSchemaType, SchemaType
+            childSchemaType);
 
     String buildOutputMessage(SoapOperation operation);
 
@@ -79,4 +83,8 @@ public interface SoapBuilder {
     boolean isOutputSoapEncoded(SoapOperation operation);
 
     boolean isInputMessageAbstract(SoapOperation operation);
+
+    SchemaType getAbstractSchemaTypeFromOperation(SoapOperation operation);
+
+    List<SchemaType> getChildrenForType(SchemaType abstractType);
 }

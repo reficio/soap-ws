@@ -19,6 +19,7 @@
 package org.reficio.ws.builder.core;
 
 
+import org.apache.xmlbeans.SchemaType;
 import org.reficio.ws.SoapBuilderException;
 import org.reficio.ws.SoapContext;
 import org.reficio.ws.builder.SoapBuilder;
@@ -40,7 +41,7 @@ import java.util.List;
  * @author Tom Bujok
  * @since 1.0.0
  */
-class SoapBuilderImpl implements SoapBuilder {
+public class SoapBuilderImpl implements SoapBuilder {
 
     private final SoapLegacyFacade soapFacade;
     private final Binding binding;
@@ -115,6 +116,17 @@ class SoapBuilderImpl implements SoapBuilder {
             throw new SoapBuilderException(e);
         }
     }
+
+    @Override
+    public String buildInputMessage(SoapOperation operation, SchemaType abstractSchemaType, SchemaType
+            childSchemaType) {
+        try {
+            return soapFacade.buildSoapMessageFromInput(binding, getBindingOperation(operation), context, abstractSchemaType, childSchemaType);
+        } catch (Exception e) {
+            throw new SoapBuilderException(e);
+        }
+    }
+
 
     @Override
     public String buildOutputMessage(SoapOperation operation) {
@@ -217,6 +229,16 @@ class SoapBuilderImpl implements SoapBuilder {
 
     @Override
     public boolean isInputMessageAbstract(SoapOperation operation) {
-        return soapFacade.isInputMessageAbstract(binding, getBindingOperation(operation), context);
+        return soapFacade.isInputMessageAbstract(getBindingOperation(operation), context);
+    }
+
+    @Override
+    public SchemaType getAbstractSchemaTypeFromOperation(SoapOperation operation) {
+        return soapFacade.getAbstractSchemaTypeFromOperation(getBindingOperation(operation), context);
+    }
+
+    @Override
+    public List<SchemaType> getChildrenForType(SchemaType abstractType) {
+        return soapFacade.getChildrenForType(abstractType);
     }
 }
