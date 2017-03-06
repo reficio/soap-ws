@@ -54,6 +54,7 @@ import java.util.List;
 interface SoapVersion {
     public static final SoapVersion11 Soap11 = SoapVersion11.instance;
     public static final SoapVersion12 Soap12 = SoapVersion12.instance;
+    public static final SoapVersion12 Http11 = SoapVersion12.instance;
 
     public QName getEnvelopeQName();
 

@@ -31,7 +31,14 @@ import org.reficio.ws.common.Wsdl11Writer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import javax.wsdl.*;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.Definition;
+import javax.wsdl.Message;
+import javax.wsdl.Part;
+import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap12.SOAP12Binding;
 import javax.wsdl.xml.WSDLReader;
@@ -554,6 +561,14 @@ class SoapMessageBuilder {
                 return SoapVersion.Soap12;
             }
         }
+
+        //lets check if the class is of type HttpBinding
+        //TODO NEED TO FIND THE BEST WAY FOR HTTP BINDING, OR DO WE REALLY NEED IT
+//        HTTPBinding httpBinding = WsdlUtils.getExtensiblityElement(list, HTTPBinding.class);
+//        if (httpBinding != null) {
+//            return SoapVersion.Soap12;
+//        }
+
         throw new SoapBuilderException("SOAP binding not recognized");
     }
 
