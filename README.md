@@ -452,6 +452,14 @@ Then you can inject the beans to your code, for example in such a way:
     private SoapServer server;
 ```
 
+## Building this project
+
+```
+  mvn clean install -Dmaven.javadoc.skip=true -B -V
+```
+Skip generating the docs as most of the comments are generated from Soap-UI and doesn't really work with the plugin
+
+
 
 ## Last but not least
 

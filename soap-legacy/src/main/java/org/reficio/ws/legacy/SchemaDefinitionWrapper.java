@@ -27,6 +27,8 @@ import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -52,6 +54,7 @@ import java.util.Set;
 class SchemaDefinitionWrapper {
     private SchemaTypeSystem schemaTypes;
     private SchemaTypeLoader schemaTypeLoader;
+    private Map<String, List<SchemaType>> abstractSchemaTypes;
 
     private Definition definition;
 
@@ -93,10 +96,20 @@ class SchemaDefinitionWrapper {
         return getSchemaTypeLoader().findType(typeName);
     }
 
+    public Map<String, List<SchemaType>> getAbstractSchemaTypes() {
+        return abstractSchemaTypes;
+    }
+
+    public void setAbstractSchemaTypes(Map<String, List<SchemaType>> abstractSchemaTypes) {
+        this.abstractSchemaTypes = abstractSchemaTypes;
+    }
+
     public void loadSchemaTypes(DefinitionLoader loader) {
         schemaTypes = SchemaUtils.loadSchemaTypes(loader.getBaseURI(), loader);
         schemaTypeLoader = XmlBeans.typeLoaderUnion(new SchemaTypeLoader[]{schemaTypes,
                 XmlBeans.getBuiltinTypeSystem()});
-    }
 
+        //Construct Abstract type list, other than anytype
+        setAbstractSchemaTypes(SchemaUtils.buildAbstractComplexTypes(schemaTypes));
+    }
 }

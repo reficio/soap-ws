@@ -18,6 +18,7 @@
  */
 package org.reficio.ws.legacy;
 
+import org.apache.xmlbeans.SchemaType;
 import org.reficio.ws.SoapBuilderException;
 import org.reficio.ws.SoapContext;
 import org.reficio.ws.SoapValidationException;
@@ -47,9 +48,18 @@ public class SoapLegacyFacade {
         this.messageBuilder = new SoapMessageBuilder(wsdlUrl);
     }
 
+    public String buildSoapMessageFromInput(Binding binding, BindingOperation bindingOperation, SoapContext context,
+                                            SchemaType abstractType, SchemaType childSchemaType) {
+        try {
+            return messageBuilder.buildSoapMessageFromInput(binding, bindingOperation, context, abstractType, childSchemaType);
+        } catch (Exception e) {
+            throw new SoapBuilderException(e);
+        }
+    }
+
     public String buildSoapMessageFromInput(Binding binding, BindingOperation bindingOperation, SoapContext context) {
         try {
-            return messageBuilder.buildSoapMessageFromInput(binding, bindingOperation, context);
+            return messageBuilder.buildSoapMessageFromInput(binding, bindingOperation, context, null, null);
         } catch (Exception e) {
             throw new SoapBuilderException(e);
         }
@@ -176,4 +186,23 @@ public class SoapLegacyFacade {
         return WsdlUtils.isInputSoapEncoded(operation);
     }
 
+    public boolean isInputMessageAbstract(BindingOperation bindingOperation, SoapContext context) {
+        try {
+            return messageBuilder.isInputMessageAbstract(bindingOperation, context);
+        } catch (Exception e) {
+            throw new SoapBuilderException(e);
+        }
+    }
+
+    public SchemaType getAbstractSchemaTypeFromOperation(BindingOperation bindingOperation, SoapContext context) {
+        try {
+            return messageBuilder.getAbstractSchemaTypeFromOperation(bindingOperation, context);
+        } catch (Exception e) {
+            throw new SoapBuilderException(e);
+        }
+    }
+
+    public List<SchemaType> getChildrenForType(SchemaType abstractType) {
+        return messageBuilder.getChildrenForType(abstractType);
+    }
 }

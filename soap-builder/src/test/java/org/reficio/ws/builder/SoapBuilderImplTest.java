@@ -32,10 +32,10 @@ public class SoapBuilderImplTest {
     @Test
     public void testLoadSnowboard_Bug_851() throws WSDLException {
         URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("builder", "snowboard.wsdl");
-        SoapBuilder builder = Wsdl.parse(wsdlUrl).binding().name("{http://namespaces.snowboard-info.com}EndorsementSearchSoapBinding").find();
+        SoapBuilder builder = Wsdl.parse(wsdlUrl).binding().name("{http://namespaces.snowboard-info" +
+                ".com}EndorsementSearchSoapBinding").find();
         for (SoapOperation op : builder.getOperations()) {
             assertNotNull(op);
         }
     }
-
 }
