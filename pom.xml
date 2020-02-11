@@ -388,11 +388,11 @@
     <repositories>
         <repository>
             <id>reficio</id>
-            <url>http://repo.reficio.org/maven/</url>
+            <url>https://repo.reficio.org/maven/</url>
         </repository>
         <repository>
             <id>eviware</id>
-            <url>http://www.eviware.com/repository/maven2/</url>
+            <url>https://www.eviware.com/repository/maven2/</url>
         </repository>
         <repository>
             <id>jboss</id>
@@ -400,7 +400,7 @@
         </repository>
         <repository>
             <id>servicemix</id>
-            <url>http://svn.apache.org/repos/asf/servicemix/m2-repo/</url>
+            <url>https://svn.apache.org/repos/asf/servicemix/m2-repo/</url>
         </repository>
 
     </repositories>
